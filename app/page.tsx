@@ -1,6 +1,6 @@
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Calendar, Users, Eye, TrendingUp } from "lucide-react"
+import { FileText, Calendar, Users, MessageSquare } from "lucide-react"
 
 const stats = [
   {
@@ -28,12 +28,12 @@ const stats = [
     bgColor: "bg-purple-50",
   },
   {
-    title: "Page Views",
-    value: "2,847",
-    description: "+12% from last month",
-    icon: Eye,
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
+    title: "Messages",
+    value: "47",
+    description: "12 unread",
+    icon: MessageSquare,
+    color: "text-pink-600",
+    bgColor: "bg-pink-50",
   },
 ]
 
@@ -67,7 +67,10 @@ export default function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className={`${stat.bgColor} border-0`}>
+          <Card
+            key={stat.title}
+            className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
               <div
@@ -93,7 +96,10 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start space-x-4">
+                <div
+                  key={index}
+                  className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-gray-900">{activity.action}</p>
                     <p className="text-sm text-gray-500">{activity.title}</p>
@@ -135,12 +141,12 @@ export default function Dashboard() {
                 <span className="font-medium">Add Team Member</span>
               </div>
             </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-orange-50 transition-colors group">
+            <button className="w-full text-left p-3 rounded-lg border hover:bg-pink-50 transition-colors group">
               <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                  <TrendingUp className="h-4 w-4 text-orange-600" />
+                <div className="h-8 w-8 rounded-lg bg-pink-100 flex items-center justify-center group-hover:bg-pink-200 transition-colors">
+                  <MessageSquare className="h-4 w-4 text-pink-600" />
                 </div>
-                <span className="font-medium">View Reports</span>
+                <span className="font-medium">View Messages</span>
               </div>
             </button>
           </CardContent>

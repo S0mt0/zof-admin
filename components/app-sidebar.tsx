@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { Calendar, FileText, Users, Home, Settings, LogOut, User } from "lucide-react"
+import { Calendar, FileText, Users, Home, Settings, LogOut, User, MessageSquare, Heart } from "lucide-react"
 
 import {
   Sidebar,
@@ -31,28 +31,36 @@ const navigationItems = [
     url: "/",
     icon: Home,
     gradient: "from-blue-400 to-blue-600",
-    hoverGradient: "from-blue-500 to-blue-700",
   },
   {
     title: "Blog Posts",
     url: "/blogs",
     icon: FileText,
     gradient: "from-emerald-400 to-emerald-600",
-    hoverGradient: "from-emerald-500 to-emerald-700",
   },
   {
     title: "Events",
     url: "/events",
     icon: Calendar,
     gradient: "from-purple-400 to-purple-600",
-    hoverGradient: "from-purple-500 to-purple-700",
+  },
+  {
+    title: "Messages",
+    url: "/messages",
+    icon: MessageSquare,
+    gradient: "from-pink-400 to-pink-600",
+  },
+  {
+    title: "Donations",
+    url: "/donations",
+    icon: Heart,
+    gradient: "from-rose-400 to-rose-600",
   },
   {
     title: "Team Members",
     url: "/team",
     icon: Users,
     gradient: "from-orange-400 to-orange-600",
-    hoverGradient: "from-orange-500 to-orange-700",
   },
 ]
 
@@ -62,14 +70,12 @@ const settingsItems = [
     url: "/settings",
     icon: Settings,
     gradient: "from-gray-400 to-gray-600",
-    hoverGradient: "from-gray-500 to-gray-700",
   },
   {
     title: "Profile",
     url: "/profile",
     icon: User,
     gradient: "from-indigo-400 to-indigo-600",
-    hoverGradient: "from-indigo-500 to-indigo-700",
   },
 ]
 
@@ -94,13 +100,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu className="space-y-2">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-12 px-3 group">
+                  <SidebarMenuButton
+                    asChild
+                    className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200"
+                  >
                     <a href={item.url} className="flex items-center gap-4">
                       <div
-                        className={`relative h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-gradient-to-br group-hover:${item.hoverGradient} group-hover:scale-110 group-hover:shadow-xl`}
+                        className={`h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
                       >
-                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm"></div>
-                        <item.icon className="h-4 w-4 text-white relative z-10" />
+                        <item.icon className="h-4 w-4 text-white" />
                       </div>
                       <span className="font-medium text-sm">{item.title}</span>
                     </a>
@@ -116,13 +124,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu className="space-y-2">
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-12 px-3 group">
+                  <SidebarMenuButton
+                    asChild
+                    className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200"
+                  >
                     <a href={item.url} className="flex items-center gap-4">
                       <div
-                        className={`relative h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-gradient-to-br group-hover:${item.hoverGradient} group-hover:scale-110 group-hover:shadow-xl`}
+                        className={`h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
                       >
-                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm"></div>
-                        <item.icon className="h-4 w-4 text-white relative z-10" />
+                        <item.icon className="h-4 w-4 text-white" />
                       </div>
                       <span className="font-medium text-sm">{item.title}</span>
                     </a>
