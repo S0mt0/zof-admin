@@ -9,13 +9,15 @@ const stats = [
     description: "+2 from last month",
     icon: FileText,
     color: "text-blue-600",
+    bgColor: "bg-blue-50",
   },
   {
     title: "Upcoming Events",
     value: "8",
     description: "3 this month",
     icon: Calendar,
-    color: "text-green-600",
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50",
   },
   {
     title: "Team Members",
@@ -23,6 +25,7 @@ const stats = [
     description: "Active members",
     icon: Users,
     color: "text-purple-600",
+    bgColor: "bg-purple-50",
   },
   {
     title: "Page Views",
@@ -30,6 +33,7 @@ const stats = [
     description: "+12% from last month",
     icon: Eye,
     color: "text-orange-600",
+    bgColor: "bg-orange-50",
   },
 ]
 
@@ -63,10 +67,14 @@ export default function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title}>
+          <Card key={stat.title} className={`${stat.bgColor} border-0`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+              <div
+                className={`h-8 w-8 rounded-lg ${stat.color.replace("text-", "bg-").replace("600", "100")} flex items-center justify-center`}
+              >
+                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
@@ -103,28 +111,36 @@ export default function Dashboard() {
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+            <button className="w-full text-left p-3 rounded-lg border hover:bg-blue-50 transition-colors group">
               <div className="flex items-center space-x-3">
-                <FileText className="h-5 w-5 text-blue-600" />
+                <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                </div>
                 <span className="font-medium">Create New Blog Post</span>
               </div>
             </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+            <button className="w-full text-left p-3 rounded-lg border hover:bg-emerald-50 transition-colors group">
               <div className="flex items-center space-x-3">
-                <Calendar className="h-5 w-5 text-green-600" />
+                <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                  <Calendar className="h-4 w-4 text-emerald-600" />
+                </div>
                 <span className="font-medium">Add New Event</span>
               </div>
             </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+            <button className="w-full text-left p-3 rounded-lg border hover:bg-purple-50 transition-colors group">
               <div className="flex items-center space-x-3">
-                <Users className="h-5 w-5 text-purple-600" />
+                <div className="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                  <Users className="h-4 w-4 text-purple-600" />
+                </div>
                 <span className="font-medium">Add Team Member</span>
               </div>
             </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+            <button className="w-full text-left p-3 rounded-lg border hover:bg-orange-50 transition-colors group">
               <div className="flex items-center space-x-3">
-                <TrendingUp className="h-5 w-5 text-orange-600" />
-                <span className="font-medium">View Analytics</span>
+                <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                  <TrendingUp className="h-4 w-4 text-orange-600" />
+                </div>
+                <span className="font-medium">View Reports</span>
               </div>
             </button>
           </CardContent>

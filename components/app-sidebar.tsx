@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { Calendar, FileText, Users, Home, Settings, LogOut, User, BarChart3, Mail } from "lucide-react"
+import { Calendar, FileText, Users, Home, Settings, LogOut, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -45,16 +45,6 @@ const navigationItems = [
     title: "Team Members",
     url: "/team",
     icon: Users,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Messages",
-    url: "/messages",
-    icon: Mail,
   },
 ]
 
