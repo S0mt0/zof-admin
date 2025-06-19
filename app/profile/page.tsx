@@ -11,7 +11,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
-import { Save, User, Mail, Phone, MapPin, Calendar, Shield, Bell, Eye, EyeOff, Camera, Edit3 } from "lucide-react"
+import {
+  Save,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Shield,
+  Bell,
+  Eye,
+  EyeOff,
+  Camera,
+  Edit3,
+  LogOut,
+} from "lucide-react"
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
@@ -47,6 +61,18 @@ export default function ProfilePage() {
 
   const handleNotificationChange = (field: string, value: boolean) => {
     setNotifications((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out?")) {
+      console.log("Logging out user...")
+      // Clear any stored authentication tokens
+      localStorage.removeItem("authToken")
+      sessionStorage.clear()
+
+      // Redirect to login page
+      window.location.href = "/auth/login"
+    }
   }
 
   const stats = [
@@ -127,6 +153,14 @@ export default function ProfilePage() {
               <Badge variant="outline" className="w-full justify-center">
                 Last login: {profileData.lastLogin}
               </Badge>
+              <Button
+                variant="outline"
+                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Log Out
+              </Button>
             </div>
           </CardContent>
         </Card>

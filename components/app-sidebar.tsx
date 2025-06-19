@@ -80,6 +80,29 @@ const settingsItems = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out?")) {
+      console.log("Logging out user...")
+      // Clear any stored authentication tokens
+      localStorage.removeItem("authToken")
+      sessionStorage.clear()
+
+      // Redirect to login page
+      window.location.href = "/auth/login"
+
+      // You could also use Next.js router if available:
+      // router.push("/auth/login")
+    }
+  }
+
+  const handleProfileClick = () => {
+    window.location.href = "/profile"
+  }
+
+  const handleSettingsClick = () => {
+    window.location.href = "/settings"
+  }
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -150,7 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Admin" />
@@ -168,17 +191,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem>
-                  <User />
+                <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings />
+                <DropdownMenuItem onClick={handleSettingsClick} className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
