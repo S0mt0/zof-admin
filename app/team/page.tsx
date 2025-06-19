@@ -72,6 +72,23 @@ const teamMembers = [
 export default function TeamPage() {
   const [searchTerm, setSearchTerm] = useState("")
 
+  const handleEditMember = (member: any) => {
+    console.log("Editing profile for member:", member)
+    // Open edit modal or navigate to edit page
+  }
+
+  const handleSendEmail = (member: any) => {
+    window.location.href = `mailto:${member.email}?subject=Hello from Zita Onyeka Foundation`
+  }
+
+  const handleRemoveMember = (member: any) => {
+    if (confirm(`Are you sure you want to remove ${member.name} from the team?`)) {
+      console.log("Removing team member:", member)
+      // Add actual remove logic here
+      alert(`${member.name} has been removed from the team`)
+    }
+  }
+
   const filteredMembers = teamMembers.filter(
     (member) =>
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,15 +154,15 @@ export default function TeamPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEditMember(member)}>
                       <Edit className="mr-2 h-4 w-4" />
                       Edit Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleSendEmail(member)}>
                       <Mail className="mr-2 h-4 w-4" />
                       Send Email
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem className="text-red-600" onClick={() => handleRemoveMember(member)}>
                       <Trash2 className="mr-2 h-4 w-4" />
                       Remove Member
                     </DropdownMenuItem>

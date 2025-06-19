@@ -61,6 +61,28 @@ const events = [
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("")
 
+  const handleViewEvent = (event: any) => {
+    console.log("Viewing event details:", event)
+    // Add modal or navigation logic
+  }
+
+  const handleEditEvent = (event: any) => {
+    console.log("Editing event:", event)
+    // Navigate to edit page or open edit modal
+  }
+
+  const handleManageAttendees = (event: any) => {
+    console.log("Managing attendees for event:", event)
+    // Open attendees management interface
+  }
+
+  const handleDeleteEvent = (eventId: number) => {
+    if (confirm("Are you sure you want to delete this event?")) {
+      console.log("Deleting event:", eventId)
+      // Add actual delete logic here
+    }
+  }
+
   const filteredEvents = events.filter(
     (event) =>
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -172,19 +194,19 @@ export default function EventsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewEvent(event)}>
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditEvent(event)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Event
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleManageAttendees(event)}>
                           <Users className="mr-2 h-4 w-4" />
                           Manage Attendees
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteEvent(event.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>

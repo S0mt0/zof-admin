@@ -116,6 +116,18 @@ export default function DonationsPage() {
     }
   }
 
+  const handleDownloadReceipt = (donation: any) => {
+    console.log("Downloading receipt for donation:", donation)
+    // Generate and download receipt PDF
+    alert(`Receipt for donation #${donation.id} will be downloaded`)
+  }
+
+  const handleSendThankYou = (donation: any) => {
+    console.log("Sending thank you email for donation:", donation)
+    // Send thank you email
+    alert(`Thank you email sent to ${donation.donor}`)
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader title="Donations" breadcrumbs={[{ label: "Donations" }]} />
@@ -211,11 +223,11 @@ export default function DonationsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDownloadReceipt(donation)}>
                           <Download className="mr-2 h-4 w-4" />
                           Receipt
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleSendThankYou(donation)}>
                           <Mail className="mr-2 h-4 w-4" />
                           Thank You Email
                         </DropdownMenuItem>

@@ -76,6 +76,28 @@ export default function MessagesPage() {
 
   const unreadCount = messages.filter((m) => m.status === "unread").length
 
+  const handleReplyMessage = (message: any) => {
+    console.log("Replying to message:", message)
+    // Open reply interface or navigate to compose
+  }
+
+  const handleToggleReadStatus = (messageId: number, currentStatus: string) => {
+    console.log("Toggling read status for message:", messageId)
+    // Update message status in state or backend
+  }
+
+  const handleArchiveMessage = (messageId: number) => {
+    console.log("Archiving message:", messageId)
+    // Move message to archive
+  }
+
+  const handleDeleteMessage = (messageId: number) => {
+    if (confirm("Are you sure you want to delete this message?")) {
+      console.log("Deleting message:", messageId)
+      // Add actual delete logic here
+    }
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader title="Messages" breadcrumbs={[{ label: "Messages" }]} />
@@ -150,19 +172,19 @@ export default function MessagesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleReplyMessage(message)}>
                           <Reply className="mr-2 h-4 w-4" />
                           Reply
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleReadStatus(message.id, message.status)}>
                           <Mail className="mr-2 h-4 w-4" />
                           Mark as {message.status === "unread" ? "Read" : "Unread"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleArchiveMessage(message.id)}>
                           <Archive className="mr-2 h-4 w-4" />
                           Archive
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteMessage(message.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>

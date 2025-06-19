@@ -52,6 +52,26 @@ const blogPosts = [
 
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedPost, setSelectedPost] = useState<any>(null)
+
+  const handleViewPost = (post: any) => {
+    setSelectedPost(post)
+    console.log("Viewing post:", post)
+    // You can add a modal or navigate to a detailed view here
+  }
+
+  const handleEditPost = (post: any) => {
+    console.log("Editing post:", post)
+    // Navigate to edit page or open edit modal
+  }
+
+  const handleDeletePost = (postId: number) => {
+    if (confirm("Are you sure you want to delete this blog post?")) {
+      console.log("Deleting post:", postId)
+      // Add actual delete logic here
+      // For now, we'll just log it
+    }
+  }
 
   const filteredPosts = blogPosts.filter(
     (post) =>
@@ -133,15 +153,15 @@ export default function BlogsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewPost(post)}>
                           <Eye className="mr-2 h-4 w-4" />
                           View
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditPost(post)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeletePost(post.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
