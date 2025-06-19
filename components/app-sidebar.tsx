@@ -1,7 +1,19 @@
-"use client"
+"use client";
 
-import type * as React from "react"
-import { Calendar, FileText, Users, Home, Settings, LogOut, User, MessageSquare, Heart } from "lucide-react"
+import type * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Calendar,
+  FileText,
+  Users,
+  Home,
+  Settings,
+  LogOut,
+  User,
+  MessageSquare,
+  Heart,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -15,15 +27,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 const navigationItems = [
   {
@@ -62,7 +75,7 @@ const navigationItems = [
     icon: Users,
     gradient: "from-orange-400 to-orange-600",
   },
-]
+];
 
 const settingsItems = [
   {
@@ -77,42 +90,41 @@ const settingsItems = [
     icon: User,
     gradient: "from-indigo-400 to-indigo-600",
   },
-]
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
+
   const handleLogout = () => {
     if (confirm("Are you sure you want to log out?")) {
-      console.log("Logging out user...")
+      console.log("Logging out user...");
       // Clear any stored authentication tokens
-      localStorage.removeItem("authToken")
-      sessionStorage.clear()
-
-      // Redirect to login page
-      window.location.href = "/auth/login"
-
-      // You could also use Next.js router if available:
-      // router.push("/auth/login")
+      localStorage.removeItem("authToken");
+      sessionStorage.clear();
+      router.push("/auth/login");
     }
-  }
-
-  const handleProfileClick = () => {
-    window.location.href = "/profile"
-  }
-
-  const handleSettingsClick = () => {
-    window.location.href = "/settings"
-  }
+  };
 
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-sm font-bold">ZOF</span>
-          </div>
+          </div> */}
+          {/* <Image
+            height={200}
+            width={200}
+            src={"/zof-logo.png"}
+            alt="@ZOF_LOGO"
+            className="w-14 h-auto"
+            priority
+          /> */}
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">Zita Onyeka Foundation</span>
-            <span className="truncate text-xs text-muted-foreground">Admin Dashboard</span>
+            <span className="truncate font-bold">Zita Onyeka Foundation</span>
+            <span className="truncate text-xs text-muted-foreground">
+              Admin Dashboard
+            </span>
           </div>
         </div>
       </SidebarHeader>
@@ -127,14 +139,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     asChild
                     className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200"
                   >
-                    <a href={item.url} className="flex items-center gap-4">
+                    <Link href={item.url} className="flex items-center gap-4">
                       <div
                         className={`h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
                       >
                         <item.icon className="h-4 w-4 text-white" />
                       </div>
                       <span className="font-medium text-sm">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -151,14 +163,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     asChild
                     className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200"
                   >
-                    <a href={item.url} className="flex items-center gap-4">
+                    <Link href={item.url} className="flex items-center gap-4">
                       <div
                         className={`h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
                       >
                         <item.icon className="h-4 w-4 text-white" />
                       </div>
                       <span className="font-medium text-sm">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -176,12 +188,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Admin" />
+                    <AvatarImage
+                      src="/placeholder.svg?height=32&width=32"
+                      alt="Admin"
+                    />
                     <AvatarFallback className="rounded-lg">AD</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Admin User</span>
-                    <span className="truncate text-xs">admin@zitaonyeka.org</span>
+                    <span className="truncate text-xs">
+                      admin@zitaonyeka.org
+                    </span>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -191,13 +208,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href="/profile" className="flex items-center gap-4">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSettingsClick} className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href="/settings" className="flex items-center gap-4">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -214,5 +235,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

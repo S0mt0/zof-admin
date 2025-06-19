@@ -1,32 +1,39 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, EyeOff, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Eye, EyeOff, CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function ResetPasswordPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isReset, setIsReset] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isReset, setIsReset] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords don't match!")
-      return
+      alert("Passwords don't match!");
+      return;
     }
     // Handle password reset logic here
-    console.log("Password reset:", { password })
-    setIsReset(true)
-  }
+    console.log("Password reset:", { password });
+    setIsReset(true);
+  };
 
   if (isReset) {
     return (
@@ -38,8 +45,12 @@ export default function ResetPasswordPage() {
                 <CheckCircle className="h-6 w-6" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold">Password reset successful</CardTitle>
-            <CardDescription>Your password has been successfully reset</CardDescription>
+            <CardTitle className="text-2xl font-bold">
+              Password reset successful
+            </CardTitle>
+            <CardDescription>
+              Your password has been successfully reset
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/auth/login">
@@ -48,19 +59,24 @@ export default function ResetPasswordPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-lg font-bold">ZOF</span>
-            </div>
-          </div>
-          <CardTitle className="text-2xl font-bold">Reset your password</CardTitle>
+          <Image
+            height={200}
+            width={200}
+            src={"/zof-logo.png"}
+            alt="@ZOF_LOGO"
+            className="w-14 h-auto mx-auto"
+            priority
+          />
+          <CardTitle className="text-2xl font-bold">
+            Reset your password
+          </CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
@@ -83,7 +99,11 @@ export default function ResetPasswordPage() {
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -105,7 +125,11 @@ export default function ResetPasswordPage() {
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -114,12 +138,15 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
           <div className="mt-6 text-center">
-            <Link href="/auth/login" className="text-sm text-primary hover:underline">
+            <Link
+              href="/auth/login"
+              className="text-sm text-primary hover:underline"
+            >
               Back to login
             </Link>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,6 +1,12 @@
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Calendar, Users, MessageSquare } from "lucide-react"
+import { DashboardHeader } from "@/components/dashboard-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FileText, Calendar, Users, MessageSquare } from "lucide-react";
 
 const stats = [
   {
@@ -35,7 +41,7 @@ const stats = [
     gradient: "from-pink-400 to-pink-600",
     bgColor: "bg-pink-50",
   },
-]
+];
 
 const recentActivity = [
   {
@@ -58,7 +64,7 @@ const recentActivity = [
     title: "Education Initiative Impact Report",
     time: "2 days ago",
   },
-]
+];
 
 const quickActions = [
   {
@@ -93,7 +99,7 @@ const quickActions = [
     iconBg: "bg-pink-100",
     iconHoverBg: "group-hover:bg-pink-200",
   },
-]
+];
 
 export default function Dashboard() {
   return (
@@ -107,7 +113,9 @@ export default function Dashboard() {
             className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {stat.title}
+              </CardTitle>
               <div
                 className={`h-10 w-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md transition-transform duration-200 hover:scale-105`}
               >
@@ -116,7 +124,9 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
+              <p className="text-xs text-muted-foreground">
+                {stat.description}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -126,7 +136,9 @@ export default function Dashboard() {
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest updates across your dashboard</CardDescription>
+            <CardDescription>
+              Latest updates across your dashboard
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -136,7 +148,9 @@ export default function Dashboard() {
                   className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.action}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {activity.action}
+                    </p>
                     <p className="text-sm text-gray-500">{activity.title}</p>
                   </div>
                   <div className="text-sm text-gray-400">{activity.time}</div>
@@ -171,5 +185,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
