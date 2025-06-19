@@ -8,7 +8,7 @@ const stats = [
     value: "24",
     description: "+2 from last month",
     icon: FileText,
-    color: "text-blue-600",
+    gradient: "from-blue-400 to-blue-600",
     bgColor: "bg-blue-50",
   },
   {
@@ -16,7 +16,7 @@ const stats = [
     value: "8",
     description: "3 this month",
     icon: Calendar,
-    color: "text-emerald-600",
+    gradient: "from-emerald-400 to-emerald-600",
     bgColor: "bg-emerald-50",
   },
   {
@@ -24,7 +24,7 @@ const stats = [
     value: "12",
     description: "Active members",
     icon: Users,
-    color: "text-purple-600",
+    gradient: "from-purple-400 to-purple-600",
     bgColor: "bg-purple-50",
   },
   {
@@ -32,7 +32,7 @@ const stats = [
     value: "47",
     description: "12 unread",
     icon: MessageSquare,
-    color: "text-pink-600",
+    gradient: "from-pink-400 to-pink-600",
     bgColor: "bg-pink-50",
   },
 ]
@@ -60,6 +60,41 @@ const recentActivity = [
   },
 ]
 
+const quickActions = [
+  {
+    title: "Create New Blog Post",
+    icon: FileText,
+    gradient: "from-blue-400 to-blue-600",
+    hoverBg: "hover:bg-blue-50",
+    iconBg: "bg-blue-100",
+    iconHoverBg: "group-hover:bg-blue-200",
+  },
+  {
+    title: "Add New Event",
+    icon: Calendar,
+    gradient: "from-emerald-400 to-emerald-600",
+    hoverBg: "hover:bg-emerald-50",
+    iconBg: "bg-emerald-100",
+    iconHoverBg: "group-hover:bg-emerald-200",
+  },
+  {
+    title: "Add Team Member",
+    icon: Users,
+    gradient: "from-purple-400 to-purple-600",
+    hoverBg: "hover:bg-purple-50",
+    iconBg: "bg-purple-100",
+    iconHoverBg: "group-hover:bg-purple-200",
+  },
+  {
+    title: "View Messages",
+    icon: MessageSquare,
+    gradient: "from-pink-400 to-pink-600",
+    hoverBg: "hover:bg-pink-50",
+    iconBg: "bg-pink-100",
+    iconHoverBg: "group-hover:bg-pink-200",
+  },
+]
+
 export default function Dashboard() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -74,9 +109,9 @@ export default function Dashboard() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
               <div
-                className={`h-8 w-8 rounded-lg ${stat.color.replace("text-", "bg-").replace("600", "100")} flex items-center justify-center`}
+                className={`h-10 w-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md transition-transform duration-200 hover:scale-105`}
               >
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <stat.icon className="h-5 w-5 text-white" />
               </div>
             </CardHeader>
             <CardContent>
@@ -116,39 +151,22 @@ export default function Dashboard() {
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-blue-50 transition-colors group">
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                  <FileText className="h-4 w-4 text-blue-600" />
+          <CardContent className="space-y-3">
+            {quickActions.map((action) => (
+              <button
+                key={action.title}
+                className={`w-full text-left p-3 rounded-lg border ${action.hoverBg} transition-all duration-200 group hover:shadow-md hover:border-opacity-50`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`h-10 w-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
+                  >
+                    <action.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="font-medium">{action.title}</span>
                 </div>
-                <span className="font-medium">Create New Blog Post</span>
-              </div>
-            </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-emerald-50 transition-colors group">
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
-                  <Calendar className="h-4 w-4 text-emerald-600" />
-                </div>
-                <span className="font-medium">Add New Event</span>
-              </div>
-            </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-purple-50 transition-colors group">
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                  <Users className="h-4 w-4 text-purple-600" />
-                </div>
-                <span className="font-medium">Add Team Member</span>
-              </div>
-            </button>
-            <button className="w-full text-left p-3 rounded-lg border hover:bg-pink-50 transition-colors group">
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 rounded-lg bg-pink-100 flex items-center justify-center group-hover:bg-pink-200 transition-colors">
-                  <MessageSquare className="h-4 w-4 text-pink-600" />
-                </div>
-                <span className="font-medium">View Messages</span>
-              </div>
-            </button>
+              </button>
+            ))}
           </CardContent>
         </Card>
       </div>
