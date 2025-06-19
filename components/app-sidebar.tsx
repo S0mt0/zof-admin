@@ -30,21 +30,25 @@ const navigationItems = [
     title: "Dashboard",
     url: "/",
     icon: Home,
+    color: "text-blue-600",
   },
   {
     title: "Blog Posts",
     url: "/blogs",
     icon: FileText,
+    color: "text-emerald-600",
   },
   {
     title: "Events",
     url: "/events",
     icon: Calendar,
+    color: "text-purple-600",
   },
   {
     title: "Team Members",
     url: "/team",
     icon: Users,
+    color: "text-orange-600",
   },
 ]
 
@@ -53,11 +57,13 @@ const settingsItems = [
     title: "Settings",
     url: "/settings",
     icon: Settings,
+    color: "text-gray-600",
   },
   {
     title: "Profile",
     url: "/profile",
     icon: User,
+    color: "text-indigo-600",
   },
 ]
 
@@ -82,10 +88,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                  <SidebarMenuButton asChild className="h-10">
+                    <a href={item.url} className="flex items-center gap-3">
+                      <item.icon className={`h-5 w-5 ${item.color} flex-shrink-0`} />
+                      <span className="font-medium">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -99,10 +105,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                  <SidebarMenuButton asChild className="h-10">
+                    <a href={item.url} className="flex items-center gap-3">
+                      <item.icon className={`h-5 w-5 ${item.color} flex-shrink-0`} />
+                      <span className="font-medium">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
