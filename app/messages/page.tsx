@@ -167,24 +167,31 @@ export default function MessagesPage() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                          <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleReplyMessage(message)}>
+                      <DropdownMenuContent align="end" className="w-[160px]">
+                        <DropdownMenuItem onClick={() => handleReplyMessage(message)} className="cursor-pointer">
                           <Reply className="mr-2 h-4 w-4" />
                           Reply
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleReadStatus(message.id, message.status)}>
+                        <DropdownMenuItem
+                          onClick={() => handleToggleReadStatus(message.id, message.status)}
+                          className="cursor-pointer"
+                        >
                           <Mail className="mr-2 h-4 w-4" />
                           Mark as {message.status === "unread" ? "Read" : "Unread"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleArchiveMessage(message.id)}>
+                        <DropdownMenuItem onClick={() => handleArchiveMessage(message.id)} className="cursor-pointer">
                           <Archive className="mr-2 h-4 w-4" />
                           Archive
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteMessage(message.id)}>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteMessage(message.id)}
+                          className="cursor-pointer text-red-600 focus:text-red-600"
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>

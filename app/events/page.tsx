@@ -189,24 +189,28 @@ export default function EventsPage() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                          <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleViewEvent(event)}>
+                      <DropdownMenuContent align="end" className="w-[180px]">
+                        <DropdownMenuItem onClick={() => handleViewEvent(event)} className="cursor-pointer">
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditEvent(event)}>
+                        <DropdownMenuItem onClick={() => handleEditEvent(event)} className="cursor-pointer">
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Event
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleManageAttendees(event)}>
+                        <DropdownMenuItem onClick={() => handleManageAttendees(event)} className="cursor-pointer">
                           <Users className="mr-2 h-4 w-4" />
                           Manage Attendees
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteEvent(event.id)}>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteEvent(event.id)}
+                          className="cursor-pointer text-red-600 focus:text-red-600"
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>

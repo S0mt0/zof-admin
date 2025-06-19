@@ -218,16 +218,17 @@ export default function DonationsPage() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                          <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDownloadReceipt(donation)}>
+                      <DropdownMenuContent align="end" className="w-[160px]">
+                        <DropdownMenuItem onClick={() => handleDownloadReceipt(donation)} className="cursor-pointer">
                           <Download className="mr-2 h-4 w-4" />
                           Receipt
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleSendThankYou(donation)}>
+                        <DropdownMenuItem onClick={() => handleSendThankYou(donation)} className="cursor-pointer">
                           <Mail className="mr-2 h-4 w-4" />
                           Thank You Email
                         </DropdownMenuItem>
