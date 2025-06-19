@@ -30,25 +30,29 @@ const navigationItems = [
     title: "Dashboard",
     url: "/",
     icon: Home,
-    color: "text-blue-600",
+    gradient: "from-blue-400 to-blue-600",
+    hoverGradient: "from-blue-500 to-blue-700",
   },
   {
     title: "Blog Posts",
     url: "/blogs",
     icon: FileText,
-    color: "text-emerald-600",
+    gradient: "from-emerald-400 to-emerald-600",
+    hoverGradient: "from-emerald-500 to-emerald-700",
   },
   {
     title: "Events",
     url: "/events",
     icon: Calendar,
-    color: "text-purple-600",
+    gradient: "from-purple-400 to-purple-600",
+    hoverGradient: "from-purple-500 to-purple-700",
   },
   {
     title: "Team Members",
     url: "/team",
     icon: Users,
-    color: "text-orange-600",
+    gradient: "from-orange-400 to-orange-600",
+    hoverGradient: "from-orange-500 to-orange-700",
   },
 ]
 
@@ -57,13 +61,15 @@ const settingsItems = [
     title: "Settings",
     url: "/settings",
     icon: Settings,
-    color: "text-gray-600",
+    gradient: "from-gray-400 to-gray-600",
+    hoverGradient: "from-gray-500 to-gray-700",
   },
   {
     title: "Profile",
     url: "/profile",
     icon: User,
-    color: "text-indigo-600",
+    gradient: "from-indigo-400 to-indigo-600",
+    hoverGradient: "from-indigo-500 to-indigo-700",
   },
 ]
 
@@ -85,13 +91,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-10">
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon className={`h-5 w-5 ${item.color} flex-shrink-0`} />
-                      <span className="font-medium">{item.title}</span>
+                  <SidebarMenuButton asChild className="h-12 px-3 group">
+                    <a href={item.url} className="flex items-center gap-4">
+                      <div
+                        className={`relative h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-gradient-to-br group-hover:${item.hoverGradient} group-hover:scale-110 group-hover:shadow-xl`}
+                      >
+                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm"></div>
+                        <item.icon className="h-4 w-4 text-white relative z-10" />
+                      </div>
+                      <span className="font-medium text-sm">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -102,13 +113,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Account</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2">
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-10">
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon className={`h-5 w-5 ${item.color} flex-shrink-0`} />
-                      <span className="font-medium">{item.title}</span>
+                  <SidebarMenuButton asChild className="h-12 px-3 group">
+                    <a href={item.url} className="flex items-center gap-4">
+                      <div
+                        className={`relative h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-gradient-to-br group-hover:${item.hoverGradient} group-hover:scale-110 group-hover:shadow-xl`}
+                      >
+                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm"></div>
+                        <item.icon className="h-4 w-4 text-white relative z-10" />
+                      </div>
+                      <span className="font-medium text-sm">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
