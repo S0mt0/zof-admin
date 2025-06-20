@@ -230,9 +230,7 @@ export default function BlogsPage() {
   }
 
   const handleViewPost = (post: any) => {
-    console.log("Viewing post:", post)
-    // In a real app, this would navigate to a public view of the post
-    alert(`Viewing post: ${post.title}`)
+    router.push(`/blogs/${post.id}/view`)
   }
 
   const handleEditPost = (post: any) => {
