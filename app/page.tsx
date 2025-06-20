@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { FileText, Calendar, Users, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react"
+import { Pagination } from "@/components/ui/pagination"
+import { FileText, Calendar, Users, MessageSquare } from "lucide-react"
 
 const stats = [
   {
@@ -41,7 +41,7 @@ const stats = [
   },
 ]
 
-// Extended recent activity data for pagination
+// Extended recent activity data for pagination testing
 const allRecentActivity = [
   {
     action: "New blog post published",
@@ -93,6 +93,56 @@ const allRecentActivity = [
     title: "Youth Mentorship Program Launch scheduled",
     time: "1 week ago",
   },
+  {
+    action: "New volunteer registered",
+    title: "John Doe registered as a volunteer",
+    time: "1 week ago",
+  },
+  {
+    action: "Donation processed",
+    title: "$250 monthly donation from recurring donor",
+    time: "2 weeks ago",
+  },
+  {
+    action: "Event reminder sent",
+    title: "Reminder sent for upcoming health workshop",
+    time: "2 weeks ago",
+  },
+  {
+    action: "Blog post drafted",
+    title: "Annual report draft completed",
+    time: "2 weeks ago",
+  },
+  {
+    action: "Partnership established",
+    title: "New partnership with Local University",
+    time: "3 weeks ago",
+  },
+  {
+    action: "Grant application submitted",
+    title: "Education grant application submitted",
+    time: "3 weeks ago",
+  },
+  {
+    action: "Volunteer training completed",
+    title: "15 volunteers completed training program",
+    time: "3 weeks ago",
+  },
+  {
+    action: "Event feedback received",
+    title: "Positive feedback from community workshop",
+    time: "1 month ago",
+  },
+  {
+    action: "New team member onboarded",
+    title: "Dr. Emily Rodriguez joined as Health Coordinator",
+    time: "1 month ago",
+  },
+  {
+    action: "Fundraising milestone reached",
+    title: "Reached 75% of annual fundraising goal",
+    time: "1 month ago",
+  },
 ]
 
 const quickActions = [
@@ -139,14 +189,6 @@ export default function Dashboard() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
   const currentActivities = allRecentActivity.slice(startIndex, endIndex)
-
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1))
-  }
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -196,36 +238,15 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-between mt-6 pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                Showing {startIndex + 1} to {Math.min(endIndex, allRecentActivity.length)} of {allRecentActivity.length}{" "}
-                activities
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={currentPage === 1}>
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-                <div className="flex items-center space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className="w-8 h-8 p-0"
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
-                <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              showingStart={startIndex + 1}
+              showingEnd={Math.min(endIndex, allRecentActivity.length)}
+              totalItems={allRecentActivity.length}
+              itemName="activities"
+            />
           </CardContent>
         </Card>
 

@@ -9,21 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Reply,
-  Archive,
-  Trash2,
-  Mail,
-  Clock,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react"
+import { Pagination } from "@/components/ui/pagination"
+import { Plus, Search, MoreHorizontal, Reply, Archive, Trash2, Mail, Clock, Filter } from "lucide-react"
 
-// Extended mock data for pagination
+// Extended mock data for pagination testing
 const allMessages = [
   {
     id: 1,
@@ -122,6 +111,56 @@ const allMessages = [
     subject: "Event Attendance Confirmation",
     preview: "I'm writing to confirm my attendance at the upcoming fundraising gala...",
     time: "1 week ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 11,
+    sender: "Thomas Anderson",
+    email: "thomas.anderson@email.com",
+    subject: "Grant Application Support",
+    preview: "We would like to offer our support for your upcoming grant application...",
+    time: "2 weeks ago",
+    status: "unread",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 12,
+    sender: "Patricia Moore",
+    email: "patricia.moore@email.com",
+    subject: "Community Survey Response",
+    preview: "Thank you for conducting the community needs survey. Here are my thoughts...",
+    time: "2 weeks ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 13,
+    sender: "Christopher Davis",
+    email: "christopher.davis@email.com",
+    subject: "Volunteer Appreciation",
+    preview: "I wanted to express my gratitude for the volunteer appreciation event...",
+    time: "3 weeks ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 14,
+    sender: "Michelle Thompson",
+    email: "michelle.thompson@email.com",
+    subject: "Educational Workshop Inquiry",
+    preview: "I'm interested in attending your upcoming educational workshop series...",
+    time: "3 weeks ago",
+    status: "unread",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 15,
+    sender: "Daniel Martinez",
+    email: "daniel.martinez@email.com",
+    subject: "Partnership Proposal",
+    preview: "Our local business would like to explore partnership opportunities...",
+    time: "1 month ago",
     status: "read",
     avatar: "/placeholder.svg?height=40&width=40",
   },
@@ -346,46 +385,15 @@ export default function MessagesPage() {
             ))}
           </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredMessages.length)} of {filteredMessages.length}{" "}
-              messages
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            showingStart={startIndex + 1}
+            showingEnd={Math.min(endIndex, filteredMessages.length)}
+            totalItems={filteredMessages.length}
+            itemName="messages"
+          />
         </CardContent>
       </Card>
     </div>

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Pagination } from "@/components/ui/pagination"
 import {
   Plus,
   Search,
@@ -20,12 +21,10 @@ import {
   TrendingUp,
   Users,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   Trash2,
 } from "lucide-react"
 
-// Extended mock data for pagination
+// Extended mock data for pagination testing
 const allDonations = [
   {
     id: 1,
@@ -133,6 +132,61 @@ const allDonations = [
     amount: 125,
     date: "2023-12-28",
     method: "PayPal",
+    status: "completed",
+    campaign: "General Fund",
+    recurring: true,
+  },
+  {
+    id: 11,
+    donor: "Christopher Davis",
+    email: "christopher.davis@email.com",
+    amount: 600,
+    date: "2023-12-25",
+    method: "Credit Card",
+    status: "completed",
+    campaign: "Holiday Drive",
+    recurring: false,
+  },
+  {
+    id: 12,
+    donor: "Michelle Thompson",
+    email: "michelle.thompson@email.com",
+    amount: 175,
+    date: "2023-12-20",
+    method: "Bank Transfer",
+    status: "completed",
+    campaign: "Education Initiative",
+    recurring: true,
+  },
+  {
+    id: 13,
+    donor: "Daniel Martinez",
+    email: "daniel.martinez@email.com",
+    amount: 350,
+    date: "2023-12-18",
+    method: "PayPal",
+    status: "failed",
+    campaign: "Community Outreach",
+    recurring: false,
+  },
+  {
+    id: 14,
+    donor: "Patricia Moore",
+    email: "patricia.moore@email.com",
+    amount: 225,
+    date: "2023-12-15",
+    method: "Credit Card",
+    status: "completed",
+    campaign: "Youth Program",
+    recurring: false,
+  },
+  {
+    id: 15,
+    donor: "Thomas Anderson",
+    email: "thomas.anderson@email.com",
+    amount: 800,
+    date: "2023-12-10",
+    method: "Bank Transfer",
     status: "completed",
     campaign: "General Fund",
     recurring: true,
@@ -402,46 +456,15 @@ export default function DonationsPage() {
             </TableBody>
           </Table>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredDonations.length)} of {filteredDonations.length}{" "}
-              donations
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            showingStart={startIndex + 1}
+            showingEnd={Math.min(endIndex, filteredDonations.length)}
+            totalItems={filteredDonations.length}
+            itemName="donations"
+          />
         </CardContent>
       </Card>
     </div>

@@ -9,22 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Eye,
-  Calendar,
-  MapPin,
-  Users,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react"
+import { Pagination } from "@/components/ui/pagination"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, MapPin, Users, Filter } from "lucide-react"
 
-// Extended mock data for pagination
+// Extended mock data for pagination testing
 const allEvents = [
   {
     id: 1,
@@ -113,6 +101,50 @@ const allEvents = [
     attendees: 200,
     maxAttendees: 200,
     description: "Annual holiday charity drive for local families...",
+  },
+  {
+    id: 9,
+    title: "Summer Youth Camp",
+    date: "2024-07-15",
+    time: "09:00",
+    location: "Camp Sunshine",
+    status: "upcoming",
+    attendees: 45,
+    maxAttendees: 80,
+    description: "Week-long summer camp for underprivileged youth...",
+  },
+  {
+    id: 10,
+    title: "Mental Health Awareness Workshop",
+    date: "2024-05-10",
+    time: "14:00",
+    location: "Community Center",
+    status: "draft",
+    attendees: 0,
+    maxAttendees: 50,
+    description: "Workshop focusing on mental health awareness and support...",
+  },
+  {
+    id: 11,
+    title: "Senior Citizens Support Meeting",
+    date: "2024-03-05",
+    time: "10:00",
+    location: "Senior Center",
+    status: "upcoming",
+    attendees: 30,
+    maxAttendees: 40,
+    description: "Monthly support meeting for senior citizens...",
+  },
+  {
+    id: 12,
+    title: "Environmental Conservation Talk",
+    date: "2024-04-22",
+    time: "15:00",
+    location: "Nature Center",
+    status: "upcoming",
+    attendees: 25,
+    maxAttendees: 60,
+    description: "Educational talk on environmental conservation efforts...",
   },
 ]
 
@@ -360,45 +392,15 @@ export default function EventsPage() {
             </TableBody>
           </Table>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredEvents.length)} of {filteredEvents.length} events
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            showingStart={startIndex + 1}
+            showingEnd={Math.min(endIndex, filteredEvents.length)}
+            totalItems={filteredEvents.length}
+            itemName="events"
+          />
         </CardContent>
       </Card>
     </div>

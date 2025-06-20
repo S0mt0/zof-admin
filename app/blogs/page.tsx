@@ -9,9 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Pagination } from "@/components/ui/pagination"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Filter } from "lucide-react"
 
-// Extended mock data for pagination
+// Extended mock data for pagination testing
 const allBlogPosts = [
   {
     id: 1,
@@ -84,6 +85,96 @@ const allBlogPosts = [
     date: "2023-12-28",
     views: 0,
     excerpt: "Comprehensive guide for new volunteers joining our organization...",
+  },
+  {
+    id: 9,
+    title: "Monthly Newsletter - December",
+    author: "Admin User",
+    status: "published",
+    date: "2023-12-25",
+    views: 789,
+    excerpt: "December newsletter highlighting our achievements and upcoming events...",
+  },
+  {
+    id: 10,
+    title: "Grant Application Success",
+    author: "Sarah Johnson",
+    status: "published",
+    date: "2023-12-20",
+    views: 456,
+    excerpt: "Celebrating our successful grant application for education initiatives...",
+  },
+  {
+    id: 11,
+    title: "Community Survey Results",
+    author: "Dr. Emily Rodriguez",
+    status: "draft",
+    date: "2023-12-18",
+    views: 0,
+    excerpt: "Analysis of our recent community needs survey and findings...",
+  },
+  {
+    id: 12,
+    title: "Holiday Charity Drive",
+    author: "Mike Chen",
+    status: "published",
+    date: "2023-12-15",
+    views: 1567,
+    excerpt: "Our annual holiday charity drive exceeded all expectations...",
+  },
+  {
+    id: 13,
+    title: "Volunteer Spotlight: Maria Garcia",
+    author: "Admin User",
+    status: "published",
+    date: "2023-12-10",
+    views: 345,
+    excerpt: "Highlighting the incredible contributions of volunteer Maria Garcia...",
+  },
+  {
+    id: 14,
+    title: "Educational Workshop Series",
+    author: "Dr. Emily Rodriguez",
+    status: "scheduled",
+    date: "2023-12-08",
+    views: 123,
+    excerpt: "Announcing our new series of educational workshops for 2024...",
+  },
+  {
+    id: 15,
+    title: "Partnership with Local Schools",
+    author: "Sarah Johnson",
+    status: "published",
+    date: "2023-12-05",
+    views: 678,
+    excerpt: "Expanding our reach through partnerships with local educational institutions...",
+  },
+  {
+    id: 16,
+    title: "Annual Report 2023 Draft",
+    author: "Admin User",
+    status: "draft",
+    date: "2023-12-01",
+    views: 0,
+    excerpt: "Draft of our comprehensive annual report for 2023...",
+  },
+  {
+    id: 17,
+    title: "Thanksgiving Community Dinner",
+    author: "Mike Chen",
+    status: "published",
+    date: "2023-11-28",
+    views: 890,
+    excerpt: "Recap of our successful Thanksgiving community dinner event...",
+  },
+  {
+    id: 18,
+    title: "Mental Health Awareness Campaign",
+    author: "Dr. Emily Rodriguez",
+    status: "published",
+    date: "2023-11-25",
+    views: 1234,
+    excerpt: "Launching our mental health awareness campaign for the community...",
   },
 ]
 
@@ -291,45 +382,15 @@ export default function BlogsPage() {
             </TableBody>
           </Table>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredPosts.length)} of {filteredPosts.length} posts
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
-              </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            showingStart={startIndex + 1}
+            showingEnd={Math.min(endIndex, filteredPosts.length)}
+            totalItems={filteredPosts.length}
+            itemName="posts"
+          />
         </CardContent>
       </Card>
     </div>
