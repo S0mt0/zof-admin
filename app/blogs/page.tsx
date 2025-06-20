@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Checkbox } from "@/components/ui/checkbox"
 import { Pagination } from "@/components/ui/pagination"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Filter } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 // Extended mock data for pagination testing
 const allBlogPosts = [
@@ -186,6 +187,8 @@ export default function BlogsPage() {
   const [selectedPosts, setSelectedPosts] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
 
+  const router = useRouter()
+
   // Filter and search logic
   const filteredPosts = allBlogPosts.filter((post) => {
     const matchesSearch =
@@ -295,7 +298,7 @@ export default function BlogsPage() {
               Delete ({selectedPosts.length})
             </Button>
           )}
-          <Button>
+          <Button onClick={() => router.push("/blogs/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Blog Post
           </Button>

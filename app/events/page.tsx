@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Checkbox } from "@/components/ui/checkbox"
 import { Pagination } from "@/components/ui/pagination"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, MapPin, Users, Filter } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 // Extended mock data for pagination testing
 const allEvents = [
@@ -156,6 +157,8 @@ export default function EventsPage() {
   const [selectedEvents, setSelectedEvents] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
 
+  const router = useRouter()
+
   // Filter and search logic
   const filteredEvents = allEvents.filter((event) => {
     const matchesSearch =
@@ -272,7 +275,7 @@ export default function EventsPage() {
               Delete ({selectedEvents.length})
             </Button>
           )}
-          <Button>
+          <Button onClick={() => router.push("/events/new")}>
             <Plus className="h-4 w-4 mr-2" />
             New Event
           </Button>

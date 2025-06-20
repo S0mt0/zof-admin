@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Mail, Phone } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 // Mock data
 const teamMembers = [
@@ -71,6 +72,7 @@ const teamMembers = [
 
 export default function TeamPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter()
 
   const handleEditMember = (member: any) => {
     console.log("Editing profile for member:", member)
@@ -121,7 +123,7 @@ export default function TeamPage() {
             className="pl-10"
           />
         </div>
-        <Button>
+        <Button onClick={() => router.push("/team/new")}>
           <Plus className="h-4 w-4 mr-2" />
           Add Team Member
         </Button>
