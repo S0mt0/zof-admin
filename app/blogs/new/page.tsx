@@ -181,6 +181,22 @@ export default function NewBlogPostPage() {
   const handleSave = async (status: string) => {
     if (!editorRef.current) return
 
+    // Validation for publishing
+    if (status === "published") {
+      if (!formData.title.trim()) {
+        alert("Title is required for publishing")
+        return
+      }
+      if (!formData.excerpt.trim()) {
+        alert("Excerpt is required for publishing")
+        return
+      }
+      if (formData.excerpt.length < 50) {
+        alert("Excerpt must be at least 50 characters for publishing")
+        return
+      }
+    }
+
     setIsLoading(true)
     try {
       const editorData = await editorRef.current.save()
@@ -248,14 +264,30 @@ export default function NewBlogPostPage() {
               </div>
 
               <div>
-                <Label htmlFor="excerpt">Excerpt</Label>
+                <Label htmlFor="excerpt">
+                  Excerpt <span className="text-red-500">*</span>
+                </Label>
                 <Textarea
                   id="excerpt"
                   placeholder="Brief description of your blog post..."
                   value={formData.excerpt}
-                  onChange={(e) => handleInputChange("excerpt", e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 300) {
+                      handleInputChange("excerpt", e.target.value)
+                    }
+                  }}
                   rows={3}
+                  maxLength={300}
+                  className={formData.excerpt.length > 250 ? "border-amber-300" : ""}
                 />
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">
+                    {formData.status !== "draft" ? "Required for publishing" : "Optional for drafts"}
+                  </span>
+                  <span className={`${formData.excerpt.length > 250 ? "text-amber-600" : "text-muted-foreground"}`}>
+                    {300 - formData.excerpt.length} characters remaining
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -328,7 +360,9 @@ export default function NewBlogPostPage() {
 
               <Button
                 onClick={() => handleSave("published")}
-                disabled={isLoading || !formData.title.trim()}
+                disabled={
+                  isLoading || !formData.title.trim() || !formData.excerpt.trim() || formData.excerpt.length < 50
+                }
                 className="w-full"
               >
                 <Save className="h-4 w-4 mr-2" />

@@ -161,6 +161,34 @@ export default function NewEventPage() {
   const handleSave = async (status: string) => {
     if (!editorRef.current) return
 
+    // Validation for publishing
+    if (status === "upcoming") {
+      if (!formData.title.trim()) {
+        alert("Event title is required for publishing")
+        return
+      }
+      if (!formData.description.trim()) {
+        alert("Event description is required for publishing")
+        return
+      }
+      if (formData.description.length < 50) {
+        alert("Event description must be at least 50 characters for publishing")
+        return
+      }
+      if (!formData.date) {
+        alert("Event date is required for publishing")
+        return
+      }
+      if (!formData.time) {
+        alert("Event start time is required for publishing")
+        return
+      }
+      if (!formData.location.trim()) {
+        alert("Event location is required for publishing")
+        return
+      }
+    }
+
     setIsLoading(true)
     try {
       const editorData = await editorRef.current.save()
@@ -217,14 +245,30 @@ export default function NewEventPage() {
               </div>
 
               <div>
-                <Label htmlFor="description">Short Description</Label>
+                <Label htmlFor="description">
+                  Short Description <span className="text-red-500">*</span>
+                </Label>
                 <Textarea
                   id="description"
                   placeholder="Brief description of your event..."
                   value={formData.description}
-                  onChange={(e) => handleInputChange("description", e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 300) {
+                      handleInputChange("description", e.target.value)
+                    }
+                  }}
                   rows={3}
+                  maxLength={300}
+                  className={formData.description.length > 250 ? "border-amber-300" : ""}
                 />
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">
+                    {formData.status !== "draft" ? "Required for publishing" : "Optional for drafts"}
+                  </span>
+                  <span className={`${formData.description.length > 250 ? "text-amber-600" : "text-muted-foreground"}`}>
+                    {300 - formData.description.length} characters remaining
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -360,7 +404,15 @@ export default function NewEventPage() {
 
               <Button
                 onClick={() => handleSave("upcoming")}
-                disabled={isLoading || !formData.title.trim() || !formData.date}
+                disabled={
+                  isLoading ||
+                  !formData.title.trim() ||
+                  !formData.description.trim() ||
+                  formData.description.length < 50 ||
+                  !formData.date ||
+                  !formData.time ||
+                  !formData.location.trim()
+                }
                 className="w-full"
               >
                 <Save className="h-4 w-4 mr-2" />

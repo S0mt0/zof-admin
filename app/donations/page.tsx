@@ -235,6 +235,7 @@ export default function DonationsPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedDonations, setSelectedDonations] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Filter and search logic
   const filteredDonations = allDonations.filter((donation) => {
@@ -305,6 +306,108 @@ export default function DonationsPage() {
     currentDonations.length > 0 && currentDonations.every((donation) => selectedDonations.includes(donation.id))
   const someCurrentSelected = currentDonations.some((donation) => selectedDonations.includes(donation.id))
 
+  const handleExport = async (format: "pdf" | "csv" = "pdf") => {
+    setIsLoading(true)
+
+    try {
+      if (format === "pdf") {
+        // Import jsPDF dynamically
+        const { jsPDF } = await import("jspdf")
+        const doc = new jsPDF()
+
+        // Add title
+        doc.setFontSize(20)
+        doc.text("Donations Report", 20, 20)
+
+        // Add generation date
+        doc.setFontSize(12)
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35)
+        doc.text(`Total Records: ${filteredDonations.length}`, 20, 45)
+
+        // Add summary stats
+        const totalAmount = filteredDonations.reduce((sum, donation) => sum + donation.amount, 0)
+        const completedDonations = filteredDonations.filter((d) => d.status === "completed")
+        const completedAmount = completedDonations.reduce((sum, donation) => sum + donation.amount, 0)
+
+        doc.text(`Total Amount: $${totalAmount.toLocaleString()}`, 20, 55)
+        doc.text(`Completed Amount: $${completedAmount.toLocaleString()}`, 20, 65)
+        doc.text(
+          `Completion Rate: ${((completedDonations.length / filteredDonations.length) * 100).toFixed(1)}%`,
+          20,
+          75,
+        )
+
+        // Add table headers
+        let yPosition = 95
+        doc.setFontSize(10)
+        doc.text("Donor", 20, yPosition)
+        doc.text("Amount", 70, yPosition)
+        doc.text("Date", 110, yPosition)
+        doc.text("Status", 140, yPosition)
+        doc.text("Campaign", 170, yPosition)
+
+        // Add line under headers
+        doc.line(20, yPosition + 2, 200, yPosition + 2)
+        yPosition += 10
+
+        // Add donation data
+        filteredDonations.forEach((donation, index) => {
+          if (yPosition > 270) {
+            // Start new page if needed
+            doc.addPage()
+            yPosition = 20
+          }
+
+          doc.text(donation.donor.substring(0, 20), 20, yPosition)
+          doc.text(`$${donation.amount}`, 70, yPosition)
+          doc.text(donation.date, 110, yPosition)
+          doc.text(donation.status, 140, yPosition)
+          doc.text(donation.campaign.substring(0, 15), 170, yPosition)
+          yPosition += 8
+        })
+
+        // Save the PDF
+        doc.save(`donations-report-${new Date().toISOString().split("T")[0]}.pdf`)
+      } else if (format === "csv") {
+        // Generate CSV
+        const headers = ["Donor", "Email", "Amount", "Date", "Method", "Status", "Campaign", "Recurring"]
+        const csvContent = [
+          headers.join(","),
+          ...filteredDonations.map((donation) =>
+            [
+              `"${donation.donor}"`,
+              `"${donation.email}"`,
+              donation.amount,
+              donation.date,
+              `"${donation.method}"`,
+              donation.status,
+              `"${donation.campaign}"`,
+              donation.recurring,
+            ].join(","),
+          ),
+        ].join("\n")
+
+        // Download CSV
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+        const link = document.createElement("a")
+        const url = URL.createObjectURL(blob)
+        link.setAttribute("href", url)
+        link.setAttribute("download", `donations-export-${new Date().toISOString().split("T")[0]}.csv`)
+        link.style.visibility = "hidden"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+
+      alert(`${format.toUpperCase()} export completed successfully!`)
+    } catch (error) {
+      console.error("Export error:", error)
+      alert("Export failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader title="Donations" breadcrumbs={[{ label: "Donations" }]} />
@@ -366,10 +469,24 @@ export default function DonationsPage() {
               Delete ({selectedDonations.length})
             </Button>
           )}
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" disabled={isLoading}>
+                <Download className="h-4 w-4 mr-2" />
+                {isLoading ? "Exporting..." : "Export"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleExport("pdf")} className="cursor-pointer">
+                <Download className="mr-2 h-4 w-4" />
+                Export as PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("csv")} className="cursor-pointer">
+                <Download className="mr-2 h-4 w-4" />
+                Export as CSV
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Add Donation
