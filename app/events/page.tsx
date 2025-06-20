@@ -203,7 +203,7 @@ export default function EventsPage() {
   }
 
   const handleEditEvent = (event: any) => {
-    console.log("Editing event:", event)
+    router.push(`/events/${event.id}/edit`)
   }
 
   const handleManageAttendees = (event: any) => {

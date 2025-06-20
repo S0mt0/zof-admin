@@ -75,8 +75,7 @@ export default function TeamPage() {
   const router = useRouter()
 
   const handleEditMember = (member: any) => {
-    console.log("Editing profile for member:", member)
-    // Open edit modal or navigate to edit page
+    router.push(`/team/${member.id}/edit`)
   }
 
   const handleSendEmail = (member: any) => {

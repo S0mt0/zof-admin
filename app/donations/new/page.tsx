@@ -29,7 +29,25 @@ export default function NewDonationPage() {
   })
   const [isLoading, setIsLoading] = useState(false)
 
-  const paymentMethods = ["Credit Card", "Debit Card", "Bank Transfer", "PayPal", "Cash", "Check", "Other"]
+  const paymentMethods = [
+    "Credit Card",
+    "Debit Card",
+    "Bank Transfer",
+    "Wire Transfer",
+    "PayPal",
+    "Venmo",
+    "Cash App",
+    "Zelle",
+    "Cash",
+    "Check",
+    "Money Order",
+    "Cryptocurrency",
+    "Stock Donation",
+    "In-Kind Donation",
+    "Grant",
+    "Corporate Sponsorship",
+    "Other",
+  ]
   const campaigns = [
     "General Fund",
     "Education Initiative",
@@ -205,21 +223,12 @@ export default function NewDonationPage() {
 
               <div>
                 <Label htmlFor="campaign">Campaign/Fund</Label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                      <span>{formData.campaign}</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full">
-                    {campaigns.map((campaign) => (
-                      <DropdownMenuItem key={campaign} onClick={() => handleInputChange("campaign", campaign)}>
-                        {campaign}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Input
+                  id="campaign"
+                  placeholder="e.g., General Fund, Education Initiative, Emergency Relief..."
+                  value={formData.campaign}
+                  onChange={(e) => handleInputChange("campaign", e.target.value)}
+                />
               </div>
 
               <div>
