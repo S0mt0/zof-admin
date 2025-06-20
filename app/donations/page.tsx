@@ -1,15 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Pagination } from "@/components/ui/pagination"
+import { useState } from "react";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Plus,
   Search,
@@ -22,8 +40,8 @@ import {
   Users,
   Filter,
   Trash2,
-} from "lucide-react"
-import { useRouter } from "next/navigation"
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Extended mock data for pagination testing
 const allDonations = [
@@ -192,7 +210,7 @@ const allDonations = [
     campaign: "General Fund",
     recurring: true,
   },
-]
+];
 
 const stats = [
   {
@@ -227,153 +245,197 @@ const stats = [
     color: "text-rose-600",
     bgColor: "bg-rose-50",
   },
-]
+];
 
-const ITEMS_PER_PAGE = 6
+const ITEMS_PER_PAGE = 6;
 
 export default function DonationsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedDonations, setSelectedDonations] = useState<number[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedDonations, setSelectedDonations] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   // Filter and search logic
   const filteredDonations = allDonations.filter((donation) => {
     const matchesSearch =
       donation.donor.toLowerCase().includes(searchTerm.toLowerCase()) ||
       donation.campaign.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      donation.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || donation.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+      donation.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || donation.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredDonations.length / ITEMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentDonations = filteredDonations.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(filteredDonations.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentDonations = filteredDonations.slice(startIndex, endIndex);
 
   const handleSelectDonation = (donationId: number) => {
     setSelectedDonations((prev) =>
-      prev.includes(donationId) ? prev.filter((id) => id !== donationId) : [...prev, donationId],
-    )
-  }
+      prev.includes(donationId)
+        ? prev.filter((id) => id !== donationId)
+        : [...prev, donationId]
+    );
+  };
 
   const handleSelectAll = () => {
-    const currentDonationIds = currentDonations.map((donation) => donation.id)
-    const allCurrentSelected = currentDonationIds.every((id) => selectedDonations.includes(id))
+    const currentDonationIds = currentDonations.map((donation) => donation.id);
+    const allCurrentSelected = currentDonationIds.every((id) =>
+      selectedDonations.includes(id)
+    );
 
     if (allCurrentSelected) {
-      setSelectedDonations((prev) => prev.filter((id) => !currentDonationIds.includes(id)))
+      setSelectedDonations((prev) =>
+        prev.filter((id) => !currentDonationIds.includes(id))
+      );
     } else {
-      setSelectedDonations((prev) => [...new Set([...prev, ...currentDonationIds])])
+      setSelectedDonations((prev) => [
+        ...new Set([...prev, ...currentDonationIds]),
+      ]);
     }
-  }
+  };
 
   const handleBulkDelete = () => {
-    if (selectedDonations.length === 0) return
+    if (selectedDonations.length === 0) return;
 
-    if (confirm(`Are you sure you want to delete ${selectedDonations.length} donation record(s)?`)) {
-      console.log("Bulk deleting donations:", selectedDonations)
-      setSelectedDonations([])
+    if (
+      confirm(
+        `Are you sure you want to delete ${selectedDonations.length} donation record(s)?`
+      )
+    ) {
+      console.log("Bulk deleting donations:", selectedDonations);
+      setSelectedDonations([]);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200"
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
       case "pending":
-        return "bg-amber-100 text-amber-800 border-amber-200"
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "failed":
-        return "bg-red-100 text-red-800 border-red-200"
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   const handleDownloadReceipt = (donation: any) => {
-    console.log("Downloading receipt for donation:", donation)
-    alert(`Receipt for donation #${donation.id} will be downloaded`)
-  }
+    console.log("Downloading receipt for donation:", donation);
+    alert(`Receipt for donation #${donation.id} will be downloaded`);
+  };
 
   const handleSendThankYou = (donation: any) => {
-    console.log("Sending thank you email for donation:", donation)
-    alert(`Thank you email sent to ${donation.donor}`)
-  }
+    console.log("Sending thank you email for donation:", donation);
+    alert(`Thank you email sent to ${donation.donor}`);
+  };
 
   const allCurrentSelected =
-    currentDonations.length > 0 && currentDonations.every((donation) => selectedDonations.includes(donation.id))
-  const someCurrentSelected = currentDonations.some((donation) => selectedDonations.includes(donation.id))
+    currentDonations.length > 0 &&
+    currentDonations.every((donation) =>
+      selectedDonations.includes(donation.id)
+    );
+  const someCurrentSelected = currentDonations.some((donation) =>
+    selectedDonations.includes(donation.id)
+  );
 
   const handleExport = async (format: "pdf" | "csv" = "pdf") => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       if (format === "pdf") {
         // Import jsPDF dynamically
-        const { jsPDF } = await import("jspdf")
-        const doc = new jsPDF()
+        const { jsPDF } = await import("jspdf");
+        const doc = new jsPDF();
 
         // Add title
-        doc.setFontSize(20)
-        doc.text("Donations Report", 20, 20)
+        doc.setFontSize(20);
+        doc.text("Donations Report", 20, 20);
 
         // Add generation date
-        doc.setFontSize(12)
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35)
-        doc.text(`Total Records: ${filteredDonations.length}`, 20, 45)
+        doc.setFontSize(12);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 35);
+        doc.text(`Total Records: ${filteredDonations.length}`, 20, 45);
 
         // Add summary stats
-        const totalAmount = filteredDonations.reduce((sum, donation) => sum + donation.amount, 0)
-        const completedDonations = filteredDonations.filter((d) => d.status === "completed")
-        const completedAmount = completedDonations.reduce((sum, donation) => sum + donation.amount, 0)
+        const totalAmount = filteredDonations.reduce(
+          (sum, donation) => sum + donation.amount,
+          0
+        );
+        const completedDonations = filteredDonations.filter(
+          (d) => d.status === "completed"
+        );
+        const completedAmount = completedDonations.reduce(
+          (sum, donation) => sum + donation.amount,
+          0
+        );
 
-        doc.text(`Total Amount: $${totalAmount.toLocaleString()}`, 20, 55)
-        doc.text(`Completed Amount: $${completedAmount.toLocaleString()}`, 20, 65)
+        doc.text(`Total Amount: $${totalAmount.toLocaleString()}`, 20, 55);
         doc.text(
-          `Completion Rate: ${((completedDonations.length / filteredDonations.length) * 100).toFixed(1)}%`,
+          `Completed Amount: $${completedAmount.toLocaleString()}`,
           20,
-          75,
-        )
+          65
+        );
+        doc.text(
+          `Completion Rate: ${(
+            (completedDonations.length / filteredDonations.length) *
+            100
+          ).toFixed(1)}%`,
+          20,
+          75
+        );
 
         // Add table headers
-        let yPosition = 95
-        doc.setFontSize(10)
-        doc.text("Donor", 20, yPosition)
-        doc.text("Amount", 70, yPosition)
-        doc.text("Date", 110, yPosition)
-        doc.text("Status", 140, yPosition)
-        doc.text("Campaign", 170, yPosition)
+        let yPosition = 95;
+        doc.setFontSize(10);
+        doc.text("Donor", 20, yPosition);
+        doc.text("Amount", 70, yPosition);
+        doc.text("Date", 110, yPosition);
+        doc.text("Status", 140, yPosition);
+        doc.text("Campaign", 170, yPosition);
 
         // Add line under headers
-        doc.line(20, yPosition + 2, 200, yPosition + 2)
-        yPosition += 10
+        doc.line(20, yPosition + 2, 200, yPosition + 2);
+        yPosition += 10;
 
         // Add donation data
         filteredDonations.forEach((donation, index) => {
           if (yPosition > 270) {
             // Start new page if needed
-            doc.addPage()
-            yPosition = 20
+            doc.addPage();
+            yPosition = 20;
           }
 
-          doc.text(donation.donor.substring(0, 20), 20, yPosition)
-          doc.text(`$${donation.amount}`, 70, yPosition)
-          doc.text(donation.date, 110, yPosition)
-          doc.text(donation.status, 140, yPosition)
-          doc.text(donation.campaign.substring(0, 15), 170, yPosition)
-          yPosition += 8
-        })
+          doc.text(donation.donor.substring(0, 20), 20, yPosition);
+          doc.text(`$${donation.amount}`, 70, yPosition);
+          doc.text(donation.date, 110, yPosition);
+          doc.text(donation.status, 140, yPosition);
+          doc.text(donation.campaign.substring(0, 15), 170, yPosition);
+          yPosition += 8;
+        });
 
         // Save the PDF
-        doc.save(`donations-report-${new Date().toISOString().split("T")[0]}.pdf`)
+        doc.save(
+          `donations-report-${new Date().toISOString().split("T")[0]}.pdf`
+        );
       } else if (format === "csv") {
         // Generate CSV
-        const headers = ["Donor", "Email", "Amount", "Date", "Method", "Status", "Campaign", "Recurring"]
+        const headers = [
+          "Donor",
+          "Email",
+          "Amount",
+          "Date",
+          "Method",
+          "Status",
+          "Campaign",
+          "Recurring",
+        ];
         const csvContent = [
           headers.join(","),
           ...filteredDonations.map((donation) =>
@@ -386,34 +448,42 @@ export default function DonationsPage() {
               donation.status,
               `"${donation.campaign}"`,
               donation.recurring,
-            ].join(","),
+            ].join(",")
           ),
-        ].join("\n")
+        ].join("\n");
 
         // Download CSV
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-        const link = document.createElement("a")
-        const url = URL.createObjectURL(blob)
-        link.setAttribute("href", url)
-        link.setAttribute("download", `donations-export-${new Date().toISOString().split("T")[0]}.csv`)
-        link.style.visibility = "hidden"
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute(
+          "download",
+          `donations-export-${new Date().toISOString().split("T")[0]}.csv`
+        );
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
 
-      alert(`${format.toUpperCase()} export completed successfully!`)
+      alert(`${format.toUpperCase()} export completed successfully!`);
     } catch (error) {
-      console.error("Export error:", error)
-      alert("Export failed. Please try again.")
+      console.error("Export error:", error);
+      alert("Export failed. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader title="Donations" breadcrumbs={[{ label: "Donations" }]} />
+      <DashboardHeader
+        title="Donations"
+        breadcrumbs={[{ label: "Donations" }]}
+      />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
@@ -422,16 +492,22 @@ export default function DonationsPage() {
             className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {stat.title}
+              </CardTitle>
               <div
-                className={`h-8 w-8 rounded-lg ${stat.color.replace("text-", "bg-").replace("600", "100")} flex items-center justify-center`}
+                className={`h-8 w-8 rounded-lg ${stat.color
+                  .replace("text-", "bg-")
+                  .replace("600", "100")} flex items-center justify-center`}
               >
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
+              <p className="text-xs text-muted-foreground">
+                {stat.description}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -453,14 +529,25 @@ export default function DonationsPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
-                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                {statusFilter === "all"
+                  ? "All Status"
+                  : statusFilter.charAt(0).toUpperCase() +
+                    statusFilter.slice(1)}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("pending")}>Pending</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("failed")}>Failed</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>
+                Completed
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
+                Pending
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("failed")}>
+                Failed
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -480,11 +567,17 @@ export default function DonationsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleExport("pdf")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => handleExport("pdf")}
+                className="cursor-pointer"
+              >
                 <Download className="mr-2 h-4 w-4" />
                 Export as PDF
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("csv")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => handleExport("csv")}
+                className="cursor-pointer"
+              >
                 <Download className="mr-2 h-4 w-4" />
                 Export as CSV
               </DropdownMenuItem>
@@ -500,7 +593,9 @@ export default function DonationsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Donations</CardTitle>
-          <CardDescription>Track and manage all donations to your foundation.</CardDescription>
+          <CardDescription>
+            Track and manage all donations to your foundation.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -511,7 +606,9 @@ export default function DonationsPage() {
                     checked={allCurrentSelected}
                     onCheckedChange={handleSelectAll}
                     ref={(el) => {
-                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                      if (el)
+                        (el as HTMLInputElement).indeterminate =
+                          someCurrentSelected && !allCurrentSelected;
                     }}
                   />
                 </TableHead>
@@ -536,35 +633,58 @@ export default function DonationsPage() {
                     <div>
                       <div className="font-medium flex items-center gap-2">
                         {donation.donor}
-                        {donation.recurring && <Heart className="h-3 w-3 text-rose-500" />}
+                        {donation.recurring && (
+                          <Heart className="h-3 w-3 text-rose-500" />
+                        )}
                       </div>
-                      <div className="text-sm text-muted-foreground">{donation.email}</div>
-                      <div className="text-sm text-muted-foreground md:hidden">{donation.campaign}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {donation.email}
+                      </div>
+                      <div className="text-sm text-muted-foreground md:hidden">
+                        {donation.campaign}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">${donation.amount}</div>
-                    <div className="text-sm text-muted-foreground">{donation.method}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {donation.method}
+                    </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{donation.campaign}</TableCell>
-                  <TableCell className="hidden sm:table-cell">{donation.date}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {donation.campaign}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {donation.date}
+                  </TableCell>
                   <TableCell>
-                    <Badge className={getStatusColor(donation.status)}>{donation.status}</Badge>
+                    <Badge className={getStatusColor(donation.status)}>
+                      {donation.status}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 hover:bg-gray-100"
+                        >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuItem onClick={() => handleDownloadReceipt(donation)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleDownloadReceipt(donation)}
+                          className="cursor-pointer"
+                        >
                           <Download className="mr-2 h-4 w-4" />
                           Receipt
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleSendThankYou(donation)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleSendThankYou(donation)}
+                          className="cursor-pointer"
+                        >
                           <Mail className="mr-2 h-4 w-4" />
                           Thank You Email
                         </DropdownMenuItem>
@@ -588,5 +708,5 @@ export default function DonationsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
