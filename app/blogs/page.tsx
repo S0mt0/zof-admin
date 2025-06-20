@@ -8,10 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Filter, ChevronLeft, ChevronRight } from "lucide-react"
 
-// Mock data
-const blogPosts = [
+// Extended mock data for pagination
+const allBlogPosts = [
   {
     id: 1,
     title: "Community Outreach Program Success",
@@ -48,36 +49,105 @@ const blogPosts = [
     views: 234,
     excerpt: "Join us in celebrating our amazing volunteers who make our work possible...",
   },
+  {
+    id: 5,
+    title: "Health Workshop Summary",
+    author: "Dr. Emily Rodriguez",
+    status: "published",
+    date: "2024-01-05",
+    views: 567,
+    excerpt: "Summary of our recent community health workshop and its outcomes...",
+  },
+  {
+    id: 6,
+    title: "Youth Program Launch",
+    author: "Sarah Johnson",
+    status: "draft",
+    date: "2024-01-03",
+    views: 0,
+    excerpt: "Preparing for the launch of our new youth mentorship program...",
+  },
+  {
+    id: 7,
+    title: "Partnership Announcement",
+    author: "Admin User",
+    status: "published",
+    date: "2024-01-01",
+    views: 1123,
+    excerpt: "Announcing our new partnership with local businesses for community development...",
+  },
+  {
+    id: 8,
+    title: "Volunteer Training Guide",
+    author: "Mike Chen",
+    status: "draft",
+    date: "2023-12-28",
+    views: 0,
+    excerpt: "Comprehensive guide for new volunteers joining our organization...",
+  },
 ]
+
+const ITEMS_PER_PAGE = 5
 
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedPost, setSelectedPost] = useState<any>(null)
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedPosts, setSelectedPosts] = useState<number[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Filter and search logic
+  const filteredPosts = allBlogPosts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.author.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || post.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentPosts = filteredPosts.slice(startIndex, endIndex)
+
+  const handleSelectPost = (postId: number) => {
+    setSelectedPosts((prev) => (prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]))
+  }
+
+  const handleSelectAll = () => {
+    const currentPostIds = currentPosts.map((post) => post.id)
+    const allCurrentSelected = currentPostIds.every((id) => selectedPosts.includes(id))
+
+    if (allCurrentSelected) {
+      setSelectedPosts((prev) => prev.filter((id) => !currentPostIds.includes(id)))
+    } else {
+      setSelectedPosts((prev) => [...new Set([...prev, ...currentPostIds])])
+    }
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedPosts.length === 0) return
+
+    if (confirm(`Are you sure you want to delete ${selectedPosts.length} blog post(s)?`)) {
+      console.log("Bulk deleting posts:", selectedPosts)
+      setSelectedPosts([])
+      // Add actual bulk delete logic here
+    }
+  }
 
   const handleViewPost = (post: any) => {
-    setSelectedPost(post)
     console.log("Viewing post:", post)
-    // You can add a modal or navigate to a detailed view here
   }
 
   const handleEditPost = (post: any) => {
     console.log("Editing post:", post)
-    // Navigate to edit page or open edit modal
   }
 
   const handleDeletePost = (postId: number) => {
     if (confirm("Are you sure you want to delete this blog post?")) {
       console.log("Deleting post:", postId)
-      // Add actual delete logic here
-      // For now, we'll just log it
     }
   }
-
-  const filteredPosts = blogPosts.filter(
-    (post) =>
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -92,24 +162,53 @@ export default function BlogsPage() {
     }
   }
 
+  const allCurrentSelected = currentPosts.length > 0 && currentPosts.every((post) => selectedPosts.includes(post.id))
+  const someCurrentSelected = currentPosts.some((post) => selectedPosts.includes(post.id))
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader title="Blog Posts" breadcrumbs={[{ label: "Blog Posts" }]} />
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search blog posts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search blog posts..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("published")}>Published</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>Draft</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("scheduled")}>Scheduled</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Blog Post
-        </Button>
+
+        <div className="flex items-center gap-2">
+          {selectedPosts.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete ({selectedPosts.length})
+            </Button>
+          )}
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Blog Post
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -121,6 +220,15 @@ export default function BlogsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={allCurrentSelected}
+                    onCheckedChange={handleSelectAll}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                    }}
+                  />
+                </TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden md:table-cell">Author</TableHead>
                 <TableHead>Status</TableHead>
@@ -130,8 +238,14 @@ export default function BlogsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPosts.map((post) => (
+              {currentPosts.map((post) => (
                 <TableRow key={post.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedPosts.includes(post.id)}
+                      onCheckedChange={() => handleSelectPost(post.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">{post.title}</div>
@@ -139,7 +253,7 @@ export default function BlogsPage() {
                       <div className="text-sm text-muted-foreground line-clamp-1 mt-1">{post.excerpt}</div>
                     </div>
                   </TableCell>
-                  <TableHead className="hidden md:table-cell">{post.author}</TableHead>
+                  <TableCell className="hidden md:table-cell">{post.author}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(post.status)}>{post.status}</Badge>
                   </TableCell>
@@ -176,6 +290,46 @@ export default function BlogsPage() {
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredPosts.length)} of {filteredPosts.length} posts
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

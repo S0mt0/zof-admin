@@ -8,10 +8,24 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, MapPin, Users } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  MapPin,
+  Users,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 
-// Mock data
-const events = [
+// Extended mock data for pagination
+const allEvents = [
   {
     id: 1,
     title: "Annual Fundraising Gala 2024",
@@ -56,38 +70,116 @@ const events = [
     maxAttendees: 100,
     description: "Launch event for our new youth mentorship program...",
   },
+  {
+    id: 5,
+    title: "Monthly Board Meeting",
+    date: "2024-02-01",
+    time: "09:00",
+    location: "Foundation Office",
+    status: "completed",
+    attendees: 12,
+    maxAttendees: 15,
+    description: "Monthly board meeting to discuss foundation matters...",
+  },
+  {
+    id: 6,
+    title: "Community Clean-up Day",
+    date: "2024-03-22",
+    time: "08:00",
+    location: "Central Park",
+    status: "upcoming",
+    attendees: 78,
+    maxAttendees: 100,
+    description: "Community-wide clean-up initiative...",
+  },
+  {
+    id: 7,
+    title: "Educational Seminar",
+    date: "2024-04-12",
+    time: "13:00",
+    location: "University Auditorium",
+    status: "draft",
+    attendees: 0,
+    maxAttendees: 250,
+    description: "Educational seminar on sustainable development...",
+  },
+  {
+    id: 8,
+    title: "Holiday Charity Drive",
+    date: "2023-12-15",
+    time: "10:00",
+    location: "Multiple Locations",
+    status: "completed",
+    attendees: 200,
+    maxAttendees: 200,
+    description: "Annual holiday charity drive for local families...",
+  },
 ]
+
+const ITEMS_PER_PAGE = 5
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedEvents, setSelectedEvents] = useState<number[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Filter and search logic
+  const filteredEvents = allEvents.filter((event) => {
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || event.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentEvents = filteredEvents.slice(startIndex, endIndex)
+
+  const handleSelectEvent = (eventId: number) => {
+    setSelectedEvents((prev) => (prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]))
+  }
+
+  const handleSelectAll = () => {
+    const currentEventIds = currentEvents.map((event) => event.id)
+    const allCurrentSelected = currentEventIds.every((id) => selectedEvents.includes(id))
+
+    if (allCurrentSelected) {
+      setSelectedEvents((prev) => prev.filter((id) => !currentEventIds.includes(id)))
+    } else {
+      setSelectedEvents((prev) => [...new Set([...prev, ...currentEventIds])])
+    }
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedEvents.length === 0) return
+
+    if (confirm(`Are you sure you want to delete ${selectedEvents.length} event(s)?`)) {
+      console.log("Bulk deleting events:", selectedEvents)
+      setSelectedEvents([])
+    }
+  }
 
   const handleViewEvent = (event: any) => {
     console.log("Viewing event details:", event)
-    // Add modal or navigation logic
   }
 
   const handleEditEvent = (event: any) => {
     console.log("Editing event:", event)
-    // Navigate to edit page or open edit modal
   }
 
   const handleManageAttendees = (event: any) => {
     console.log("Managing attendees for event:", event)
-    // Open attendees management interface
   }
 
   const handleDeleteEvent = (eventId: number) => {
     if (confirm("Are you sure you want to delete this event?")) {
       console.log("Deleting event:", eventId)
-      // Add actual delete logic here
     }
   }
-
-  const filteredEvents = events.filter(
-    (event) =>
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -104,24 +196,55 @@ export default function EventsPage() {
     }
   }
 
+  const allCurrentSelected =
+    currentEvents.length > 0 && currentEvents.every((event) => selectedEvents.includes(event.id))
+  const someCurrentSelected = currentEvents.some((event) => selectedEvents.includes(event.id))
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader title="Events" breadcrumbs={[{ label: "Events" }]} />
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search events..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("upcoming")}>Upcoming</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>Draft</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>Cancelled</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Event
-        </Button>
+
+        <div className="flex items-center gap-2">
+          {selectedEvents.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete ({selectedEvents.length})
+            </Button>
+          )}
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Event
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -133,6 +256,15 @@ export default function EventsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={allCurrentSelected}
+                    onCheckedChange={handleSelectAll}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                    }}
+                  />
+                </TableHead>
                 <TableHead>Event</TableHead>
                 <TableHead className="hidden md:table-cell">Date & Time</TableHead>
                 <TableHead className="hidden lg:table-cell">Location</TableHead>
@@ -142,8 +274,14 @@ export default function EventsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredEvents.map((event) => (
+              {currentEvents.map((event) => (
                 <TableRow key={event.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedEvents.includes(event.id)}
+                      onCheckedChange={() => handleSelectEvent(event.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">{event.title}</div>
@@ -221,6 +359,46 @@ export default function EventsPage() {
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredEvents.length)} of {filteredEvents.length} events
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

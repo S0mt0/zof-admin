@@ -8,10 +8,23 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreHorizontal, Reply, Archive, Trash2, Mail, Clock } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Reply,
+  Archive,
+  Trash2,
+  Mail,
+  Clock,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 
-// Mock data
-const messages = [
+// Extended mock data for pagination
+const allMessages = [
   {
     id: 1,
     sender: "John Smith",
@@ -62,41 +75,131 @@ const messages = [
     status: "unread",
     avatar: "/placeholder.svg?height=40&width=40",
   },
+  {
+    id: 6,
+    sender: "Lisa Chen",
+    email: "lisa.chen@email.com",
+    subject: "Sponsorship Opportunity",
+    preview: "Our company is interested in sponsoring your next community event...",
+    time: "4 days ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 7,
+    sender: "Robert Taylor",
+    email: "robert.taylor@email.com",
+    subject: "Volunteer Training Question",
+    preview: "I have some questions about the upcoming volunteer training session...",
+    time: "5 days ago",
+    status: "unread",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 8,
+    sender: "Amanda Rodriguez",
+    email: "amanda.rodriguez@email.com",
+    subject: "Program Feedback",
+    preview: "I wanted to share some feedback about the youth mentorship program...",
+    time: "1 week ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 9,
+    sender: "James Wilson",
+    email: "james.wilson@email.com",
+    subject: "Collaboration Request",
+    preview: "We're reaching out to explore potential collaboration opportunities...",
+    time: "1 week ago",
+    status: "unread",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 10,
+    sender: "Jennifer Lee",
+    email: "jennifer.lee@email.com",
+    subject: "Event Attendance Confirmation",
+    preview: "I'm writing to confirm my attendance at the upcoming fundraising gala...",
+    time: "1 week ago",
+    status: "read",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
 ]
+
+const ITEMS_PER_PAGE = 6
 
 export default function MessagesPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedMessages, setSelectedMessages] = useState<number[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredMessages = messages.filter(
-    (message) =>
+  // Filter and search logic
+  const filteredMessages = allMessages.filter((message) => {
+    const matchesSearch =
       message.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
       message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      message.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      message.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || message.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
-  const unreadCount = messages.filter((m) => m.status === "unread").length
+  // Pagination logic
+  const totalPages = Math.ceil(filteredMessages.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentMessages = filteredMessages.slice(startIndex, endIndex)
+
+  const unreadCount = allMessages.filter((m) => m.status === "unread").length
+
+  const handleSelectMessage = (messageId: number) => {
+    setSelectedMessages((prev) =>
+      prev.includes(messageId) ? prev.filter((id) => id !== messageId) : [...prev, messageId],
+    )
+  }
+
+  const handleSelectAll = () => {
+    const currentMessageIds = currentMessages.map((message) => message.id)
+    const allCurrentSelected = currentMessageIds.every((id) => selectedMessages.includes(id))
+
+    if (allCurrentSelected) {
+      setSelectedMessages((prev) => prev.filter((id) => !currentMessageIds.includes(id)))
+    } else {
+      setSelectedMessages((prev) => [...new Set([...prev, ...currentMessageIds])])
+    }
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedMessages.length === 0) return
+
+    if (confirm(`Are you sure you want to delete ${selectedMessages.length} message(s)?`)) {
+      console.log("Bulk deleting messages:", selectedMessages)
+      setSelectedMessages([])
+    }
+  }
 
   const handleReplyMessage = (message: any) => {
     console.log("Replying to message:", message)
-    // Open reply interface or navigate to compose
   }
 
   const handleToggleReadStatus = (messageId: number, currentStatus: string) => {
     console.log("Toggling read status for message:", messageId)
-    // Update message status in state or backend
   }
 
   const handleArchiveMessage = (messageId: number) => {
     console.log("Archiving message:", messageId)
-    // Move message to archive
   }
 
   const handleDeleteMessage = (messageId: number) => {
     if (confirm("Are you sure you want to delete this message?")) {
       console.log("Deleting message:", messageId)
-      // Add actual delete logic here
     }
   }
+
+  const allCurrentSelected =
+    currentMessages.length > 0 && currentMessages.every((message) => selectedMessages.includes(message.id))
+  const someCurrentSelected = currentMessages.some((message) => selectedMessages.includes(message.id))
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -113,22 +216,57 @@ export default function MessagesPage() {
               className="pl-10"
             />
           </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {statusFilter === "all" ? "All Messages" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Messages</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("unread")}>Unread</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("read")}>Read</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {unreadCount > 0 && <Badge className="bg-pink-100 text-pink-800 border-pink-200">{unreadCount} unread</Badge>}
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Compose
-        </Button>
+
+        <div className="flex items-center gap-2">
+          {selectedMessages.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete ({selectedMessages.length})
+            </Button>
+          )}
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Compose
+          </Button>
+        </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Inbox</CardTitle>
-          <CardDescription>Manage your messages and communications.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Inbox</CardTitle>
+              <CardDescription>Manage your messages and communications.</CardDescription>
+            </div>
+            <Checkbox
+              checked={allCurrentSelected}
+              onCheckedChange={handleSelectAll}
+              ref={(el) => {
+                if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+              }}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {filteredMessages.map((message) => (
+            {currentMessages.map((message) => (
               <div
                 key={message.id}
                 className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md hover:bg-gray-50 cursor-pointer ${
@@ -137,6 +275,11 @@ export default function MessagesPage() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
+                    <Checkbox
+                      checked={selectedMessages.includes(message.id)}
+                      onCheckedChange={() => handleSelectMessage(message.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={message.avatar || "/placeholder.svg"} alt={message.sender} />
                       <AvatarFallback>
@@ -201,6 +344,47 @@ export default function MessagesPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredMessages.length)} of {filteredMessages.length}{" "}
+              messages
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

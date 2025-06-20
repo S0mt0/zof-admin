@@ -8,10 +8,25 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreHorizontal, Download, Mail, Heart, DollarSign, TrendingUp, Users } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Download,
+  Mail,
+  Heart,
+  DollarSign,
+  TrendingUp,
+  Users,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+} from "lucide-react"
 
-// Mock data
-const donations = [
+// Extended mock data for pagination
+const allDonations = [
   {
     id: 1,
     donor: "Anonymous",
@@ -56,6 +71,72 @@ const donations = [
     campaign: "Health Workshop",
     recurring: true,
   },
+  {
+    id: 5,
+    donor: "David Wilson",
+    email: "david.wilson@email.com",
+    amount: 750,
+    date: "2024-01-08",
+    method: "Bank Transfer",
+    status: "completed",
+    campaign: "Youth Program",
+    recurring: false,
+  },
+  {
+    id: 6,
+    donor: "Lisa Brown",
+    email: "lisa.brown@email.com",
+    amount: 200,
+    date: "2024-01-05",
+    method: "Credit Card",
+    status: "failed",
+    campaign: "General Fund",
+    recurring: false,
+  },
+  {
+    id: 7,
+    donor: "Robert Taylor",
+    email: "robert.taylor@email.com",
+    amount: 300,
+    date: "2024-01-03",
+    method: "PayPal",
+    status: "completed",
+    campaign: "Education Initiative",
+    recurring: true,
+  },
+  {
+    id: 8,
+    donor: "Amanda Garcia",
+    email: "amanda.garcia@email.com",
+    amount: 150,
+    date: "2024-01-01",
+    method: "Credit Card",
+    status: "pending",
+    campaign: "Community Outreach",
+    recurring: false,
+  },
+  {
+    id: 9,
+    donor: "James Lee",
+    email: "james.lee@email.com",
+    amount: 400,
+    date: "2023-12-30",
+    method: "Bank Transfer",
+    status: "completed",
+    campaign: "Health Workshop",
+    recurring: false,
+  },
+  {
+    id: 10,
+    donor: "Jennifer Martinez",
+    email: "jennifer.martinez@email.com",
+    amount: 125,
+    date: "2023-12-28",
+    method: "PayPal",
+    status: "completed",
+    campaign: "General Fund",
+    recurring: true,
+  },
 ]
 
 const stats = [
@@ -93,15 +174,55 @@ const stats = [
   },
 ]
 
+const ITEMS_PER_PAGE = 6
+
 export default function DonationsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedDonations, setSelectedDonations] = useState<number[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredDonations = donations.filter(
-    (donation) =>
+  // Filter and search logic
+  const filteredDonations = allDonations.filter((donation) => {
+    const matchesSearch =
       donation.donor.toLowerCase().includes(searchTerm.toLowerCase()) ||
       donation.campaign.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      donation.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      donation.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || donation.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredDonations.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentDonations = filteredDonations.slice(startIndex, endIndex)
+
+  const handleSelectDonation = (donationId: number) => {
+    setSelectedDonations((prev) =>
+      prev.includes(donationId) ? prev.filter((id) => id !== donationId) : [...prev, donationId],
+    )
+  }
+
+  const handleSelectAll = () => {
+    const currentDonationIds = currentDonations.map((donation) => donation.id)
+    const allCurrentSelected = currentDonationIds.every((id) => selectedDonations.includes(id))
+
+    if (allCurrentSelected) {
+      setSelectedDonations((prev) => prev.filter((id) => !currentDonationIds.includes(id)))
+    } else {
+      setSelectedDonations((prev) => [...new Set([...prev, ...currentDonationIds])])
+    }
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedDonations.length === 0) return
+
+    if (confirm(`Are you sure you want to delete ${selectedDonations.length} donation record(s)?`)) {
+      console.log("Bulk deleting donations:", selectedDonations)
+      setSelectedDonations([])
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -118,15 +239,17 @@ export default function DonationsPage() {
 
   const handleDownloadReceipt = (donation: any) => {
     console.log("Downloading receipt for donation:", donation)
-    // Generate and download receipt PDF
     alert(`Receipt for donation #${donation.id} will be downloaded`)
   }
 
   const handleSendThankYou = (donation: any) => {
     console.log("Sending thank you email for donation:", donation)
-    // Send thank you email
     alert(`Thank you email sent to ${donation.donor}`)
   }
+
+  const allCurrentSelected =
+    currentDonations.length > 0 && currentDonations.every((donation) => selectedDonations.includes(donation.id))
+  const someCurrentSelected = currentDonations.some((donation) => selectedDonations.includes(donation.id))
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -155,16 +278,40 @@ export default function DonationsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search donations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search donations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("pending")}>Pending</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("failed")}>Failed</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+
         <div className="flex gap-2">
+          {selectedDonations.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete ({selectedDonations.length})
+            </Button>
+          )}
           <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -185,6 +332,15 @@ export default function DonationsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={allCurrentSelected}
+                    onCheckedChange={handleSelectAll}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                    }}
+                  />
+                </TableHead>
                 <TableHead>Donor</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead className="hidden md:table-cell">Campaign</TableHead>
@@ -194,8 +350,14 @@ export default function DonationsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredDonations.map((donation) => (
+              {currentDonations.map((donation) => (
                 <TableRow key={donation.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedDonations.includes(donation.id)}
+                      onCheckedChange={() => handleSelectDonation(donation.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium flex items-center gap-2">
@@ -239,6 +401,47 @@ export default function DonationsPage() {
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredDonations.length)} of {filteredDonations.length}{" "}
+              donations
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
