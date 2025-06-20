@@ -23,6 +23,7 @@ import {
   Filter,
   Trash2,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 // Extended mock data for pagination testing
 const allDonations = [
@@ -236,6 +237,8 @@ export default function DonationsPage() {
   const [selectedDonations, setSelectedDonations] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
 
   // Filter and search logic
   const filteredDonations = allDonations.filter((donation) => {
@@ -487,7 +490,7 @@ export default function DonationsPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button>
+          <Button onClick={() => router.push("/donations/new")}>
             <Plus className="h-4 w-4 mr-2" />
             Add Donation
           </Button>

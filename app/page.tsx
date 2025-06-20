@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Pagination } from "@/components/ui/pagination"
@@ -153,6 +154,7 @@ const quickActions = [
     hoverBg: "hover:bg-blue-50",
     iconBg: "bg-blue-100",
     iconHoverBg: "group-hover:bg-blue-200",
+    href: "/blogs/new",
   },
   {
     title: "Add New Event",
@@ -161,6 +163,7 @@ const quickActions = [
     hoverBg: "hover:bg-emerald-50",
     iconBg: "bg-emerald-100",
     iconHoverBg: "group-hover:bg-emerald-200",
+    href: "/events/new",
   },
   {
     title: "Add Team Member",
@@ -169,6 +172,7 @@ const quickActions = [
     hoverBg: "hover:bg-purple-50",
     iconBg: "bg-purple-100",
     iconHoverBg: "group-hover:bg-purple-200",
+    href: "/team/new",
   },
   {
     title: "View Messages",
@@ -177,6 +181,7 @@ const quickActions = [
     hoverBg: "hover:bg-pink-50",
     iconBg: "bg-pink-100",
     iconHoverBg: "group-hover:bg-pink-200",
+    href: "/messages",
   },
 ]
 
@@ -257,19 +262,20 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             {quickActions.map((action) => (
-              <button
-                key={action.title}
-                className={`w-full text-left p-3 rounded-lg border ${action.hoverBg} transition-all duration-200 group hover:shadow-md hover:border-opacity-50`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`h-10 w-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
-                  >
-                    <action.icon className="h-5 w-5 text-white" />
+              <Link key={action.title} href={action.href}>
+                <div
+                  className={`w-full text-left p-3 rounded-lg border ${action.hoverBg} transition-all duration-200 group hover:shadow-md hover:border-opacity-50 cursor-pointer`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div
+                      className={`h-10 w-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
+                    >
+                      <action.icon className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="font-medium">{action.title}</span>
                   </div>
-                  <span className="font-medium">{action.title}</span>
                 </div>
-              </button>
+              </Link>
             ))}
           </CardContent>
         </Card>
