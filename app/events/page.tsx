@@ -1,17 +1,46 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Pagination } from "@/components/ui/pagination"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Calendar, MapPin, Users, Filter } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  MapPin,
+  Users,
+  Filter,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Extended mock data for pagination testing
 const allEvents = [
@@ -147,93 +176,110 @@ const allEvents = [
     maxAttendees: 60,
     description: "Educational talk on environmental conservation efforts...",
   },
-]
+];
 
-const ITEMS_PER_PAGE = 5
+const ITEMS_PER_PAGE = 5;
 
 export default function EventsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedEvents, setSelectedEvents] = useState<number[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const router = useRouter()
+  const router = useRouter();
 
   // Filter and search logic
   const filteredEvents = allEvents.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || event.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+      event.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || event.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentEvents = filteredEvents.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentEvents = filteredEvents.slice(startIndex, endIndex);
 
   const handleSelectEvent = (eventId: number) => {
-    setSelectedEvents((prev) => (prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]))
-  }
+    setSelectedEvents((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
+  };
 
   const handleSelectAll = () => {
-    const currentEventIds = currentEvents.map((event) => event.id)
-    const allCurrentSelected = currentEventIds.every((id) => selectedEvents.includes(id))
+    const currentEventIds = currentEvents.map((event) => event.id);
+    const allCurrentSelected = currentEventIds.every((id) =>
+      selectedEvents.includes(id)
+    );
 
     if (allCurrentSelected) {
-      setSelectedEvents((prev) => prev.filter((id) => !currentEventIds.includes(id)))
+      setSelectedEvents((prev) =>
+        prev.filter((id) => !currentEventIds.includes(id))
+      );
     } else {
-      setSelectedEvents((prev) => [...new Set([...prev, ...currentEventIds])])
+      setSelectedEvents((prev) => [...new Set([...prev, ...currentEventIds])]);
     }
-  }
+  };
 
   const handleBulkDelete = () => {
-    if (selectedEvents.length === 0) return
+    if (selectedEvents.length === 0) return;
 
-    if (confirm(`Are you sure you want to delete ${selectedEvents.length} event(s)?`)) {
-      console.log("Bulk deleting events:", selectedEvents)
-      setSelectedEvents([])
+    if (
+      confirm(
+        `Are you sure you want to delete ${selectedEvents.length} event(s)?`
+      )
+    ) {
+      console.log("Bulk deleting events:", selectedEvents);
+      console.log(selectedEvents);
+      setSelectedEvents([]);
     }
-  }
+  };
 
   const handleViewEvent = (event: any) => {
-    console.log("Viewing event details:", event)
-  }
+    console.log("Viewing event details:", event);
+  };
 
   const handleEditEvent = (event: any) => {
-    router.push(`/events/${event.id}/edit`)
-  }
+    router.push(`/events/${event.id}/edit`);
+  };
 
   const handleManageAttendees = (event: any) => {
-    console.log("Managing attendees for event:", event)
-  }
+    console.log("Managing attendees for event:", event);
+  };
 
   const handleDeleteEvent = (eventId: number) => {
     if (confirm("Are you sure you want to delete this event?")) {
-      console.log("Deleting event:", eventId)
+      console.log("Deleting event:", eventId);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "upcoming":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "completed":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200"
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
       case "draft":
-        return "bg-amber-100 text-amber-800 border-amber-200"
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200"
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   const allCurrentSelected =
-    currentEvents.length > 0 && currentEvents.every((event) => selectedEvents.includes(event.id))
-  const someCurrentSelected = currentEvents.some((event) => selectedEvents.includes(event.id))
+    currentEvents.length > 0 &&
+    currentEvents.every((event) => selectedEvents.includes(event.id));
+  const someCurrentSelected = currentEvents.some((event) =>
+    selectedEvents.includes(event.id)
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -255,15 +301,28 @@ export default function EventsPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
-                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                {statusFilter === "all"
+                  ? "All Status"
+                  : statusFilter.charAt(0).toUpperCase() +
+                    statusFilter.slice(1)}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("upcoming")}>Upcoming</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>Completed</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>Draft</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>Cancelled</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("upcoming")}>
+                Upcoming
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("completed")}>
+                Completed
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>
+                Draft
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>
+                Cancelled
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -285,7 +344,9 @@ export default function EventsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Events</CardTitle>
-          <CardDescription>Manage your events, track attendance, and update event details.</CardDescription>
+          <CardDescription>
+            Manage your events, track attendance, and update event details.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -296,15 +357,21 @@ export default function EventsPage() {
                     checked={allCurrentSelected}
                     onCheckedChange={handleSelectAll}
                     ref={(el) => {
-                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                      if (el)
+                        (el as HTMLInputElement).indeterminate =
+                          someCurrentSelected && !allCurrentSelected;
                     }}
                   />
                 </TableHead>
                 <TableHead>Event</TableHead>
-                <TableHead className="hidden md:table-cell">Date & Time</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Date & Time
+                </TableHead>
                 <TableHead className="hidden lg:table-cell">Location</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden sm:table-cell">Attendees</TableHead>
+                <TableHead className="hidden sm:table-cell">
+                  Attendees
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -320,7 +387,9 @@ export default function EventsPage() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{event.title}</div>
-                      <div className="text-sm text-muted-foreground line-clamp-2 mt-1">{event.description}</div>
+                      <div className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        {event.description}
+                      </div>
                       <div className="flex items-center gap-4 mt-2 md:hidden">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Calendar className="h-3 w-3 mr-1" />
@@ -338,7 +407,9 @@ export default function EventsPage() {
                       <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                       <div>
                         <div className="font-medium">{event.date}</div>
-                        <div className="text-sm text-muted-foreground">{event.time}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {event.time}
+                        </div>
                       </div>
                     </div>
                   </TableCell>
@@ -349,7 +420,9 @@ export default function EventsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusColor(event.status)}>{event.status}</Badge>
+                    <Badge className={getStatusColor(event.status)}>
+                      {event.status}
+                    </Badge>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     <div className="flex items-center">
@@ -362,21 +435,33 @@ export default function EventsPage() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 hover:bg-gray-100"
+                        >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-[180px]">
-                        <DropdownMenuItem onClick={() => handleViewEvent(event)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleViewEvent(event)}
+                          className="cursor-pointer"
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditEvent(event)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleEditEvent(event)}
+                          className="cursor-pointer"
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Event
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleManageAttendees(event)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleManageAttendees(event)}
+                          className="cursor-pointer"
+                        >
                           <Users className="mr-2 h-4 w-4" />
                           Manage Attendees
                         </DropdownMenuItem>
@@ -407,5 +492,5 @@ export default function EventsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,17 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Pagination } from "@/components/ui/pagination"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, Filter } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Eye,
+  Filter,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Extended mock data for pagination testing
 const allBlogPosts = [
@@ -22,7 +48,8 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-15",
     views: 1247,
-    excerpt: "Our latest community outreach program has reached over 500 families...",
+    excerpt:
+      "Our latest community outreach program has reached over 500 families...",
   },
   {
     id: 2,
@@ -31,7 +58,8 @@ const allBlogPosts = [
     status: "draft",
     date: "2024-01-12",
     views: 0,
-    excerpt: "Comprehensive report on the impact of our education initiatives...",
+    excerpt:
+      "Comprehensive report on the impact of our education initiatives...",
   },
   {
     id: 3,
@@ -40,7 +68,8 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-10",
     views: 892,
-    excerpt: "We're excited to share the results of our annual fundraising campaign...",
+    excerpt:
+      "We're excited to share the results of our annual fundraising campaign...",
   },
   {
     id: 4,
@@ -49,7 +78,8 @@ const allBlogPosts = [
     status: "scheduled",
     date: "2024-01-08",
     views: 234,
-    excerpt: "Join us in celebrating our amazing volunteers who make our work possible...",
+    excerpt:
+      "Join us in celebrating our amazing volunteers who make our work possible...",
   },
   {
     id: 5,
@@ -58,7 +88,8 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-05",
     views: 567,
-    excerpt: "Summary of our recent community health workshop and its outcomes...",
+    excerpt:
+      "Summary of our recent community health workshop and its outcomes...",
   },
   {
     id: 6,
@@ -76,7 +107,8 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-01",
     views: 1123,
-    excerpt: "Announcing our new partnership with local businesses for community development...",
+    excerpt:
+      "Announcing our new partnership with local businesses for community development...",
   },
   {
     id: 8,
@@ -85,7 +117,8 @@ const allBlogPosts = [
     status: "draft",
     date: "2023-12-28",
     views: 0,
-    excerpt: "Comprehensive guide for new volunteers joining our organization...",
+    excerpt:
+      "Comprehensive guide for new volunteers joining our organization...",
   },
   {
     id: 9,
@@ -94,7 +127,8 @@ const allBlogPosts = [
     status: "published",
     date: "2023-12-25",
     views: 789,
-    excerpt: "December newsletter highlighting our achievements and upcoming events...",
+    excerpt:
+      "December newsletter highlighting our achievements and upcoming events...",
   },
   {
     id: 10,
@@ -103,7 +137,8 @@ const allBlogPosts = [
     status: "published",
     date: "2023-12-20",
     views: 456,
-    excerpt: "Celebrating our successful grant application for education initiatives...",
+    excerpt:
+      "Celebrating our successful grant application for education initiatives...",
   },
   {
     id: 11,
@@ -130,7 +165,8 @@ const allBlogPosts = [
     status: "published",
     date: "2023-12-10",
     views: 345,
-    excerpt: "Highlighting the incredible contributions of volunteer Maria Garcia...",
+    excerpt:
+      "Highlighting the incredible contributions of volunteer Maria Garcia...",
   },
   {
     id: 14,
@@ -148,7 +184,8 @@ const allBlogPosts = [
     status: "published",
     date: "2023-12-05",
     views: 678,
-    excerpt: "Expanding our reach through partnerships with local educational institutions...",
+    excerpt:
+      "Expanding our reach through partnerships with local educational institutions...",
   },
   {
     id: 16,
@@ -175,93 +212,115 @@ const allBlogPosts = [
     status: "published",
     date: "2023-11-25",
     views: 1234,
-    excerpt: "Launching our mental health awareness campaign for the community...",
+    excerpt:
+      "Launching our mental health awareness campaign for the community...",
   },
-]
+];
 
-const ITEMS_PER_PAGE = 5
+const ITEMS_PER_PAGE = 5;
 
 export default function BlogsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedPosts, setSelectedPosts] = useState<number[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const router = useRouter()
+  const router = useRouter();
 
   // Filter and search logic
   const filteredPosts = allBlogPosts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || post.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+      post.author.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || post.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentPosts = filteredPosts.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentPosts = filteredPosts.slice(startIndex, endIndex);
 
   const handleSelectPost = (postId: number) => {
-    setSelectedPosts((prev) => (prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]))
-  }
+    setSelectedPosts((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId]
+    );
+  };
 
   const handleSelectAll = () => {
-    const currentPostIds = currentPosts.map((post) => post.id)
-    const allCurrentSelected = currentPostIds.every((id) => selectedPosts.includes(id))
+    const currentPostIds = currentPosts.map((post) => post.id);
+    const allCurrentSelected = currentPostIds.every((id) =>
+      selectedPosts.includes(id)
+    );
 
     if (allCurrentSelected) {
-      setSelectedPosts((prev) => prev.filter((id) => !currentPostIds.includes(id)))
+      setSelectedPosts((prev) =>
+        prev.filter((id) => !currentPostIds.includes(id))
+      );
     } else {
-      setSelectedPosts((prev) => [...new Set([...prev, ...currentPostIds])])
+      setSelectedPosts((prev) => [...new Set([...prev, ...currentPostIds])]);
     }
-  }
+  };
 
   const handleBulkDelete = () => {
-    if (selectedPosts.length === 0) return
+    if (selectedPosts.length === 0) return;
 
-    if (confirm(`Are you sure you want to delete ${selectedPosts.length} blog post(s)?`)) {
-      console.log("Bulk deleting posts:", selectedPosts)
-      setSelectedPosts([])
+    if (
+      confirm(
+        `Are you sure you want to delete ${selectedPosts.length} blog post(s)?`
+      )
+    ) {
+      console.log("Bulk deleting posts:", selectedPosts);
+      setSelectedPosts([]);
       // Add actual bulk delete logic here
     }
-  }
+  };
 
   const handleViewPost = (post: any) => {
-    router.push(`/blogs/${post.id}/view`)
-  }
+    router.push(`/blogs/${post.id}/view`);
+  };
 
   const handleEditPost = (post: any) => {
-    router.push(`/blogs/${post.id}/edit`)
-  }
+    router.push(`/blogs/${post.id}/edit`);
+  };
 
   const handleDeletePost = (postId: number) => {
     if (confirm("Are you sure you want to delete this blog post?")) {
-      console.log("Deleting post:", postId)
+      console.log("Deleting post:", postId);
     }
-  }
+  };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: BlogStatus) => {
     switch (status) {
       case "published":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200"
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
       case "draft":
-        return "bg-amber-100 text-amber-800 border-amber-200"
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "scheduled":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-blue-100 text-blue-800 border-blue-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
-  const allCurrentSelected = currentPosts.length > 0 && currentPosts.every((post) => selectedPosts.includes(post.id))
-  const someCurrentSelected = currentPosts.some((post) => selectedPosts.includes(post.id))
+  const allCurrentSelected =
+    currentPosts.length > 0 &&
+    currentPosts.every((post) => selectedPosts.includes(post.id));
+
+  const someCurrentSelected = currentPosts.some((post) =>
+    selectedPosts.includes(post.id)
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader title="Blog Posts" breadcrumbs={[{ label: "Blog Posts" }]} />
+      <DashboardHeader
+        title="Blog Posts"
+        breadcrumbs={[{ label: "Blog Posts" }]}
+      />
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
@@ -279,14 +338,25 @@ export default function BlogsPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
-                {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                {statusFilter === "all"
+                  ? "All Status"
+                  : statusFilter.charAt(0).toUpperCase() +
+                    statusFilter.slice(1)}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter("all")}>All Status</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("published")}>Published</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>Draft</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("scheduled")}>Scheduled</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("all")}>
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("published")}>
+                Published
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("draft")}>
+                Draft
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("scheduled")}>
+                Scheduled
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -308,7 +378,9 @@ export default function BlogsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Blog Posts</CardTitle>
-          <CardDescription>Manage your blog posts, edit content, and track performance.</CardDescription>
+          <CardDescription>
+            Manage your blog posts, edit content, and track performance.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -319,7 +391,9 @@ export default function BlogsPage() {
                     checked={allCurrentSelected}
                     onCheckedChange={handleSelectAll}
                     ref={(el) => {
-                      if (el) el.indeterminate = someCurrentSelected && !allCurrentSelected
+                      if (el)
+                        (el as HTMLInputElement).indeterminate =
+                          someCurrentSelected && !allCurrentSelected;
                     }}
                   />
                 </TableHead>
@@ -343,30 +417,53 @@ export default function BlogsPage() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{post.title}</div>
-                      <div className="text-sm text-muted-foreground md:hidden">by {post.author}</div>
-                      <div className="text-sm text-muted-foreground line-clamp-1 mt-1">{post.excerpt}</div>
+                      <div className="text-sm text-muted-foreground md:hidden">
+                        by {post.author}
+                      </div>
+                      <div className="text-sm text-muted-foreground line-clamp-1 mt-1">
+                        {post.excerpt}
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{post.author}</TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(post.status)}>{post.status}</Badge>
+                  <TableCell className="hidden md:table-cell">
+                    {post.author}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">{post.date}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{post.views}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={getStatusColor(post.status as BlogStatus)}
+                    >
+                      {post.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {post.date}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {post.views}
+                  </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 hover:bg-gray-100"
+                        >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuItem onClick={() => handleViewPost(post)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleViewPost(post)}
+                          className="cursor-pointer"
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           View
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditPost(post)} className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => handleEditPost(post)}
+                          className="cursor-pointer"
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
@@ -397,5 +494,5 @@ export default function BlogsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

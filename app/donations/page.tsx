@@ -395,9 +395,9 @@ export default function DonationsPage() {
         let yPosition = 95;
         doc.setFontSize(10);
         doc.text("Donor", 20, yPosition);
-        doc.text("Amount", 70, yPosition);
-        doc.text("Date", 110, yPosition);
-        doc.text("Status", 140, yPosition);
+        doc.text("Email", 65, yPosition);
+        doc.text("Amount", 120, yPosition);
+        doc.text("Date", 140, yPosition);
         doc.text("Campaign", 170, yPosition);
 
         // Add line under headers
@@ -412,17 +412,17 @@ export default function DonationsPage() {
             yPosition = 20;
           }
 
-          doc.text(donation.donor.substring(0, 20), 20, yPosition);
-          doc.text(`$${donation.amount}`, 70, yPosition);
-          doc.text(donation.date, 110, yPosition);
-          doc.text(donation.status, 140, yPosition);
+          doc.text(donation.donor.substring(0, 30), 20, yPosition);
+          doc.text(donation.email.substring(0, 30), 65, yPosition);
+          doc.text(`$${donation.amount}`, 120, yPosition);
+          doc.text(donation.date, 140, yPosition);
           doc.text(donation.campaign.substring(0, 15), 170, yPosition);
           yPosition += 8;
         });
 
         // Save the PDF
         doc.save(
-          `donations-report-${new Date().toISOString().split("T")[0]}.pdf`
+          `ZOF Donations Report - ${new Date().toISOString().split("T")[0]}.pdf`
         );
       } else if (format === "csv") {
         // Generate CSV
@@ -461,7 +461,7 @@ export default function DonationsPage() {
         link.setAttribute("href", url);
         link.setAttribute(
           "download",
-          `donations-export-${new Date().toISOString().split("T")[0]}.csv`
+          `ZOF Donations - ${new Date().toISOString().split("T")[0]}.csv`
         );
         link.style.visibility = "hidden";
         document.body.appendChild(link);

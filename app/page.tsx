@@ -1,11 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Pagination } from "@/components/ui/pagination"
-import { FileText, Calendar, Users, MessageSquare } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { FileText, Calendar, Users, MessageSquare } from "lucide-react";
+
+import { DashboardHeader } from "@/components/dashboard-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 
 const stats = [
   {
@@ -40,7 +47,7 @@ const stats = [
     gradient: "from-pink-400 to-pink-600",
     bgColor: "bg-pink-50",
   },
-]
+];
 
 // Extended recent activity data for pagination testing
 const allRecentActivity = [
@@ -144,7 +151,7 @@ const allRecentActivity = [
     title: "Reached 75% of annual fundraising goal",
     time: "1 month ago",
   },
-]
+];
 
 const quickActions = [
   {
@@ -183,17 +190,17 @@ const quickActions = [
     iconHoverBg: "group-hover:bg-pink-200",
     href: "/messages",
   },
-]
+];
 
-const ITEMS_PER_PAGE = 5
+const ITEMS_PER_PAGE = 5;
 
 export default function Dashboard() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(allRecentActivity.length / ITEMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentActivities = allRecentActivity.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(allRecentActivity.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentActivities = allRecentActivity.slice(startIndex, endIndex);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -206,7 +213,9 @@ export default function Dashboard() {
             className={`${stat.bgColor} border-0 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {stat.title}
+              </CardTitle>
               <div
                 className={`h-10 w-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md transition-transform duration-200 hover:scale-105`}
               >
@@ -215,7 +224,9 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
+              <p className="text-xs text-muted-foreground">
+                {stat.description}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -225,7 +236,9 @@ export default function Dashboard() {
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest updates across your dashboard</CardDescription>
+            <CardDescription>
+              Latest updates across your dashboard
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -235,7 +248,9 @@ export default function Dashboard() {
                   className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.action}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {activity.action}
+                    </p>
                     <p className="text-sm text-gray-500">{activity.title}</p>
                   </div>
                   <div className="text-sm text-gray-400">{activity.time}</div>
@@ -260,7 +275,7 @@ export default function Dashboard() {
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="flex flex-col gap-2">
             {quickActions.map((action) => (
               <Link key={action.title} href={action.href}>
                 <div
@@ -281,5 +296,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -19,7 +19,10 @@ interface DashboardHeaderProps {
   }>;
 }
 
-export function DashboardHeader({ title, breadcrumbs }: DashboardHeaderProps) {
+export function DashboardHeader({
+  title = "Dashboard",
+  breadcrumbs,
+}: DashboardHeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
@@ -27,7 +30,7 @@ export function DashboardHeader({ title, breadcrumbs }: DashboardHeaderProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
-            <Link href="/">Dashboard</Link>
+            <Link href="/">{title}</Link>
             {/* <BreadcrumbLink href="/">Dashboard</BreadcrumbLink> */}
           </BreadcrumbItem>
           {breadcrumbs?.map((crumb, index) => (
@@ -35,9 +38,10 @@ export function DashboardHeader({ title, breadcrumbs }: DashboardHeaderProps) {
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
                 {crumb.href ? (
-                  <BreadcrumbLink href={crumb.href}>
-                    {crumb.label}
-                  </BreadcrumbLink>
+                  // <BreadcrumbLink href={crumb.href}>
+                  //   {crumb.label}
+                  // </BreadcrumbLink>
+                  <Link href={crumb.href}>{crumb.label}</Link>
                 ) : (
                   <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                 )}

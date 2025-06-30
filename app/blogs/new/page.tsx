@@ -1,28 +1,35 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Save, ArrowLeft, Eye, Upload, ChevronDown } from "lucide-react"
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ToolConstructable } from "@editorjs/editorjs";
+import EditorJS from "@editorjs/editorjs";
 
-// EditorJS types and imports
-declare global {
-  interface Window {
-    EditorJS: any
-  }
-}
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Save, ArrowLeft, Eye, Upload, ChevronDown } from "lucide-react";
 
 export default function NewBlogPostPage() {
-  const router = useRouter()
-  const editorRef = useRef<any>(null)
-  const [isEditorReady, setIsEditorReady] = useState(false)
+  const router = useRouter();
+  const editorRef = useRef<EditorJS | null>(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
@@ -31,23 +38,37 @@ export default function NewBlogPostPage() {
     author: "Admin User",
     tags: [] as string[],
     newTag: "",
-  })
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const initEditor = async () => {
       if (typeof window !== "undefined" && !editorRef.current) {
         // Load EditorJS and plugins
-        const EditorJS = (await import("@editorjs/editorjs")).default
-        const Header = (await import("@editorjs/header")).default
-        const List = (await import("@editorjs/list")).default
-        const Paragraph = (await import("@editorjs/paragraph")).default
-        const Image = (await import("@editorjs/image")).default
-        const Quote = (await import("@editorjs/quote")).default
-        const Code = (await import("@editorjs/code")).default
-        const Delimiter = (await import("@editorjs/delimiter")).default
-        const Table = (await import("@editorjs/table")).default
-        const LinkTool = (await import("@editorjs/link")).default
+
+        const Header = (await import("@editorjs/header"))
+          .default as unknown as ToolConstructable;
+
+        const List = (await import("@editorjs/list"))
+          .default as unknown as ToolConstructable;
+
+        const Paragraph = (await import("@editorjs/paragraph"))
+          .default as unknown as ToolConstructable;
+
+        const Image = (await import("@editorjs/image"))
+          .default as unknown as ToolConstructable;
+
+        const Quote = (await import("@editorjs/quote"))
+          .default as unknown as ToolConstructable;
+
+        const Code = (await import("@editorjs/code"))
+          .default as unknown as ToolConstructable;
+
+        const Delimiter = (await import("@editorjs/delimiter"))
+          .default as unknown as ToolConstructable;
+
+        const Table = (await import("@editorjs/table"))
+          .default as unknown as ToolConstructable;
 
         editorRef.current = new EditorJS({
           holder: "editorjs",
@@ -57,7 +78,7 @@ export default function NewBlogPostPage() {
               class: Header,
               config: {
                 levels: [1, 2, 3],
-                defaultLevel: 2,
+                Level: 2,
               },
             },
             paragraph: {
@@ -81,15 +102,15 @@ export default function NewBlogPostPage() {
                           file: {
                             url: "/placeholder.svg?height=400&width=800",
                           },
-                        })
-                      }, 1000)
-                    })
+                        });
+                      }, 1000);
+                    });
                   },
                   uploadByUrl: async (url: string) => {
                     return {
                       success: 1,
                       file: { url },
-                    }
+                    };
                   },
                 },
               },
@@ -106,12 +127,6 @@ export default function NewBlogPostPage() {
               class: Table,
               inlineToolbar: true,
             },
-            linkTool: {
-              class: LinkTool,
-              config: {
-                endpoint: "/api/link-preview", // You would implement this
-              },
-            },
           },
           data: {
             blocks: [
@@ -123,83 +138,86 @@ export default function NewBlogPostPage() {
               },
             ],
           },
-        })
+        });
 
-        setIsEditorReady(true)
+        setIsEditorReady(true);
       }
-    }
+    };
 
-    initEditor()
+    initEditor();
 
     return () => {
       if (editorRef.current && editorRef.current.destroy) {
-        editorRef.current.destroy()
-        editorRef.current = null
+        editorRef.current.destroy();
+        editorRef.current = null;
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleAddTag = () => {
-    if (formData.newTag.trim() && !formData.tags.includes(formData.newTag.trim())) {
+    if (
+      formData.newTag.trim() &&
+      !formData.tags.includes(formData.newTag.trim())
+    ) {
       setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, prev.newTag.trim()],
         newTag: "",
-      }))
+      }));
     }
-  }
+  };
 
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }))
-  }
+    }));
+  };
 
   const handleImageUpload = () => {
     // Simulate image upload
-    const input = document.createElement("input")
-    input.type = "file"
-    input.accept = "image/*"
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
     input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
+      const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         // In a real app, you'd upload to your server/cloud storage
         setFormData((prev) => ({
           ...prev,
           bannerImage: "/placeholder.svg?height=400&width=800",
-        }))
+        }));
       }
-    }
-    input.click()
-  }
+    };
+    input.click();
+  };
 
   const handleSave = async (status: string) => {
-    if (!editorRef.current) return
+    if (!editorRef.current) return;
 
     // Validation for publishing
     if (status === "published") {
       if (!formData.title.trim()) {
-        alert("Title is required for publishing")
-        return
+        alert("Title is required for publishing");
+        return;
       }
       if (!formData.excerpt.trim()) {
-        alert("Excerpt is required for publishing")
-        return
+        alert("Excerpt is required for publishing");
+        return;
       }
       if (formData.excerpt.length < 50) {
-        alert("Excerpt must be at least 50 characters for publishing")
-        return
+        alert("Excerpt must be at least 50 characters for publishing");
+        return;
       }
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const editorData = await editorRef.current.save()
+      const editorData = await editorRef.current.save();
 
       const blogPost = {
         ...formData,
@@ -207,40 +225,47 @@ export default function NewBlogPostPage() {
         content: editorData,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      }
+      };
 
-      console.log("Saving blog post:", blogPost)
+      console.log("Saving blog post:", blogPost);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(`Blog post ${status === "published" ? "published" : "saved as draft"} successfully!`)
-      router.push("/blogs")
+      alert(
+        `Blog post ${
+          status === "published" ? "published" : "saved as draft"
+        } successfully!`
+      );
+      router.push("/blogs");
     } catch (error) {
-      console.error("Error saving blog post:", error)
-      alert("Error saving blog post. Please try again.")
+      console.error("Error saving blog post:", error);
+      alert("Error saving blog post. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handlePreview = async () => {
-    if (!editorRef.current) return
+    if (!editorRef.current) return;
 
     try {
-      const editorData = await editorRef.current.save()
-      console.log("Preview data:", { ...formData, content: editorData })
-      alert("Preview functionality would open in a new tab")
+      const editorData = await editorRef.current.save();
+      console.log("Preview data:", { ...formData, content: editorData });
+      alert("Preview functionality would open in a new tab");
     } catch (error) {
-      console.error("Error generating preview:", error)
+      console.error("Error generating preview:", error);
     }
-  }
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         title="Create New Blog Post"
-        breadcrumbs={[{ label: "Blog Posts", href: "/blogs" }, { label: "New Post" }]}
+        breadcrumbs={[
+          { label: "Blog Posts", href: "/blogs" },
+          { label: "New Post" },
+        ]}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -273,18 +298,28 @@ export default function NewBlogPostPage() {
                   value={formData.excerpt}
                   onChange={(e) => {
                     if (e.target.value.length <= 300) {
-                      handleInputChange("excerpt", e.target.value)
+                      handleInputChange("excerpt", e.target.value);
                     }
                   }}
                   rows={3}
                   maxLength={300}
-                  className={formData.excerpt.length > 250 ? "border-amber-300" : ""}
+                  className={
+                    formData.excerpt.length > 250 ? "border-amber-300" : ""
+                  }
                 />
                 <div className="flex justify-between text-xs mt-1">
                   <span className="text-muted-foreground">
-                    {formData.status !== "draft" ? "Required for publishing" : "Optional for drafts"}
+                    {formData.status !== "draft"
+                      ? "Required for publishing"
+                      : "Optional for drafts"}
                   </span>
-                  <span className={`${formData.excerpt.length > 250 ? "text-amber-600" : "text-muted-foreground"}`}>
+                  <span
+                    className={`${
+                      formData.excerpt.length > 250
+                        ? "text-amber-600"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     {300 - formData.excerpt.length} characters remaining
                   </span>
                 </div>
@@ -296,7 +331,9 @@ export default function NewBlogPostPage() {
           <Card>
             <CardHeader>
               <CardTitle>Banner Image</CardTitle>
-              <CardDescription>Upload a banner image for your blog post</CardDescription>
+              <CardDescription>
+                Upload a banner image for your blog post
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {formData.bannerImage ? (
@@ -306,7 +343,12 @@ export default function NewBlogPostPage() {
                     alt="Banner preview"
                     className="w-full h-48 object-cover rounded-lg"
                   />
-                  <Button variant="secondary" size="sm" onClick={handleImageUpload} className="absolute top-2 right-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleImageUpload}
+                    className="absolute top-2 right-2"
+                  >
                     <Upload className="h-4 w-4 mr-2" />
                     Change
                   </Button>
@@ -317,7 +359,9 @@ export default function NewBlogPostPage() {
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
                 >
                   <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-600">Click to upload banner image</p>
+                  <p className="text-sm text-gray-600">
+                    Click to upload banner image
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -327,10 +371,16 @@ export default function NewBlogPostPage() {
           <Card>
             <CardHeader>
               <CardTitle>Content</CardTitle>
-              <CardDescription>Write your blog post content using the rich text editor</CardDescription>
+              <CardDescription>
+                Write your blog post content using the rich text editor
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div id="editorjs" className="min-h-[400px] prose max-w-none" style={{ outline: "none" }} />
+              <div
+                id="editorjs"
+                className="min-h-[400px] prose max-w-none"
+                style={{ outline: "none" }}
+              />
               {!isEditorReady && (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-sm text-gray-500">Loading editor...</div>
@@ -361,7 +411,10 @@ export default function NewBlogPostPage() {
               <Button
                 onClick={() => handleSave("published")}
                 disabled={
-                  isLoading || !formData.title.trim() || !formData.excerpt.trim() || formData.excerpt.length < 50
+                  isLoading ||
+                  !formData.title.trim() ||
+                  !formData.excerpt.trim() ||
+                  formData.excerpt.length < 50
                 }
                 className="w-full"
               >
@@ -369,12 +422,21 @@ export default function NewBlogPostPage() {
                 {isLoading ? "Publishing..." : "Publish"}
               </Button>
 
-              <Button onClick={handlePreview} disabled={!formData.title.trim()} variant="secondary" className="w-full">
+              <Button
+                onClick={handlePreview}
+                disabled={!formData.title.trim()}
+                variant="secondary"
+                className="w-full"
+              >
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
               </Button>
 
-              <Button onClick={() => router.push("/blogs")} variant="ghost" className="w-full">
+              <Button
+                onClick={() => router.push("/blogs")}
+                variant="ghost"
+                className="w-full"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Posts
               </Button>
@@ -395,11 +457,19 @@ export default function NewBlogPostPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full">
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "draft")}>Draft</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "published")}>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "draft")}
+                  >
+                    Draft
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "published")}
+                  >
                     Published
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "scheduled")}>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "scheduled")}
+                  >
                     Scheduled
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -413,7 +483,10 @@ export default function NewBlogPostPage() {
               <CardTitle>Author</CardTitle>
             </CardHeader>
             <CardContent>
-              <Input value={formData.author} onChange={(e) => handleInputChange("author", e.target.value)} />
+              <Input
+                value={formData.author}
+                onChange={(e) => handleInputChange("author", e.target.value)}
+              />
             </CardContent>
           </Card>
 
@@ -436,7 +509,12 @@ export default function NewBlogPostPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => handleRemoveTag(tag)}>
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer"
+                    onClick={() => handleRemoveTag(tag)}
+                  >
                     {tag} ×
                   </Badge>
                 ))}
@@ -446,5 +524,5 @@ export default function NewBlogPostPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

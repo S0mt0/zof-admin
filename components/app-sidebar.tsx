@@ -36,7 +36,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
 
 const navigationItems = [
   {
@@ -112,14 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-sm font-bold">ZOF</span>
           </div> */}
-          {/* <Image
-            height={200}
-            width={200}
-            src={"/zof-logo.png"}
-            alt="@ZOF_LOGO"
-            className="w-14 h-auto"
-            priority
-          /> */}
+
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-bold">Zita Onyeka Foundation</span>
             <span className="truncate text-xs text-muted-foreground">
