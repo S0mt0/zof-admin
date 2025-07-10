@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, Mail } from "lucide-react";
 import Image from "next/image";
+import { CardWrapper } from "../_components";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -69,52 +70,30 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <Image
-            height={200}
-            width={200}
-            src={"/zof-logo.png"}
-            alt="@ZOF_LOGO"
-            className="w-14 h-auto mx-auto"
-            priority
-          />
-          <CardTitle className="text-2xl font-bold">
-            Forgot your password?
-          </CardTitle>
-          <CardDescription>
-            Enter your email address and we'll send you a link to reset your
-            password
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="admin@zitaonyeka.org"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Send Reset Link
-            </Button>
-          </form>
-          <div className="mt-6 text-center">
-            <Link
-              href="/auth/login"
-              className="text-sm text-primary hover:underline"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1 inline" />
-              Back to login
-            </Link>
+      <CardWrapper
+        backButtonLabel="Back to login"
+        backButtonHref="/auth/login"
+        headerLabel="Forgot your password?"
+        description=" Enter your email address and we'll send you a link to reset your
+            password"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="admin@zitaonyeka.org"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-        </CardContent>
-      </Card>
+          <Button type="submit" className="w-full">
+            Send Reset Link
+          </Button>
+        </form>
+      </CardWrapper>
     </div>
   );
 }
