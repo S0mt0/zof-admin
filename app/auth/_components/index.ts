@@ -2,3 +2,7 @@ export * from "./login-button";
 export * from "./card-wrapper";
 export * from "./back-button";
 export * from "./socials";
+export * from "./password-reset-form";
+export * from "./forgot-password-form";
+export * from "./sign-up-form";
+export * from "./login-form";
