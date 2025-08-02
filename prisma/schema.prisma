@@ -198,6 +198,7 @@ model User {
   teamMember TeamMember?
   messages Message[]
   comments Comment[]
+  activities UserActivity[]
 }
 
 model Comment {
@@ -211,5 +212,14 @@ model Comment {
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model UserActivity {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  action  String   // e.g., "New blog post published"
+  title   String   // e.g., "Community Outreach Program Success"
+  time    DateTime @default(now())
+  userId  String?  @db.ObjectId
+  user    User?    @relation(fields: [userId], references: [id])
 }
 
