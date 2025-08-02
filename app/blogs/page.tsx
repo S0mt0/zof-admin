@@ -48,6 +48,7 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-15",
     views: 1247,
+    featured: true,
     excerpt:
       "Our latest community outreach program has reached over 500 families...",
   },
@@ -58,6 +59,7 @@ const allBlogPosts = [
     status: "draft",
     date: "2024-01-12",
     views: 0,
+    featured: false,
     excerpt:
       "Comprehensive report on the impact of our education initiatives...",
   },
@@ -68,6 +70,7 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-10",
     views: 892,
+    featured: true,
     excerpt:
       "We're excited to share the results of our annual fundraising campaign...",
   },
@@ -78,6 +81,7 @@ const allBlogPosts = [
     status: "scheduled",
     date: "2024-01-08",
     views: 234,
+    featured: false,
     excerpt:
       "Join us in celebrating our amazing volunteers who make our work possible...",
   },
@@ -88,6 +92,7 @@ const allBlogPosts = [
     status: "published",
     date: "2024-01-05",
     views: 567,
+    featured: false,
     excerpt:
       "Summary of our recent community health workshop and its outcomes...",
   },
@@ -98,6 +103,7 @@ const allBlogPosts = [
     status: "draft",
     date: "2024-01-03",
     views: 0,
+    featured: false,
     excerpt: "Preparing for the launch of our new youth mentorship program...",
   },
   {
@@ -222,6 +228,7 @@ const ITEMS_PER_PAGE = 5;
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [featuredFilter, setFeaturedFilter] = useState("all");
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -234,7 +241,11 @@ export default function BlogsPage() {
       post.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || post.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesFeatured =
+      featuredFilter === "all" ||
+      (featuredFilter === "featured" && post.featured) ||
+      (featuredFilter === "not-featured" && !post.featured);
+    return matchesSearch && matchesStatus && matchesFeatured;
   });
 
   // Pagination logic
@@ -359,6 +370,32 @@ export default function BlogsPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {featuredFilter === "all"
+                  ? "All Featured"
+                  : featuredFilter === "featured"
+                  ? "Featured"
+                  : "Not Featured"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setFeaturedFilter("all")}>
+                All Featured
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFeaturedFilter("featured")}>
+                Featured
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setFeaturedFilter("not-featured")}
+              >
+                Not Featured
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex items-center gap-2">
@@ -398,7 +435,7 @@ export default function BlogsPage() {
                   />
                 </TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead className="hidden md:table-cell">Author</TableHead>
+                <TableHead className="hidden md:table-cell">Featured</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="hidden sm:table-cell">Date</TableHead>
                 <TableHead className="hidden lg:table-cell">Views</TableHead>
@@ -418,7 +455,7 @@ export default function BlogsPage() {
                     <div>
                       <div className="font-medium">{post.title}</div>
                       <div className="text-sm text-muted-foreground md:hidden">
-                        by {post.author}
+                        {post.featured ? "⭐ Featured" : "Not Featured"}
                       </div>
                       <div className="text-sm text-muted-foreground line-clamp-1 mt-1">
                         {post.excerpt}
@@ -426,7 +463,18 @@ export default function BlogsPage() {
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {post.author}
+                    {post.featured ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-yellow-100 text-yellow-800 border-yellow-200"
+                      >
+                        ⭐ Featured
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        Not Featured
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge

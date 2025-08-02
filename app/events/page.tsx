@@ -53,6 +53,7 @@ const allEvents = [
     status: "upcoming",
     attendees: 150,
     maxAttendees: 200,
+    featured: true,
     description: "Join us for an evening of celebration and fundraising...",
   },
   {
@@ -64,6 +65,7 @@ const allEvents = [
     status: "upcoming",
     attendees: 45,
     maxAttendees: 60,
+    featured: true,
     description: "Educational workshop on community health and wellness...",
   },
   {
@@ -75,6 +77,7 @@ const allEvents = [
     status: "completed",
     attendees: 25,
     maxAttendees: 30,
+    featured: false,
     description: "Training session for new volunteers...",
   },
   {
@@ -86,6 +89,7 @@ const allEvents = [
     status: "draft",
     attendees: 0,
     maxAttendees: 100,
+    featured: false,
     description: "Launch event for our new youth mentorship program...",
   },
   {
@@ -97,6 +101,7 @@ const allEvents = [
     status: "completed",
     attendees: 12,
     maxAttendees: 15,
+    featured: false,
     description: "Monthly board meeting to discuss foundation matters...",
   },
   {
@@ -183,6 +188,7 @@ const ITEMS_PER_PAGE = 5;
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [featuredFilter, setFeaturedFilter] = useState("all");
   const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -195,7 +201,11 @@ export default function EventsPage() {
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || event.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesFeatured =
+      featuredFilter === "all" ||
+      (featuredFilter === "featured" && event.featured) ||
+      (featuredFilter === "not-featured" && !event.featured);
+    return matchesSearch && matchesStatus && matchesFeatured;
   });
 
   // Pagination logic
@@ -325,6 +335,32 @@ export default function EventsPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                {featuredFilter === "all"
+                  ? "All Featured"
+                  : featuredFilter === "featured"
+                  ? "Featured"
+                  : "Not Featured"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setFeaturedFilter("all")}>
+                All Featured
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFeaturedFilter("featured")}>
+                Featured
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setFeaturedFilter("not-featured")}
+              >
+                Not Featured
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex items-center gap-2">
@@ -369,9 +405,7 @@ export default function EventsPage() {
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">Location</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden sm:table-cell">
-                  Attendees
-                </TableHead>
+                <TableHead className="hidden sm:table-cell">Featured</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -425,12 +459,18 @@ export default function EventsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <div className="flex items-center">
-                      <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>
-                        {event.attendees}/{event.maxAttendees}
+                    {event.featured ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-yellow-100 text-yellow-800 border-yellow-200"
+                      >
+                        ⭐ Featured
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        Not Featured
                       </span>
-                    </div>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
