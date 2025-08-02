@@ -1,21 +1,42 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Save, ArrowLeft, Upload, ChevronDown, Calendar, MapPin, Users, Clock } from "lucide-react"
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Save,
+  ArrowLeft,
+  Upload,
+  ChevronDown,
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+} from "lucide-react";
 
 export default function NewEventPage() {
-  const router = useRouter()
-  const editorRef = useRef<any>(null)
-  const [isEditorReady, setIsEditorReady] = useState(false)
+  const router = useRouter();
+  const editorRef = useRef<any>(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -31,21 +52,25 @@ export default function NewEventPage() {
     newTag: "",
     ticketPrice: "",
     registrationRequired: true,
-  })
-  const [isLoading, setIsLoading] = useState(false)
+    featured: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const initEditor = async () => {
-      if (typeof window !== "undefined" && !editorRef.current) {
+      // Only run on client side
+      if (typeof window === "undefined") return;
+
+      if (!editorRef.current) {
         // Load EditorJS and plugins
-        const EditorJS = (await import("@editorjs/editorjs")).default
-        const Header = (await import("@editorjs/header")).default
-        const List = (await import("@editorjs/list")).default
-        const Paragraph = (await import("@editorjs/paragraph")).default
-        const Image = (await import("@editorjs/image")).default
-        const Quote = (await import("@editorjs/quote")).default
-        const Delimiter = (await import("@editorjs/delimiter")).default
-        const Table = (await import("@editorjs/table")).default
+        const EditorJS = (await import("@editorjs/editorjs")).default;
+        const Header = (await import("@editorjs/header")).default;
+        const List = (await import("@editorjs/list")).default;
+        const Paragraph = (await import("@editorjs/paragraph")).default;
+        const Image = (await import("@editorjs/image")).default;
+        const Quote = (await import("@editorjs/quote")).default;
+        const Delimiter = (await import("@editorjs/delimiter")).default;
+        const Table = (await import("@editorjs/table")).default;
 
         editorRef.current = new EditorJS({
           holder: "event-editorjs",
@@ -78,9 +103,9 @@ export default function NewEventPage() {
                           file: {
                             url: "/placeholder.svg?height=300&width=600",
                           },
-                        })
-                      }, 1000)
-                    })
+                        });
+                      }, 1000);
+                    });
                   },
                 },
               },
@@ -105,93 +130,98 @@ export default function NewEventPage() {
               },
             ],
           },
-        })
+        });
 
-        setIsEditorReady(true)
+        setIsEditorReady(true);
       }
-    }
+    };
 
-    initEditor()
+    initEditor();
 
     return () => {
       if (editorRef.current && editorRef.current.destroy) {
-        editorRef.current.destroy()
-        editorRef.current = null
+        editorRef.current.destroy();
+        editorRef.current = null;
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleAddTag = () => {
-    if (formData.newTag.trim() && !formData.tags.includes(formData.newTag.trim())) {
+    if (
+      formData.newTag.trim() &&
+      !formData.tags.includes(formData.newTag.trim())
+    ) {
       setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, prev.newTag.trim()],
         newTag: "",
-      }))
+      }));
     }
-  }
+  };
 
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }))
-  }
+    }));
+  };
 
   const handleImageUpload = () => {
-    const input = document.createElement("input")
-    input.type = "file"
-    input.accept = "image/*"
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
     input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
+      const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         setFormData((prev) => ({
           ...prev,
           bannerImage: "/placeholder.svg?height=400&width=800",
-        }))
+        }));
       }
-    }
-    input.click()
-  }
+    };
+    input.click();
+  };
 
   const handleSave = async (status: string) => {
-    if (!editorRef.current) return
+    if (!editorRef.current) return;
 
     // Validation for publishing
     if (status === "upcoming") {
       if (!formData.title.trim()) {
-        alert("Event title is required for publishing")
-        return
+        alert("Event title is required for publishing");
+        return;
       }
       if (!formData.description.trim()) {
-        alert("Event description is required for publishing")
-        return
+        alert("Event description is required for publishing");
+        return;
       }
       if (formData.description.length < 50) {
-        alert("Event description must be at least 50 characters for publishing")
-        return
+        alert(
+          "Event description must be at least 50 characters for publishing"
+        );
+        return;
       }
       if (!formData.date) {
-        alert("Event date is required for publishing")
-        return
+        alert("Event date is required for publishing");
+        return;
       }
       if (!formData.time) {
-        alert("Event start time is required for publishing")
-        return
+        alert("Event start time is required for publishing");
+        return;
       }
       if (!formData.location.trim()) {
-        alert("Event location is required for publishing")
-        return
+        alert("Event location is required for publishing");
+        return;
       }
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const editorData = await editorRef.current.save()
+      const editorData = await editorRef.current.save();
 
       const event = {
         ...formData,
@@ -200,28 +230,35 @@ export default function NewEventPage() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         attendees: 0,
-      }
+      };
 
-      console.log("Saving event:", event)
+      console.log("Saving event:", event);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(`Event ${status === "upcoming" ? "published" : "saved as draft"} successfully!`)
-      router.push("/events")
+      alert(
+        `Event ${
+          status === "upcoming" ? "published" : "saved as draft"
+        } successfully!`
+      );
+      router.push("/events");
     } catch (error) {
-      console.error("Error saving event:", error)
-      alert("Error saving event. Please try again.")
+      console.error("Error saving event:", error);
+      alert("Error saving event. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         title="Create New Event"
-        breadcrumbs={[{ label: "Events", href: "/events" }, { label: "New Event" }]}
+        breadcrumbs={[
+          { label: "Events", href: "/events" },
+          { label: "New Event" },
+        ]}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -254,18 +291,28 @@ export default function NewEventPage() {
                   value={formData.description}
                   onChange={(e) => {
                     if (e.target.value.length <= 300) {
-                      handleInputChange("description", e.target.value)
+                      handleInputChange("description", e.target.value);
                     }
                   }}
                   rows={3}
                   maxLength={300}
-                  className={formData.description.length > 250 ? "border-amber-300" : ""}
+                  className={
+                    formData.description.length > 250 ? "border-amber-300" : ""
+                  }
                 />
                 <div className="flex justify-between text-xs mt-1">
                   <span className="text-muted-foreground">
-                    {formData.status !== "draft" ? "Required for publishing" : "Optional for drafts"}
+                    {formData.status !== "draft"
+                      ? "Required for publishing"
+                      : "Optional for drafts"}
                   </span>
-                  <span className={`${formData.description.length > 250 ? "text-amber-600" : "text-muted-foreground"}`}>
+                  <span
+                    className={`${
+                      formData.description.length > 250
+                        ? "text-amber-600"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     {300 - formData.description.length} characters remaining
                   </span>
                 </div>
@@ -299,7 +346,9 @@ export default function NewEventPage() {
                     id="endTime"
                     type="time"
                     value={formData.endTime}
-                    onChange={(e) => handleInputChange("endTime", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("endTime", e.target.value)
+                    }
                   />
                 </div>
                 <div>
@@ -309,7 +358,9 @@ export default function NewEventPage() {
                     type="number"
                     placeholder="e.g., 100"
                     value={formData.maxAttendees}
-                    onChange={(e) => handleInputChange("maxAttendees", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("maxAttendees", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -320,7 +371,9 @@ export default function NewEventPage() {
                   id="location"
                   placeholder="Event venue or address..."
                   value={formData.location}
-                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
                 />
               </div>
 
@@ -330,7 +383,9 @@ export default function NewEventPage() {
                   id="ticketPrice"
                   placeholder="e.g., $25 or Free"
                   value={formData.ticketPrice}
-                  onChange={(e) => handleInputChange("ticketPrice", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("ticketPrice", e.target.value)
+                  }
                 />
               </div>
             </CardContent>
@@ -340,7 +395,9 @@ export default function NewEventPage() {
           <Card>
             <CardHeader>
               <CardTitle>Event Banner</CardTitle>
-              <CardDescription>Upload a banner image for your event</CardDescription>
+              <CardDescription>
+                Upload a banner image for your event
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {formData.bannerImage ? (
@@ -350,7 +407,12 @@ export default function NewEventPage() {
                     alt="Banner preview"
                     className="w-full h-48 object-cover rounded-lg"
                   />
-                  <Button variant="secondary" size="sm" onClick={handleImageUpload} className="absolute top-2 right-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleImageUpload}
+                    className="absolute top-2 right-2"
+                  >
                     <Upload className="h-4 w-4 mr-2" />
                     Change
                   </Button>
@@ -361,7 +423,9 @@ export default function NewEventPage() {
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
                 >
                   <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-600">Click to upload event banner</p>
+                  <p className="text-sm text-gray-600">
+                    Click to upload event banner
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -371,10 +435,16 @@ export default function NewEventPage() {
           <Card>
             <CardHeader>
               <CardTitle>Event Details & Agenda</CardTitle>
-              <CardDescription>Provide detailed information about your event</CardDescription>
+              <CardDescription>
+                Provide detailed information about your event
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div id="event-editorjs" className="min-h-[400px] prose max-w-none" style={{ outline: "none" }} />
+              <div
+                id="event-editorjs"
+                className="min-h-[400px] prose max-w-none"
+                style={{ outline: "none" }}
+              />
               {!isEditorReady && (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-sm text-gray-500">Loading editor...</div>
@@ -419,7 +489,11 @@ export default function NewEventPage() {
                 {isLoading ? "Publishing..." : "Publish Event"}
               </Button>
 
-              <Button onClick={() => router.push("/events")} variant="ghost" className="w-full">
+              <Button
+                onClick={() => router.push("/events")}
+                variant="ghost"
+                className="w-full"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Events
               </Button>
@@ -468,13 +542,46 @@ export default function NewEventPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full">
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "draft")}>Draft</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "upcoming")}>Upcoming</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleInputChange("status", "cancelled")}>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "draft")}
+                  >
+                    Draft
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "upcoming")}
+                  >
+                    Upcoming
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleInputChange("status", "cancelled")}
+                  >
                     Cancelled
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </CardContent>
+          </Card>
+
+          {/* Featured */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Featured</CardTitle>
+              <CardDescription>
+                Featured events will be displayed on the main website landing
+                page
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="featured"
+                  checked={formData.featured}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("featured", checked as boolean)
+                  }
+                />
+                <Label htmlFor="featured">Mark as featured</Label>
+              </div>
             </CardContent>
           </Card>
 
@@ -497,7 +604,12 @@ export default function NewEventPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => handleRemoveTag(tag)}>
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer"
+                    onClick={() => handleRemoveTag(tag)}
+                  >
                     {tag} ×
                   </Badge>
                 ))}
@@ -507,5 +619,5 @@ export default function NewEventPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

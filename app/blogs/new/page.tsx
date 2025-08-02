@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,13 +39,18 @@ export default function NewBlogPostPage() {
     author: "Admin User",
     tags: [] as string[],
     newTag: "",
+    featured: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const initEditor = async () => {
-      if (typeof window !== "undefined" && !editorRef.current) {
+      // Only run on client side
+      if (typeof window === "undefined") return;
+
+      if (!editorRef.current) {
         // Load EditorJS and plugins
+        const EditorJS = (await import("@editorjs/editorjs")).default;
 
         const Header = (await import("@editorjs/header"))
           .default as unknown as ToolConstructable;
@@ -154,7 +160,7 @@ export default function NewBlogPostPage() {
     };
   }, []);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -474,6 +480,29 @@ export default function NewBlogPostPage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </CardContent>
+          </Card>
+
+          {/* Featured */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Featured</CardTitle>
+              <CardDescription>
+                Featured posts will be displayed on the main website landing
+                page
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="featured"
+                  checked={formData.featured}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("featured", checked as boolean)
+                  }
+                />
+                <Label htmlFor="featured">Mark as featured</Label>
+              </div>
             </CardContent>
           </Card>
 

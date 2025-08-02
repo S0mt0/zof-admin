@@ -7,27 +7,209 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  slug     String    @unique
-  title    String
-  body     String
+enum Role {
+  user
+  admin
+  rep
+  editor
+  cto
+}
 
-  authorId String    @db.ObjectId
-  comments Comment[]
+enum BlogStatus {
+  published
+  draft
+  scheduled
+}
+
+enum EventStatus {
+  upcoming
+  draft
+  completed
+  cancelled
+}
+
+enum DonationStatus {
+  completed
+  pending
+  failed
+  refunded
+}
+
+enum TeamMemberStatus {
+  active
+  inactive
+  suspended
+}
+
+enum MessageStatus {
+  unread
+  read
+  archived
+  replied
+}
+
+model Blog {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String     @unique
+  excerpt     String?
+  content     String     // Lexical editor content
+  bannerImage String?
+  status      BlogStatus @default(draft)
+  featured    Boolean    @default(false)
+  tags        String[]
+  views       Int        @default(0)
+  
+  // Relations
+  authorId    String     @db.ObjectId
+  author      User       @relation(fields: [authorId], references: [id])
+  comments    Comment[]
+  
+  // Timestamps
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  publishedAt DateTime?
+}
+
+model Event {
+  id                   String      @id @default(auto()) @map("_id") @db.ObjectId
+  title                String
+  description          String
+  content              String?     // Lexical editor content
+  date                 DateTime
+  startTime            String
+  endTime              String?
+  location             String
+  maxAttendees         Int?
+  currentAttendees     Int         @default(0)
+  bannerImage          String?
+  status               EventStatus @default(draft)
+  featured             Boolean     @default(false)
+  tags                 String[]
+  ticketPrice          Float?
+  registrationRequired Boolean     @default(true)
+  
+  // Relations
+  organizerId          String      @db.ObjectId
+  organizer            User        @relation(fields: [organizerId], references: [id])
+  
+  // Timestamps
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+model Donation {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  donor             String?
+  email             String?
+  phone             String?
+  amount            Float
+  method            String
+  campaign          String
+  notes             String?
+  recurring         Boolean        @default(false)
+  anonymous         Boolean        @default(false)
+  sendReceipt       Boolean        @default(true)
+  sendThankYou      Boolean        @default(true)
+  status            DonationStatus @default(completed)
+  
+  // Relations
+  donorId           String?        @db.ObjectId
+  donorUser         User?          @relation(fields: [donorId], references: [id])
+  
+  // Timestamps
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model TeamMember {
+  id           String            @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  role         String
+  email        String
+  phone        String?
+  bio          String?
+  status       TeamMemberStatus  @default(active)
+  avatar       String?
+  joinDate     DateTime
+  department   String?
+  location     String?
+  skills       String[]
+  
+  // Social links
+  linkedin     String?
+  twitter      String?
+  github       String?
+  
+  // Relations
+  userId       String?           @unique @db.ObjectId
+  user         User?             @relation(fields: [userId], references: [id])
+  
+  // Timestamps
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Message {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  sender    String
+  email     String
+  subject   String
+  content   String
+  status    MessageStatus @default(unread)
+  avatar    String?
+  
+  // Relations
+  senderId  String?       @db.ObjectId
+  senderUser User?        @relation(fields: [senderId], references: [id])
+  
+  // Timestamps
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model User {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
-  name    String?
-
+  password String
+  firstName String
+  lastName String
+  phone String?
+  location String?
+  bio String?
+  role Role @default(user)
+  joinDate DateTime @default(now())
+  lastLogin DateTime?
+  
+  // Notification preferences
+  emailNotifications Boolean @default(true)
+  pushNotifications Boolean @default(false)
+  weeklyReports Boolean @default(true)
+  eventReminders Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  blogs Blog[]
+  events Event[]
+  donations Donation[]
+  teamMember TeamMember?
+  messages Message[]
+  comments Comment[]
 }
 
 model Comment {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   comment String
-  post    Post   @relation(fields: [postId], references: [id])
-  postId  String @db.ObjectId
+  blog    Blog   @relation(fields: [blogId], references: [id])
+  blogId  String @db.ObjectId
+  author  User   @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
