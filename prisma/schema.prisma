@@ -50,8 +50,8 @@ enum MessageStatus {
 
 model Blog {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  slug        String     @unique
+  title       String     @unique
+  slug        String     
   excerpt     String?
   content     String     // Lexical editor content
   bannerImage String?
@@ -69,11 +69,13 @@ model Blog {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   publishedAt DateTime?
+
+  @@unique([title, slug])
 }
 
 model Event {
   id                   String      @id @default(auto()) @map("_id") @db.ObjectId
-  title                String
+  title                String      @unique
   description          String
   content              String?     // Lexical editor content
   date                 DateTime
@@ -148,6 +150,8 @@ model TeamMember {
   // Timestamps
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+
+  @@unique([name, role])
 }
 
 model Message {
@@ -199,6 +203,8 @@ model User {
   messages Message[]
   comments Comment[]
   activities UserActivity[]
+
+  @@unique([firstName, lastName, email])
 }
 
 model Comment {
