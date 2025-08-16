@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -10,8 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Zita Onyeka Foundation - Admin Dashboard",
-  description: "Admin dashboard for managing foundation content",
-  generator: "v0.dev",
+  description: "Admin dashboard for managing foundation's website content",
 };
 
 export default function RootLayout({
@@ -24,7 +24,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>{children}</SidebarInset>
+          <SidebarInset>
+            {children}
+            <Toaster />
+          </SidebarInset>
         </SidebarProvider>
       </body>
     </html>

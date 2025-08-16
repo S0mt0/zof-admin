@@ -5,6 +5,7 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
+  publicApiRoutes,
 } from "./lib/constants";
 
 const { auth } = NextAuth(authConfig);
@@ -13,10 +14,14 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isPublicApiRoute = publicApiRoutes.some((route) =>
+    nextUrl.pathname.startsWith(route)
+  );
 
   if (isApiAuthRoute) return null;
+  if (isPublicApiRoute) return null; // The main website (i.e. zitaonyekafoundation.org) will hit these endpoints for data.
 
   if (isAuthRoute) {
     if (isLoggedIn) {
@@ -34,9 +39,7 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };

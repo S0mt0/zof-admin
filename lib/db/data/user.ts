@@ -2,11 +2,11 @@ import { db } from "../config";
 
 export const getUserByEmail = async (email: string) => {
   try {
-    return await db.user.findUnique({
+    return (await db.user.findUnique({
       where: {
         email,
       },
-    });
+    })) as IUser;
   } catch (e) {
     return null;
   }
@@ -14,11 +14,11 @@ export const getUserByEmail = async (email: string) => {
 
 export const getUserById = async (id: string) => {
   try {
-    return await db.user.findUnique({
+    return (await db.user.findUnique({
       where: {
         id,
       },
-    });
+    })) as IUser;
   } catch (e) {
     return null;
   }

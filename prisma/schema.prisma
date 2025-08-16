@@ -8,7 +8,6 @@ generator client {
 }
 
 enum Role {
-  user
   admin
   rep
   editor
@@ -58,7 +57,7 @@ model User {
   location String?
   bio String?
   image String? @default("https://res.cloudinary.com/dc8r0pdlw/image/upload/v1755290946/user_c7pd0a.png")
-  role Role @default(user)
+  role Role @default(admin)
   joinDate DateTime @default(now())
   lastLogin DateTime?
   
@@ -80,7 +79,6 @@ model User {
   messages Message[]
   comments Comment[]
   activities UserActivity[]
-
   accounts      Account[]
 }
 
@@ -98,9 +96,11 @@ model Account {
   id_token          String? @db.String
   session_state     String?
 
+ // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+ // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
@@ -117,11 +117,14 @@ model Blog {
   featured    Boolean    @default(false)
   tags        String[]
   views       Int        @default(0)
+  createdBy    String     @db.ObjectId
   
   // Relations
   authorId    String     @db.ObjectId
   author      User       @relation(fields: [authorId], references: [id])
   comments    Comment[]
+
+
   
   // Timestamps
   createdAt   DateTime   @default(now())
@@ -148,10 +151,11 @@ model Event {
   tags                 String[]
   ticketPrice          Float?
   registrationRequired Boolean     @default(true)
+  createdBy    String     @db.ObjectId
   
   // Relations
-  organizerId          String      @db.ObjectId
-  organizer            User        @relation(fields: [organizerId], references: [id])
+  organizerId          String?      @db.ObjectId
+  organizer            User?        @relation(fields: [organizerId], references: [id])
   
   // Timestamps
   createdAt            DateTime    @default(now())
@@ -195,6 +199,7 @@ model TeamMember {
   department   String?
   location     String?
   skills       String[]
+  createdBy    String     @db.ObjectId
   
   // Social links
   linkedin     String?

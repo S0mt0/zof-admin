@@ -1,6 +1,14 @@
+export const publicApiRoutes = [
+  "/api/blogs",
+  "/api/events",
+  "/api/teams",
+  "/api/donations",
+];
+
 export const authRoutes = [
   "/auth/login",
   "/auth/signup",
+  "/auth/error",
   "/auth/forgot-password",
   "/auth/reset-password",
 ];

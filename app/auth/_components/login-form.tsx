@@ -25,6 +25,7 @@ import { LoginSchema } from "@/lib/schemas";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/lib/actions";
+import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +53,12 @@ export const LoginForm = () => {
       });
     });
   };
+
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Another account already exists with the same e-mail address"
+      : "";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -119,7 +126,7 @@ export const LoginForm = () => {
               </div>
             </div>
 
-            <FormError message={error} />
+            <FormError message={error || urlError} />
             <FormSuccess message={success} />
             <div className="flex items-center justify-between">
               <Link

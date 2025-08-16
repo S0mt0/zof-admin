@@ -4,7 +4,6 @@ import { AuthError } from "next-auth";
 
 import { LoginSchema } from "../schemas";
 
-import { toast } from "sonner";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "../constants";
 
@@ -22,7 +21,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
 
-    toast.success("Welcome back!");
+    return { success: "Welcome back!" };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -37,6 +36,4 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     throw error;
   }
-
-  return { success: "Welcome back!" };
 };

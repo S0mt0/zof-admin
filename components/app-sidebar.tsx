@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Heart,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import {
   Sidebar,
@@ -36,8 +37,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "@/auth";
-import { handleLogout } from "@/lib/actions/logout";
 
 const navigationItems = [
   {
@@ -206,7 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={handleLogout}
+                  onClick={async () => await signOut()}
                   className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
