@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { PropagateLoader } from "react-spinners";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,7 @@ import {
 import { LoginSchema } from "@/lib/schemas";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { login } from "@/lib/actions/auth";
+import { login } from "@/lib/actions";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -128,8 +129,16 @@ export const LoginForm = () => {
                 Forgot password?
               </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={isPending}>
-              Sign In
+            <Button
+              type="submit"
+              className="w-full flex items-center justify-center"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <PropagateLoader size={8} loading={isPending} />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </Form>

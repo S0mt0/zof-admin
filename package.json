@@ -7,7 +7,8 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "postInstall": "npx prisma generate"
+    "postInstall": "npx prisma generate",
+    "db:push": "npx prisma generate && npx prisma db push"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -52,6 +53,7 @@
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "latest",
     "autoprefixer": "^10.4.20",
+    "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -70,6 +72,7 @@
     "react-hook-form": "^7.54.1",
     "react-icons": "^5.5.0",
     "react-resizable-panels": "^2.1.7",
+    "react-spinners": "^0.17.0",
     "resend": "^4.6.0",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
@@ -84,6 +87,5 @@
     "prisma": "^6.10.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
-  },
-  "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
+  }
 }

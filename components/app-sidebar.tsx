@@ -36,6 +36,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { signOut } from "@/auth";
+import { handleLogout } from "@/lib/actions/logout";
 
 const navigationItems = [
   {
@@ -93,16 +95,6 @@ const settingsItems = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
-
-  const handleLogout = () => {
-    if (confirm("Are you sure you want to log out?")) {
-      console.log("Logging out user...");
-      // Clear any stored authentication tokens
-      localStorage.removeItem("authToken");
-      sessionStorage.clear();
-      router.push("/auth/login");
-    }
-  };
 
   return (
     <Sidebar variant="inset" {...props}>

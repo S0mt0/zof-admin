@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SignUpSchema } from "@/lib/schemas";
-import { signup } from "@/lib/actions/auth";
+import { signup } from "@/lib/actions";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 
@@ -181,7 +181,11 @@ export function SignupForm() {
             <FormError message={error} />
             <FormSuccess message={success} />
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full disabled:cursor-not-allowed"
+              disabled={isPending}
+            >
               Create Account
             </Button>
           </form>

@@ -1,16 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Switch } from "@/components/ui/switch"
+import { useState } from "react";
+import { DashboardHeader } from "@/components/dashboard-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import {
   Save,
   User,
@@ -25,11 +31,12 @@ import {
   Camera,
   Edit3,
   LogOut,
-} from "lucide-react"
+} from "lucide-react";
+import { signOut } from "@/auth";
 
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [profileData, setProfileData] = useState({
     firstName: "Admin",
     lastName: "User",
@@ -40,40 +47,32 @@ export default function ProfilePage() {
     role: "Administrator",
     joinDate: "January 15, 2020",
     lastLogin: "2 hours ago",
-  })
+  });
 
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
     pushNotifications: false,
     weeklyReports: true,
     eventReminders: true,
-  })
+  });
 
   const handleSave = () => {
-    setIsEditing(false)
+    setIsEditing(false);
     // Handle save logic here
-    console.log("Profile saved:", profileData)
-  }
+    console.log("Profile saved:", profileData);
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }))
-  }
+    setProfileData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleNotificationChange = (field: string, value: boolean) => {
-    setNotifications((prev) => ({ ...prev, [field]: value }))
-  }
+    setNotifications((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const handleLogout = () => {
-    if (confirm("Are you sure you want to log out?")) {
-      console.log("Logging out user...")
-      // Clear any stored authentication tokens
-      localStorage.removeItem("authToken")
-      sessionStorage.clear()
-
-      // Redirect to login page
-      window.location.href = "/auth/login"
-    }
-  }
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   const stats = [
     {
@@ -97,7 +96,7 @@ export default function ProfilePage() {
       icon: User,
       gradient: "from-purple-400 to-purple-600",
     },
-  ]
+  ];
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -109,13 +108,20 @@ export default function ProfilePage() {
           <CardHeader className="text-center">
             <div className="relative mx-auto">
               <Avatar className="h-24 w-24 mx-auto">
-                <AvatarImage src="/placeholder.svg?height=96&width=96" alt="Admin User" />
+                <AvatarImage
+                  src="/placeholder.svg?height=96&width=96"
+                  alt="Admin User"
+                />
                 <AvatarFallback className="text-lg">
                   {profileData.firstName[0]}
                   {profileData.lastName[0]}
                 </AvatarFallback>
               </Avatar>
-              <Button size="sm" variant="outline" className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0">
+              <Button
+                size="sm"
+                variant="outline"
+                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+              >
                 <Camera className="h-4 w-4" />
               </Button>
             </div>
@@ -170,9 +176,14 @@ export default function ProfilePage() {
           {/* Activity Stats */}
           <div className="grid gap-4 md:grid-cols-3">
             {stats.map((stat) => (
-              <Card key={stat.title} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Card
+                key={stat.title}
+                className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    {stat.title}
+                  </CardTitle>
                   <div
                     className={`h-8 w-8 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}
                   >
@@ -181,7 +192,9 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.description}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {stat.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -192,7 +205,9 @@ export default function ProfilePage() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Update your personal information and bio.</CardDescription>
+                <CardDescription>
+                  Update your personal information and bio.
+                </CardDescription>
               </div>
               <Button
                 variant={isEditing ? "default" : "outline"}
@@ -218,7 +233,9 @@ export default function ProfilePage() {
                   <Input
                     id="firstName"
                     value={profileData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("firstName", e.target.value)
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -227,7 +244,9 @@ export default function ProfilePage() {
                   <Input
                     id="lastName"
                     value={profileData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("lastName", e.target.value)
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -258,7 +277,9 @@ export default function ProfilePage() {
                 <Input
                   id="location"
                   value={profileData.location}
-                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
                   disabled={!isEditing}
                 />
               </div>
@@ -279,7 +300,9 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your account security and password.</CardDescription>
+              <CardDescription>
+                Manage your account security and password.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -297,18 +320,30 @@ export default function ProfilePage() {
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="newPassword">New Password</Label>
-                  <Input id="newPassword" type="password" placeholder="Enter new password" />
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    placeholder="Enter new password"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" placeholder="Confirm new password" />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm new password"
+                  />
                 </div>
               </div>
               <Button variant="outline">Update Password</Button>
@@ -319,7 +354,9 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Choose how you want to be notified about updates.</CardDescription>
+              <CardDescription>
+                Choose how you want to be notified about updates.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -328,44 +365,60 @@ export default function ProfilePage() {
                     <Bell className="h-4 w-4 text-muted-foreground" />
                     <Label>Email Notifications</Label>
                   </div>
-                  <p className="text-sm text-muted-foreground">Receive email notifications for important updates</p>
+                  <p className="text-sm text-muted-foreground">
+                    Receive email notifications for important updates
+                  </p>
                 </div>
                 <Switch
                   checked={notifications.emailNotifications}
-                  onCheckedChange={(checked) => handleNotificationChange("emailNotifications", checked)}
+                  onCheckedChange={(checked) =>
+                    handleNotificationChange("emailNotifications", checked)
+                  }
                 />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Push Notifications</Label>
-                  <p className="text-sm text-muted-foreground">Get push notifications on your device</p>
+                  <p className="text-sm text-muted-foreground">
+                    Get push notifications on your device
+                  </p>
                 </div>
                 <Switch
                   checked={notifications.pushNotifications}
-                  onCheckedChange={(checked) => handleNotificationChange("pushNotifications", checked)}
+                  onCheckedChange={(checked) =>
+                    handleNotificationChange("pushNotifications", checked)
+                  }
                 />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Weekly Reports</Label>
-                  <p className="text-sm text-muted-foreground">Receive weekly analytics reports</p>
+                  <p className="text-sm text-muted-foreground">
+                    Receive weekly analytics reports
+                  </p>
                 </div>
                 <Switch
                   checked={notifications.weeklyReports}
-                  onCheckedChange={(checked) => handleNotificationChange("weeklyReports", checked)}
+                  onCheckedChange={(checked) =>
+                    handleNotificationChange("weeklyReports", checked)
+                  }
                 />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Event Reminders</Label>
-                  <p className="text-sm text-muted-foreground">Get reminders about upcoming events</p>
+                  <p className="text-sm text-muted-foreground">
+                    Get reminders about upcoming events
+                  </p>
                 </div>
                 <Switch
                   checked={notifications.eventReminders}
-                  onCheckedChange={(checked) => handleNotificationChange("eventReminders", checked)}
+                  onCheckedChange={(checked) =>
+                    handleNotificationChange("eventReminders", checked)
+                  }
                 />
               </div>
             </CardContent>
@@ -373,5 +426,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

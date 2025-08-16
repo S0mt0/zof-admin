@@ -48,6 +48,64 @@ enum MessageStatus {
   replied
 }
 
+model User {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String   @unique
+  emailVerified DateTime?
+  password String?
+  name String
+  phone String?
+  location String?
+  bio String?
+  image String? @default("https://res.cloudinary.com/dc8r0pdlw/image/upload/v1755290946/user_c7pd0a.png")
+  role Role @default(user)
+  joinDate DateTime @default(now())
+  lastLogin DateTime?
+  
+  // Notification preferences
+  emailNotifications Boolean @default(true)
+  pushNotifications Boolean @default(false)
+  weeklyReports Boolean @default(true)
+  eventReminders Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  blogs Blog[]
+  events Event[]
+  donations Donation[]
+  teamMember TeamMember?
+  messages Message[]
+  comments Comment[]
+  activities UserActivity[]
+
+  accounts      Account[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
 model Blog {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   title       String     @unique
@@ -172,40 +230,7 @@ model Message {
   updatedAt DateTime      @updatedAt
 }
 
-model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  password String
-  firstName String
-  lastName String
-  phone String?
-  location String?
-  bio String?
-  role Role @default(user)
-  joinDate DateTime @default(now())
-  lastLogin DateTime?
-  
-  // Notification preferences
-  emailNotifications Boolean @default(true)
-  pushNotifications Boolean @default(false)
-  weeklyReports Boolean @default(true)
-  eventReminders Boolean @default(true)
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Relations
-  blogs Blog[]
-  events Event[]
-  donations Donation[]
-  teamMember TeamMember?
-  messages Message[]
-  comments Comment[]
-  activities UserActivity[]
 
-  @@unique([firstName, lastName, email])
-}
 
 model Comment {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
