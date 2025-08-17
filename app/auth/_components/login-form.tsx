@@ -49,7 +49,6 @@ export const LoginForm = () => {
       login(values).then((data) => {
         setSuccess(data?.success);
         setError(data?.error);
-        form.reset();
       });
     });
   };

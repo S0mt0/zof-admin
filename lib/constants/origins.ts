@@ -1,7 +1,7 @@
 export const DASHBOARD_BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : "https://www.zof-admin.vercel.app";
+    : "https://zof-admin.vercel.app";
 
 export const MAIN_WEBSITE_BASE_URL =
   process.env.NODE_ENV === "development"
