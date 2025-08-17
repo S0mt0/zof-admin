@@ -25,13 +25,25 @@ export const {
     },
   },
   callbacks: {
-    signIn({ user }) {
+    signIn({ user, account }) {
+      console.log({ user });
+      // Not everyone is supposed to signup on this dashboard, so check whitelist for allowed emails
       const allowedAccountEmailsString = process.env.ALLOWED_ACCOUNT_EMAILS;
       const allowedAccountEmailsArray =
         allowedAccountEmailsString?.split(",") || [];
 
-      if (!user || !allowedAccountEmailsArray.includes(user.email!))
-        return false;
+      // Allow OAuth without email verification
+      if (
+        account?.provider !== "credentials" &&
+        allowedAccountEmailsArray.includes(user.email!)
+      )
+        return true;
+
+      if (!allowedAccountEmailsArray.includes(user.email!))
+        throw new Error("Email not allowed");
+
+      // Prevent signin without verification
+      if (!user?.emailVerified) return false;
 
       return true;
     },

@@ -3,9 +3,11 @@ import * as z from "zod";
 import { AuthError } from "next-auth";
 
 import { LoginSchema } from "../schemas";
-
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "../constants";
+import { getUserByEmail } from "../db/data";
+import { generateVerificationToken } from "../utils";
+import { MailService } from "../utils/mail.service";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedField = LoginSchema.safeParse(values);
@@ -13,6 +15,20 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   if (!validatedField.success) return { error: "Invalid fields, try again." };
 
   const { password, email } = validatedField.data;
+
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser || !existingUser.email || !existingUser.password)
+    return { error: "Email does not exist!" };
+
+  if (!existingUser.emailVerified) {
+    const token = (await generateVerificationToken(email)).token;
+    const mailer = new MailService();
+
+    await mailer.sendVerificationEmail(email, token);
+
+    return { success: "Confirmation email sent!" };
+  }
 
   try {
     await signIn("credentials", {
@@ -29,7 +45,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
           return { error: "Invalid credentials!" };
 
         default:
-          console.error("[LOGIN ERROR]: ", error);
           return { error: "Something went wrong, please try again." };
       }
     }

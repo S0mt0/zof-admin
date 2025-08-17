@@ -2,7 +2,6 @@
 
 import type * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Calendar,
   FileText,
@@ -14,7 +13,7 @@ import {
   MessageSquare,
   Heart,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 import {
   Sidebar,
@@ -37,6 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { capitalize, getInitials } from "@/lib/utils";
 
 const navigationItems = [
   {
@@ -93,16 +93,12 @@ const settingsItems = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const router = useRouter();
+  const { data } = useSession();
 
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
-          {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-sm font-bold">ZOF</span>
-          </div> */}
-
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-bold">Zita Onyeka Foundation</span>
             <span className="truncate text-xs text-muted-foreground">
@@ -161,61 +157,67 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
+      {data?.user && (
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
+                  >
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src={data?.user.image || "/placeholder-user.jpg"}
+                        alt="Admin"
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {getInitials(data?.user.name!)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {capitalize(data?.user?.name!)}
+                      </span>
+                      <span className="truncate text-xs">
+                        {data?.user.email}
+                      </span>
+                    </div>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
-                      alt="Admin"
-                    />
-                    <AvatarFallback className="rounded-lg">AD</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Admin User</span>
-                    <span className="truncate text-xs">
-                      admin@zitaonyeka.org
-                    </span>
-                  </div>
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuItem className="cursor-pointer">
-                  <Link href="/profile" className="flex items-center gap-4">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Link href="/settings" className="flex items-center gap-4">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={async () => await signOut()}
-                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Link href="/profile" className="flex items-center gap-4">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Link href="/settings" className="flex items-center gap-4">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={async () => await signOut()}
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
       <SidebarRail />
     </Sidebar>
   );

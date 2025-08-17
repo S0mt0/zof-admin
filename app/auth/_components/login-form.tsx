@@ -50,6 +50,7 @@ export const LoginForm = () => {
       login(values).then((data) => {
         setSuccess(data?.success);
         setError(data?.error);
+        form.reset();
       });
     });
   };
@@ -57,7 +58,7 @@ export const LoginForm = () => {
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Another account already exists with the same e-mail address"
+      ? "Another account already exists with the same e-mail address."
       : "";
 
   return (

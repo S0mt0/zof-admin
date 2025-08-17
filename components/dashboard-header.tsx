@@ -1,15 +1,15 @@
 import React from "react";
+import Link from "next/link";
+
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
-  Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
+  Breadcrumb,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import Link from "next/link";
 
 interface DashboardHeaderProps {
   title: string;
@@ -31,16 +31,12 @@ export function DashboardHeader({
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
             <Link href="/">{title}</Link>
-            {/* <BreadcrumbLink href="/">Dashboard</BreadcrumbLink> */}
           </BreadcrumbItem>
           {breadcrumbs?.map((crumb, index) => (
             <React.Fragment key={index}>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
                 {crumb.href ? (
-                  // <BreadcrumbLink href={crumb.href}>
-                  //   {crumb.label}
-                  // </BreadcrumbLink>
                   <Link href={crumb.href}>{crumb.label}</Link>
                 ) : (
                   <BreadcrumbPage>{crumb.label}</BreadcrumbPage>

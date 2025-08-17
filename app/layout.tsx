@@ -2,6 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
 
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -22,13 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            {children}
-            <Toaster />
-          </SidebarInset>
-        </SidebarProvider>
+        <SessionProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              {children}
+              <Toaster />
+            </SidebarInset>
+          </SidebarProvider>
+        </SessionProvider>
       </body>
     </html>
   );

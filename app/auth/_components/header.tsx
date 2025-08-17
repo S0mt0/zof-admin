@@ -4,7 +4,7 @@ import React from "react";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface HeaderProps {
-  label: string;
+  label?: string;
   description?: string;
 }
 
@@ -19,7 +19,9 @@ export const Header = ({ label, description }: HeaderProps) => {
         className="w-14 h-auto mx-auto"
         priority
       />
-      <CardTitle className="text-2xl font-bold">{label}</CardTitle>
+      <CardTitle className="text-2xl font-bold text-gray-700">
+        {label}
+      </CardTitle>
       {description && <CardDescription>{description}</CardDescription>}
     </CardHeader>
   );

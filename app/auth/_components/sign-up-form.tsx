@@ -47,6 +47,7 @@ export function SignupForm() {
       signup(values).then((data) => {
         setSuccess(data?.success);
         setError(data?.error);
+        form.reset();
       });
     });
   };

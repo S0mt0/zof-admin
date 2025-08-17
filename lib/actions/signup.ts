@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import { SignUpSchema } from "../schemas";
 import { db } from "../db";
 import { getUserByEmail } from "../db/data";
+import { generateVerificationToken } from "../utils";
+import { MailService } from "../utils/mail.service";
 
 export const signup = async (values: z.infer<typeof SignUpSchema>) => {
   const validatedField = SignUpSchema.safeParse(values);
@@ -26,7 +28,10 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
     },
   });
 
-  // Todo: Send verification email
+  const token = (await generateVerificationToken(email)).token;
+  const mailer = new MailService();
 
-  return { success: "Verification email sent" };
+  await mailer.sendVerificationEmail(email, token);
+
+  return { success: "Confirmation email sent!" };
 };

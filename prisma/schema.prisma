@@ -151,7 +151,7 @@ model Event {
   tags                 String[]
   ticketPrice          Float?
   registrationRequired Boolean     @default(true)
-  createdBy    String     @db.ObjectId
+  createdBy            String     @db.ObjectId
   
   // Relations
   organizerId          String?      @db.ObjectId
@@ -199,7 +199,7 @@ model TeamMember {
   department   String?
   location     String?
   skills       String[]
-  createdBy    String     @db.ObjectId
+  addedBy      String     @db.ObjectId
   
   // Social links
   linkedin     String?
@@ -259,3 +259,11 @@ model UserActivity {
   user    User?    @relation(fields: [userId], references: [id])
 }
 
+model VerificationToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
