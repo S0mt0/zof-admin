@@ -18,8 +18,13 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   const existingUser = await getUserByEmail(email);
 
-  if (!existingUser || !existingUser.email || !existingUser.password)
-    return { error: "Email does not exist!" };
+  if (!existingUser?.email) return { error: "Email does not exist!" };
+
+  if (existingUser && !existingUser.password)
+    return {
+      error:
+        "This email is already associated with a different account. Please sign in with the original method you used to create your account.",
+    };
 
   if (!existingUser.emailVerified) {
     const token = (await generateVerificationToken(email)).token;

@@ -42,4 +42,19 @@ export class MailService {
       console.error("[error_sending_account_verification_email]: ", error);
     }
   }
+
+  async sendResetPasswordEmail(email: string, token: string) {
+    try {
+      const resetLink = `${DASHBOARD_BASE_URL}/auth/reset-password?token=${token}`;
+
+      await this.send({
+        subject: "Reset your password",
+        to: email,
+        text: `Click the link to reset your password ${resetLink}`,
+        html: `<p>Click <a href="${resetLink}">here</a> to reset your password. Link is valid for only 15 minutes.</p>`,
+      });
+    } catch (error) {
+      console.error("[error_sending_password_reset_email]: ", error);
+    }
+  }
 }

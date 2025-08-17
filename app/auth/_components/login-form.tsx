@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { PropagateLoader } from "react-spinners";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +57,7 @@ export const LoginForm = () => {
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Another account already exists with the same e-mail address."
+      ? "This email is already associated with a different account. Please sign in with the original method you used to create your account."
       : "";
 
   return (
@@ -142,11 +141,7 @@ export const LoginForm = () => {
               className="w-full flex items-center justify-center"
               disabled={isPending}
             >
-              {isPending ? (
-                <PropagateLoader size={8} loading={isPending} />
-              ) : (
-                "Sign In"
-              )}
+              {isPending ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </Form>

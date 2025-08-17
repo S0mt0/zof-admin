@@ -25,25 +25,26 @@ export const {
     },
   },
   callbacks: {
-    signIn({ user, account }) {
-      console.log({ user });
+    async signIn({ user, account }) {
       // Not everyone is supposed to signup on this dashboard, so check whitelist for allowed emails
       const allowedAccountEmailsString = process.env.ALLOWED_ACCOUNT_EMAILS;
       const allowedAccountEmailsArray =
         allowedAccountEmailsString?.split(",") || [];
 
-      // Allow OAuth without email verification
-      if (
-        account?.provider !== "credentials" &&
-        allowedAccountEmailsArray.includes(user.email!)
-      )
+      // Check if email is allowed
+      if (!allowedAccountEmailsArray.includes(user.email!)) {
+        throw new Error("EmailNotAllowed");
+      }
+
+      // For OAuth providers (I'm using only Google in the app), allow sign in
+      if (account?.provider !== "credentials") {
         return true;
+      }
 
-      if (!allowedAccountEmailsArray.includes(user.email!))
-        throw new Error("Email not allowed");
-
-      // Prevent signin without verification
-      if (!user?.emailVerified) return false;
+      // For credentials provider, check email verification
+      if (!user?.emailVerified) {
+        return false;
+      }
 
       return true;
     },

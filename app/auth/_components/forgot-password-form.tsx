@@ -1,70 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Mail } from "lucide-react";
+import { useState, useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { CardWrapper } from "./card-wrapper";
+import { ForgotPasswordSchema } from "@/lib/schemas";
+import { forgotPassword } from "@/lib/actions";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 
 export function ForgotPasswordForm() {
-  const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle forgot password logic here
-    console.log("Password reset request for:", email);
-    setIsSubmitted(true);
+  const [error, setError] = useState<string>();
+  const [success, setSuccess] = useState<string>();
+
+  const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
+    resolver: zodResolver(ForgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof ForgotPasswordSchema>) => {
+    setError("");
+    setSuccess("");
+
+    startTransition(() => {
+      forgotPassword(values).then((data) => {
+        setSuccess(data?.success);
+        setError(data?.error);
+        form.reset();
+      });
+    });
   };
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600">
-                <Mail className="h-6 w-6" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold">
-              Check your email
-            </CardTitle>
-            <CardDescription>
-              We've sent a password reset link to {email}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Didn't receive the email? Check your spam folder or{" "}
-              <button
-                onClick={() => setIsSubmitted(false)}
-                className="text-primary hover:underline"
-              >
-                try again
-              </button>
-            </p>
-            <Link href="/auth/login">
-              <Button variant="outline" className="w-full">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to login
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -75,22 +57,35 @@ export function ForgotPasswordForm() {
         description=" Enter your email address and we'll send you a link to reset your
             password"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="admin@zitaonyeka.org"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            Send Reset Link
-          </Button>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="admin@zitaonyeka.org"
+                        disabled={isPending}
+                      />
+                    </FormControl>{" "}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormError message={error} />
+            <FormSuccess message={success} />
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Sending link..." : "Send Reset Link"}
+            </Button>
+          </form>
+        </Form>
       </CardWrapper>
     </div>
   );

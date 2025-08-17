@@ -33,6 +33,30 @@ export async function generateVerificationToken(email: string) {
   return verificationToken;
 }
 
+export async function generateResetPasswordToken(email: string) {
+  const token = uuidv4();
+  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+  const existingToken = await getVerificationTokenByEmail(email);
+
+  if (existingToken) {
+    await db.resetPasswordToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
+
+  const resetToken = await db.resetPasswordToken.create({
+    data: {
+      email,
+      token,
+      expires,
+    },
+  });
+
+  return resetToken;
+}
+
 export function getInitials(name: string = "Admin") {
   const initials = name
     .split(" ")
@@ -47,4 +71,18 @@ export function capitalize(name: string = "Admin User") {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
   return capitalized;
+}
+
+export function obscureEmail(email: string): string {
+  const [localPart, domain] = email.split("@");
+
+  if (!domain || localPart.length <= 3) {
+    return email;
+  }
+
+  const firstTwo = localPart.slice(0, 2);
+  const lastChar = localPart.slice(-1);
+  const obscuredMiddle = "*".repeat(Math.max(0, localPart.length - 3));
+
+  return `${firstTwo}${obscuredMiddle}${lastChar}@${domain}`;
 }

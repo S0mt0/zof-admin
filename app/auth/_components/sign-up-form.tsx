@@ -187,7 +187,7 @@ export function SignupForm() {
               className="w-full disabled:cursor-not-allowed"
               disabled={isPending}
             >
-              Create Account
+              {isPending ? "Creating account..." : "Create Account"}
             </Button>
           </form>
         </Form>
