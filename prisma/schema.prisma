@@ -63,8 +63,7 @@ model User {
   
   // Notification preferences
   emailNotifications Boolean @default(true)
-  pushNotifications Boolean @default(false)
-  weeklyReports Boolean @default(true)
+  weeklyReports Boolean @default(false)
   eventReminders Boolean @default(true)
   
   // Timestamps

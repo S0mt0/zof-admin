@@ -34,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { capitalize, getInitials } from "@/lib/utils";
+import { capitalize } from "@/lib/utils";
 import { useCurrentUser } from "@/lib/hooks";
 import { LogoutButton } from "./logout-button";
 
