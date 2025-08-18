@@ -1,6 +1,6 @@
 "use server";
 import { signOut } from "@/auth";
 
-export const handleLogout = async () => {
+export const logout = async () => {
   await signOut();
 };

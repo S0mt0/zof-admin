@@ -1,9 +1,17 @@
 import React from "react";
+import Link from "next/link";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Header } from "./header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Socials } from "./socials";
-import { BackButton } from "./back-button";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface CardWrapperProps {
   children: React.ReactNode;
@@ -24,7 +32,20 @@ export const CardWrapper = ({
 }: CardWrapperProps) => {
   return (
     <Card className="w-full max-w-md">
-      <Header label={headerLabel} description={description} />
+      <CardHeader className="space-y-1 text-center">
+        <Image
+          height={200}
+          width={200}
+          src={"/zof-logo.png"}
+          alt="@zof-logo"
+          className="w-14 h-auto mx-auto"
+          priority
+        />
+        <CardTitle className="text-2xl font-bold text-gray-700">
+          {headerLabel}
+        </CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
+      </CardHeader>
 
       <CardContent>{children}</CardContent>
 
@@ -35,7 +56,9 @@ export const CardWrapper = ({
       )}
 
       <CardFooter>
-        <BackButton label={backButtonLabel} href={backButtonHref} />
+        <Button variant="link" size="sm" asChild className="font-normal w-full">
+          <Link href={backButtonHref}>{backButtonLabel}</Link>
+        </Button>
       </CardFooter>
     </Card>
   );

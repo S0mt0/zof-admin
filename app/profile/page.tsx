@@ -33,6 +33,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { signOut } from "@/auth";
+import { LogoutButton } from "@/components/logout-button";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -159,14 +160,10 @@ export default function ProfilePage() {
               <Badge variant="outline" className="w-full justify-center">
                 Last login: {profileData.lastLogin}
               </Badge>
-              <Button
-                variant="outline"
-                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
-                onClick={handleLogout}
-              >
+              <LogoutButton className="w-full text-red-600 border border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors py-2 cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" />
                 Log Out
-              </Button>
+              </LogoutButton>
             </div>
           </CardContent>
         </Card>

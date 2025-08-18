@@ -1,4 +1,4 @@
-type Role = "admin" | "rep" | "editor" | "cto";
+type Role = "admin" | "rep" | "editor" | "user";
 
 interface IUser {
   id: string;

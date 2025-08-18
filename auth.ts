@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
+import { allowedAdminEmailsList } from "./lib/constants";
 
 export const {
   handlers: { GET, POST },
@@ -20,22 +21,13 @@ export const {
         where: { id: user.id },
         data: {
           emailVerified: new Date(),
+          role: allowedAdminEmailsList.includes(user.email!) ? "admin" : "user",
         },
       });
     },
   },
   callbacks: {
     async signIn({ user, account }) {
-      // Not everyone is supposed to signup on this dashboard, so check whitelist for allowed emails
-      const allowedAccountEmailsString = process.env.ALLOWED_ACCOUNT_EMAILS;
-      const allowedAccountEmailsArray =
-        allowedAccountEmailsString?.split(",") || [];
-
-      // Check if email is allowed
-      if (!allowedAccountEmailsArray.includes(user.email!)) {
-        throw new Error("EmailNotAllowed");
-      }
-
       // For OAuth providers (I'm using only Google in the app), allow sign in
       if (account?.provider !== "credentials") {
         return true;

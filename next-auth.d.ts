@@ -1,8 +1,15 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth, {
+  type DefaultSession,
+  type User as DefaultUser,
+} from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
-  interface User extends Partial<IUser> {}
+  interface User extends DefaultUser {
+    id?: string;
+    role?: Role;
+    emailVerified?: Date | null;
+  }
 
   /**
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context

@@ -7,6 +7,7 @@ import { db } from "../db";
 import { getUserByEmail } from "../db/data";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
+import { allowedAdminEmailsList } from "../constants";
 
 export const signup = async (values: z.infer<typeof SignUpSchema>) => {
   const validatedField = SignUpSchema.safeParse(values);
@@ -25,6 +26,7 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
       name,
       email,
       password: hashedPassword,
+      role: allowedAdminEmailsList.includes(email) ? "admin" : "user",
     },
   });
 

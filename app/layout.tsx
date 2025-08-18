@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,15 +16,16 @@ export const metadata: Metadata = {
   description: "Admin dashboard for managing foundation's website content",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>

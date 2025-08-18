@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { getVerificationTokenByEmail } from "../db/data";
 import { db } from "../db";
+import { auth } from "@/auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -65,7 +66,7 @@ export function getInitials(name: string = "Admin") {
   return initials;
 }
 
-export function capitalize(name: string = "Admin User") {
+export function capitalize(name: string = "") {
   const capitalized = name
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -86,3 +87,6 @@ export function obscureEmail(email: string): string {
 
   return `${firstTwo}${obscuredMiddle}${lastChar}@${domain}`;
 }
+
+export const currentUser = async () => (await auth())?.user;
+export const currentUserRole = async () => (await auth())?.user.role;

@@ -52,8 +52,6 @@ export function ResetPasswordForm() {
       return;
     }
 
-    console.log({ token });
-
     startTransition(() => {
       resetPassword(values, token)
         .then((data) => {
