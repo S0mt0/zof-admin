@@ -56,7 +56,7 @@ model User {
   phone String?
   location String?
   bio String?
-  image String? @default("https://res.cloudinary.com/dc8r0pdlw/image/upload/v1755290946/user_c7pd0a.png")
+  image String @default("https://res.cloudinary.com/dc8r0pdlw/image/upload/v1755290946/user_c7pd0a.png")
   role Role @default(user)
   joinDate DateTime @default(now())
   lastLogin DateTime?

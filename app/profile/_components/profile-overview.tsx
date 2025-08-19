@@ -48,23 +48,21 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
           )}
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>
-              Joined {format(profile?.joinDate || new Date(), "MMMM d, yyyy")}
-            </span>
+            <span>Joined {format(profile?.joinDate, "MMMM d, yyyy")}</span>
           </div>
         </div>
         <Separator />
-        <div className="space-y-2">
+        <div className="gap-y-2 flex flex-col">
           {profile?.lastLogin && (
             <Badge variant="outline" className="w-full justify-center">
               Last login:{" "}
-              {formatDistanceToNow(profile?.lastLogin || new Date(), {
+              {formatDistanceToNow(profile?.lastLogin, {
                 addSuffix: true,
               })}
             </Badge>
           )}
 
-          <LogoutButton>
+          <LogoutButton userId={profile?.id}>
             <Button
               variant="outline"
               className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"

@@ -10,6 +10,9 @@ import {
   NotificationPreferencesSchema,
 } from "../schemas";
 import { getUserByEmail, getUserById, updateUser } from "../db/data";
+import { update } from "@/auth";
+import { generateVerificationToken } from "../utils";
+import { MailService } from "../utils/mail.service";
 
 export const updateProfile = async (
   values: z.infer<typeof ProfileSchema>,
@@ -36,6 +39,7 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
 
   try {
     await updateUser(userId, { image: imageUrl });
+
     revalidatePath("/profile");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
@@ -65,11 +69,22 @@ export const updateEmail = async (
       return { error: "Email is already set to this value!" };
     }
 
-    await updateUser(userId, { email: email.trim(), emailVerified: null }); // Reset email verification since email changed
+    const user = await updateUser(userId, {
+      email: email.trim(),
+      emailVerified: null,
+    }); // Reset email verification since email changed
+
+    const token = (await generateVerificationToken(email)).token;
+    const mailer = new MailService();
+
+    await mailer.sendVerificationEmail(email, token);
+
+    await update({ user: { email: user?.email } });
 
     revalidatePath("/profile");
     return {
-      success: "Email updated successfully! Please verify your new email.",
+      success:
+        "Email updated successfully! A confirmation mail has been sent to your new email.",
     };
   } catch (error) {
     return { error: "Something went wrong!" };

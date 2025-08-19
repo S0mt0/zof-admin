@@ -4,6 +4,7 @@ import { useRef, useTransition, type ChangeEvent } from "react";
 import { Camera } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import { handleFileUpload } from "@/lib/utils";
@@ -21,6 +22,7 @@ export const ProfileImage = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { update } = useSession();
 
   const onClick = () => {
     inputRef.current?.click();
@@ -66,7 +68,10 @@ export const ProfileImage = ({
             return;
           }
 
-          toast.success(res?.success || "Uploaded successfully");
+          if (res?.success) {
+            update();
+            toast.success(res?.success);
+          }
         } catch (error) {
           toast.error("Something went wrong");
         } finally {

@@ -23,7 +23,7 @@ import {
 import { LoginSchema } from "@/lib/schemas";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { login } from "@/lib/actions";
+import { login } from "@/lib/actions/login";
 import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
@@ -41,23 +41,29 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError("");
-    setSuccess("");
-
-    startTransition(() => {
-      login(values).then((data) => {
-        setSuccess(data?.success);
-        setError(data?.error);
-      });
-    });
-  };
-
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "This email is already associated with a different account. Please sign in with the original method you used to create your account."
       : "";
+
+  const callbackUrl = searchParams.get("callbackUrl") || "";
+
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    setError("");
+    setSuccess("");
+
+    startTransition(() => {
+      login(values, callbackUrl).then((data) => {
+        if (data?.success) {
+          setSuccess(data?.success);
+          form.reset();
+        }
+
+        if (data?.error) setError(data?.error);
+      });
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
