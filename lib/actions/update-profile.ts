@@ -29,6 +29,20 @@ export const updateProfile = async (
   }
 };
 
+export const updateProfileImage = async (imageUrl: string, userId: string) => {
+  if (!imageUrl || !userId) {
+    return { error: "Invalid image or user!" };
+  }
+
+  try {
+    await updateUser(userId, { image: imageUrl });
+    revalidatePath("/profile");
+    return { success: "Profile image updated successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+
 export const updateEmail = async (
   values: z.infer<typeof EmailUpdateSchema>,
   userId: string

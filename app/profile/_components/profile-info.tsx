@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { ProfileSchema, EmailUpdateSchema } from "@/lib/schemas";
-import { updateProfile, updateEmail } from "@/lib/actions";
+import { updateProfile, updateEmail } from "@/lib/actions/update-profile";
 
 interface ProfileInfoProps {
   profile: IUser;
@@ -56,15 +56,15 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     startTransition(() => {
-      if (
-        values.bio === profile?.bio &&
-        values.location &&
-        profile?.location &&
-        values.name &&
-        profile?.name &&
-        values.phone === profile?.phone
-      )
+      const hasChanges =
+        values.bio !== profile?.bio ||
+        values.location !== profile?.location ||
+        values.name !== profile?.name ||
+        values.phone !== profile?.phone;
+
+      if (!hasChanges) {
         return; // Do nothing if values didn't change
+      }
 
       updateProfile(values, profile?.id).then((data) => {
         if (data?.error) toast.error(data.error);

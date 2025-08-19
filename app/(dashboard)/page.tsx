@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FileText, Calendar, Users, MessageSquare } from "lucide-react";
-import { toast } from "sonner";
-import { signOut } from "next-auth/react";
 
 import { DashboardHeader } from "@/components/dashboard-header";
 import {
@@ -15,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Pagination } from "@/components/ui/pagination";
-import { Button } from "@/components/ui/button";
 
 const stats = [
   {

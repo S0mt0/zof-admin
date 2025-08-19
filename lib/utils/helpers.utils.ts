@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getVerificationTokenByEmail } from "../db/data";
 import { db } from "../db";
 import { auth } from "@/auth";
+import { getUploadUrl } from "../actions/s3";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -90,3 +91,26 @@ export function obscureEmail(email: string): string {
 
 export const currentUser = async () => (await auth())?.user;
 export const currentUserRole = async () => (await auth())?.user.role;
+
+export const handleFileUpload = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  folder: S3FileFolders
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const { url } = await getUploadUrl(file.name, file.type, folder);
+
+  try {
+    await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "multipart/form-data" },
+      body: file,
+    });
+
+    const objectUrl = url.split("?")[0];
+    return objectUrl;
+  } catch (error) {
+    console.log("Error Uploading to S3: ", error);
+  }
+};

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { deleteAccount } from "@/lib/actions";
+import { deleteAccount } from "@/lib/actions/delete-account";
 
 export function DeleteAccount({ userId }: { userId: string }) {
   const [showWarning, setShowWarning] = useState(false);
