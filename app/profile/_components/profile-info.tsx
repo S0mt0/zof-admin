@@ -59,9 +59,9 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     startTransition(() => {
       const hasChanges =
+        values.name !== profile?.name ||
         values.bio !== profile?.bio ||
         values.location !== profile?.location ||
-        values.name !== profile?.name ||
         values.phone !== profile?.phone;
 
       if (!hasChanges) {
