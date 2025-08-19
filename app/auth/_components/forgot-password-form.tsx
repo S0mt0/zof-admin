@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 
 import { CardWrapper } from "./card-wrapper";
 import { ForgotPasswordSchema } from "@/lib/schemas";
-import { forgotPassword } from "@/lib/actions";
+import { forgotPassword } from "@/lib/actions/forgot-password";
 import {
   Form,
   FormControl,
@@ -41,9 +41,12 @@ export function ForgotPasswordForm() {
 
     startTransition(() => {
       forgotPassword(values).then((data) => {
-        setSuccess(data?.success);
-        setError(data?.error);
-        form.reset();
+        if (data?.success) {
+          setSuccess(data?.success);
+          form.reset();
+        }
+
+        if (data?.error) setError(data?.error);
       });
     });
   };

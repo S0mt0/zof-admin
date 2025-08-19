@@ -9,7 +9,10 @@ import { getUserByEmail } from "../db/data";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+export const login = async (
+  values: z.infer<typeof LoginSchema>,
+  callbackUrl?: string
+) => {
   const validatedField = LoginSchema.safeParse(values);
 
   if (!validatedField.success) return { error: "Invalid fields, try again." };
@@ -39,7 +42,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+      redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
 
     return { success: "Welcome back!" };

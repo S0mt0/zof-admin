@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/form";
 
 import { PasswordUpdateSchema } from "@/lib/schemas";
-import { updatePassword } from "@/lib/actions";
+import { updatePassword } from "@/lib/actions/update-profile";
 
 export function SecuritySettings({ profile }: { profile: IUser }) {
   const [showPassword, setShowPassword] = useState(false);

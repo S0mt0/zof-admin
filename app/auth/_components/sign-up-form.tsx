@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SignUpSchema } from "@/lib/schemas";
-import { signup } from "@/lib/actions";
+import { signup } from "@/lib/actions/signup";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 
@@ -45,9 +45,12 @@ export function SignupForm() {
 
     startTransition(() => {
       signup(values).then((data) => {
-        setSuccess(data?.success);
-        setError(data?.error);
-        form.reset();
+        if (data?.success) {
+          setSuccess(data?.success);
+          form.reset();
+        }
+
+        if (data?.error) setError(data?.error);
       });
     });
   };

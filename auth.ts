@@ -4,12 +4,14 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { allowedAdminEmailsList } from "./lib/constants";
+import { getUserById } from "./lib/db/data";
 
 export const {
   handlers: { GET, POST },
   auth,
   signIn,
   signOut,
+  unstable_update: update,
 } = NextAuth({
   pages: {
     signIn: "/auth/login",
@@ -41,19 +43,29 @@ export const {
       return true;
     },
 
-    jwt({ token, user }) {
-      if (user) {
-        token.role = user.role!;
-        token.id = user.id!;
+    async jwt({ token }) {
+      const existingUser = await getUserById(token.sub!);
+
+      if (existingUser) {
+        token.role = existingUser.role;
+        token.id = existingUser.id;
+        token.name = existingUser.name;
+        token.email = existingUser.email;
+        token.image = existingUser.image;
       }
+
       return token;
     },
 
     session({ session, token }) {
-      if (token.role && session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+      if (session.user) {
+        if (token.role) session.user.role = token.role;
+        if (token.id) session.user.id = token.id;
+        if (token.name) session.user.name = token.name;
+        if (token.email) session.user.email = token.email;
+        if (token.image) session.user.image = token.image;
       }
+
       return session;
     },
   },

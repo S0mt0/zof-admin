@@ -203,7 +203,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <LogoutButton>
+                <LogoutButton userId={user?.id!}>
                   <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out

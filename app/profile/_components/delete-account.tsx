@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { deleteAccount } from "@/lib/actions";
+import { deleteAccount } from "@/lib/actions/delete-account";
 
 export function DeleteAccount({ userId }: { userId: string }) {
   const [showWarning, setShowWarning] = useState(false);
@@ -22,13 +22,7 @@ export function DeleteAccount({ userId }: { userId: string }) {
   const handleDeleteAccount = () => {
     startTransition(() => {
       deleteAccount(userId).then((data) => {
-        if (data?.error) {
-          toast.error(data.error);
-        } else {
-          toast.success(
-            "Account deleted successfully. Redirecting to login..."
-          );
-        }
+        if (data?.error) toast.error(data.error);
       });
     });
   };

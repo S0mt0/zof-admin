@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { ProfileSchema, EmailUpdateSchema } from "@/lib/schemas";
-import { updateProfile, updateEmail } from "@/lib/actions";
+import { updateProfile, updateEmail } from "@/lib/actions/update-profile";
 
 interface ProfileInfoProps {
   profile: IUser;
@@ -36,40 +37,42 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEmailEditing, setIsEmailEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { update } = useSession();
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: profile?.name,
-      phone: profile?.phone || "",
-      location: profile?.location || "",
-      bio: profile?.bio || "",
+      name: profile?.name?.trim() || undefined,
+      phone: profile?.phone?.trim() || undefined,
+      location: profile?.location?.trim() || undefined,
+      bio: profile?.bio?.trim() || undefined,
     },
   });
 
   const emailForm = useForm<z.infer<typeof EmailUpdateSchema>>({
     resolver: zodResolver(EmailUpdateSchema),
     defaultValues: {
-      email: profile?.email,
+      email: profile?.email?.trim() || undefined,
     },
   });
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     startTransition(() => {
-      if (
-        values.bio === profile?.bio &&
-        values.location &&
-        profile?.location &&
-        values.name &&
-        profile?.name &&
-        values.phone === profile?.phone
-      )
+      const hasChanges =
+        values.bio !== profile?.bio ||
+        values.location !== profile?.location ||
+        values.name !== profile?.name ||
+        values.phone !== profile?.phone;
+
+      if (!hasChanges) {
         return; // Do nothing if values didn't change
+      }
 
       updateProfile(values, profile?.id).then((data) => {
         if (data?.error) toast.error(data.error);
 
         if (data?.success) {
+          update();
           toast.success(data.success);
           setIsEditing(false);
         }
@@ -79,11 +82,17 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
 
   const onEmailSubmit = (values: z.infer<typeof EmailUpdateSchema>) => {
     startTransition(() => {
+      const hasChanges = values.email !== profile?.email;
+      if (!hasChanges) {
+        return; // Do nothing if value didn't change
+      }
+
       updateEmail(values, profile?.id).then((data) => {
         if (data?.error) {
           toast.error(data.error);
         }
         if (data?.success) {
+          update();
           toast.success(data.success);
           setIsEmailEditing(false);
         }

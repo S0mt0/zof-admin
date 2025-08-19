@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { CardWrapper } from ".";
 import { FormError } from "@/components/form-error";
-import { verifyToken } from "@/lib/actions";
+import { verifyToken } from "@/lib/actions/verify-account";
 import { FormSuccess } from "@/components/form-success";
 
 export const VerificationCard = () => {

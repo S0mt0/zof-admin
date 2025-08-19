@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 
 import { CardWrapper } from "./card-wrapper";
 import { ResetPasswordSchema } from "@/lib/schemas";
-import { resetPassword } from "@/lib/actions";
+import { resetPassword } from "@/lib/actions/reset-password";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import {
@@ -55,9 +55,12 @@ export function ResetPasswordForm() {
     startTransition(() => {
       resetPassword(values, token)
         .then((data) => {
-          setSuccess(data?.success);
-          setError(data?.error);
-          form.reset();
+          if (data?.success) {
+            setSuccess(data?.success);
+            form.reset();
+          }
+
+          if (data?.error) setError(data?.error);
         })
         .catch(() => {
           setError("Something went wrong!");

@@ -1,15 +1,6 @@
-import {
-  Calendar,
-  Camera,
-  LogOut,
-  Mail,
-  MapPin,
-  Phone,
-  Shield,
-} from "lucide-react";
+import { Calendar, LogOut, Mail, MapPin, Phone, Shield } from "lucide-react";
 import { Separator } from "@radix-ui/react-separator";
 import { format, formatDistanceToNow } from "date-fns";
-import Image from "next/image";
 
 import {
   Card,
@@ -22,29 +13,13 @@ import { capitalize } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LogoutButton } from "@/components/logout-button";
+import { ProfileImage } from "./profile-image";
 
 export const ProfileOverview = ({ profile }: { profile: IUser }) => {
   return (
     <Card className="md:col-span-1">
       <CardHeader className="text-center">
-        <div className="relative mx-auto">
-          <Image
-            src={profile?.image || ""}
-            alt={profile?.name}
-            className="w-24 h-auto rounded-full"
-            width={100}
-            height={100}
-            priority
-          />
-
-          <Button
-            size="sm"
-            variant="outline"
-            className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
-          >
-            <Camera className="h-4 w-4" />
-          </Button>
-        </div>
+        <ProfileImage imgUrl={profile?.image!} userId={profile?.id} />
         <div className="space-y-1">
           <CardTitle className="text-xl">{capitalize(profile?.name)}</CardTitle>
           <CardDescription className="flex items-center justify-center gap-1">
@@ -73,23 +48,21 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
           )}
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>
-              Joined {format(profile?.joinDate || new Date(), "MMMM d, yyyy")}
-            </span>
+            <span>Joined {format(profile?.joinDate, "MMMM d, yyyy")}</span>
           </div>
         </div>
         <Separator />
-        <div className="space-y-2">
+        <div className="gap-y-2 flex flex-col">
           {profile?.lastLogin && (
             <Badge variant="outline" className="w-full justify-center">
               Last login:{" "}
-              {formatDistanceToNow(profile?.lastLogin || new Date(), {
+              {formatDistanceToNow(profile?.lastLogin, {
                 addSuffix: true,
               })}
             </Badge>
           )}
 
-          <LogoutButton>
+          <LogoutButton userId={profile?.id}>
             <Button
               variant="outline"
               className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"

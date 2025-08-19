@@ -9,7 +9,7 @@ interface IUser {
   phone?: string | null;
   location?: string | null;
   bio?: string | null;
-  image?: string | null;
+  image: string;
   role: Role;
   joinDate: Date;
   lastLogin?: Date | null;

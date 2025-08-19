@@ -19,7 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { NotificationPreferencesSchema } from "@/lib/schemas";
-import { updateNotificationPreferences } from "@/lib/actions";
+import { updateNotificationPreferences } from "@/lib/actions/update-profile";
 
 export function NotificationPreferences({ profile }: { profile: IUser }) {
   const [_, startTransition] = useTransition();
