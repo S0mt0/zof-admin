@@ -3,19 +3,18 @@ type Role = "admin" | "rep" | "editor" | "user";
 interface IUser {
   id: string;
   email: string;
-  emailVerified?: Date;
-  password?: string;
+  emailVerified?: Date | null;
+  password?: string | null;
   name: string;
-  phone: string;
-  location: string;
-  bio: string;
-  image?: string;
+  phone?: string | null;
+  location?: string | null;
+  bio?: string | null;
+  image?: string | null;
   role: Role;
   joinDate: Date;
-  lastLogin: Date;
+  lastLogin?: Date | null;
 
   emailNotifications: boolean;
-  pushNotifications: boolean;
   weeklyReports: boolean;
   eventReminders: boolean;
 
