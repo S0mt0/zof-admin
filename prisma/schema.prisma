@@ -74,7 +74,6 @@ model User {
   blogs Blog[]
   events Event[]
   donations Donation[]
-  teamMember TeamMember?
   messages Message[]
   comments Comment[]
   activities UserActivity[]
@@ -205,10 +204,6 @@ model TeamMember {
   twitter      String?
   github       String?
   
-  // Relations
-  userId       String?           @unique @db.ObjectId
-  user         User?             @relation(fields: [userId], references: [id])
-  
   // Timestamps
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
@@ -265,6 +260,30 @@ model VerificationToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model FoundationInfo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  email       String
+  description String?
+  address     String?
+  phone       String?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WebsiteSettings {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  maintenanceMode     Boolean  @default(false)
+  blogComments        Boolean  @default(false)
+  eventRegistration  Boolean  @default(false)
+  
+  // Timestamps
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model ResetPasswordToken {

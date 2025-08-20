@@ -62,7 +62,7 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
             </Badge>
           )}
 
-          <LogoutButton userId={profile?.id}>
+          <LogoutButton>
             <Button
               variant="outline"
               className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
