@@ -5,7 +5,6 @@ export const publicApiRoutes = [
   "/api/events",
   "/api/teams",
   "/api/donations",
-  "/api/activity-stats",
 ];
 
 export const authRoutes = [

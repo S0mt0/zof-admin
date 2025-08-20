@@ -1,6 +1,6 @@
 "use server";
 import * as z from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import bcrypt from "bcryptjs";
 
 import {
@@ -40,7 +40,7 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
   try {
     await updateUser(userId, { image: imageUrl });
 
-    revalidatePath("/profile");
+    revalidateTag("profile");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -81,7 +81,7 @@ export const updateEmail = async (
 
     await update({ user: { email: user?.email } });
 
-    revalidatePath("/profile");
+    revalidateTag("profile");
     return {
       success:
         "Email updated successfully! A confirmation mail has been sent to your new email.",
@@ -117,7 +117,7 @@ export const updatePassword = async (
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     await updateUser(userId, { password: hashedPassword });
 
-    revalidatePath("/profile");
+    revalidateTag("profile");
     return { success: "Password updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -136,7 +136,7 @@ export const updateNotificationPreferences = async (
 
   try {
     await updateUser(userId, validatedFields.data);
-    revalidatePath("/profile");
+    revalidateTag("profile");
     return { success: "Notification preferences updated!" };
   } catch (error) {
     return { error: "Something went wrong!" };

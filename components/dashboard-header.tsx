@@ -33,7 +33,7 @@ export function DashboardHeader({
             <Link href="/">{title}</Link>
           </BreadcrumbItem>
           {breadcrumbs?.map((crumb, index) => (
-            <React.Fragment key={index}>
+            <React.Fragment key={`${crumb.label}-${index}`}>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
                 {crumb.href ? (

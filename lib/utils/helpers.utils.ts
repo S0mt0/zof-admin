@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 
 import { getVerificationTokenByEmail } from "../db/repository";
 import { db } from "../db";
-import { auth } from "@/auth";
 import { getUploadUrl } from "../actions/s3";
 
 export function cn(...inputs: ClassValue[]) {
@@ -87,36 +86,6 @@ export function obscureEmail(email: string): string {
   const obscuredMiddle = "*".repeat(Math.max(0, localPart.length - 3));
 
   return `${firstTwo}${obscuredMiddle}${lastChar}@${domain}`;
-}
-
-export const currentUser = async () => (await auth())?.user;
-export const currentUserRole = async () => (await auth())?.user.role;
-
-export async function prismaPaginate<M, A = any>({
-  page = 1,
-  limit,
-  defaultLimit = 10,
-  maxLimit = 20,
-  args = {} as A,
-  model,
-}: PrismaPaginationOptions<M, A>) {
-  const cappedLimit = Math.min(limit || defaultLimit, maxLimit);
-  const skip = (Math.max(page, 1) - 1) * cappedLimit;
-
-  const [count, rows] = await Promise.all([
-    model.count({ where: (args as any)?.where }),
-    model.findMany({ ...(args as any), skip, take: cappedLimit }),
-  ]);
-
-  return {
-    data: rows,
-    pagination: {
-      total: count,
-      page: Math.max(page, 1),
-      limit: cappedLimit,
-      totalPages: Math.ceil(count / cappedLimit) || 1,
-    },
-  } as const;
 }
 
 export const handleFileUpload = async (

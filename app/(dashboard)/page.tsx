@@ -17,7 +17,7 @@ export default async function Dashboard({
 
   const activityStats = unstable_cache(
     getActivityStats,
-    ["recent-activities"],
+    ["all-activity-stats"],
     {
       tags: ["all-activity-stats"],
       revalidate: false,
