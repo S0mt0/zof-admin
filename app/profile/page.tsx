@@ -11,6 +11,8 @@ export default async function Page() {
     where: { addedBy: user?.id },
   });
 
+  console.log("fetching profile data...");
+
   return (
     <ProfilePage
       profile={profile!}

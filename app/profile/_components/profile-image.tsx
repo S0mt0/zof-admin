@@ -45,8 +45,10 @@ export const ProfileImage = ({
       return;
     }
 
+    // Check file size (5MB = 5 * 1024 * 1024 bytes)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File size too large");
+      toast.error("File size must be less than 5MB");
       e.target.value = "";
       return;
     }
@@ -68,10 +70,7 @@ export const ProfileImage = ({
             return;
           }
 
-          if (res?.success) {
-            update();
-            toast.success(res?.success);
-          }
+          toast.success(res?.success || "Uploaded successfully");
         } catch (error) {
           toast.error("Something went wrong");
         } finally {

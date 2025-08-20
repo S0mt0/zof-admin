@@ -7,16 +7,14 @@ import { cn } from "@/lib/utils";
 export const LogoutButton = ({
   children,
   className,
-  userId,
 }: {
   children: React.ReactNode | React.ReactNode[];
   className?: string;
-  userId: string;
 }) => {
   const { update } = useSession();
 
   const handleLogout = () => {
-    logout(userId).then(() => update());
+    logout().then(() => update());
   };
   return (
     <span onClick={handleLogout} className={cn(className)}>
