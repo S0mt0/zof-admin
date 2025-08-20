@@ -1,4 +1,4 @@
-import { listTeamMembers } from "@/lib/db/data";
+import { listTeamMembers } from "@/lib/db/repository";
 import TeamPageClient from "./_components/team-page";
 
 export default async function Page() {

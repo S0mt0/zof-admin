@@ -11,7 +11,7 @@ import {
   getWebsiteSettings,
   updateWebsiteSettings,
   createWebsiteSettings,
-} from "../db/data";
+} from "../db/repository";
 
 export const updateFoundationInfoAction = async (
   values: z.infer<typeof FoundationInfoSchema>

@@ -1,6 +1,6 @@
 import { DashboardHeader } from "@/components/dashboard-header";
 import TeamForm from "../../_components/team-form";
-import { getTeamMemberById } from "@/lib/db/data";
+import { getTeamMemberById } from "@/lib/db/repository";
 
 interface EditPageProps {
   params: { id: string };

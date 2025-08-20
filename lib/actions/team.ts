@@ -10,7 +10,7 @@ import {
   updateTeamMember,
   deleteTeamMember,
   getUniqueTeamMember,
-} from "../db/data";
+} from "../db/repository";
 import { MailService } from "../utils/mail.service";
 
 export const listTeamAction = async () => {

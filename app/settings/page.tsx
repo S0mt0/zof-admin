@@ -1,4 +1,4 @@
-import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/data";
+import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 import { SettingsPage } from "./_components/settings-page";
 
 export default async function Page() {

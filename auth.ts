@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { allowedAdminEmailsList } from "./lib/constants";
-import { getUserById } from "./lib/db/data";
+import { getUserById } from "./lib/db/repository";
 
 export const {
   handlers: { GET, POST },

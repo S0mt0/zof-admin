@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 import { SignUpSchema } from "../schemas";
 import { db } from "../db";
-import { getUserByEmail } from "../db/data";
+import { getUserByEmail } from "../db/repository";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { allowedAdminEmailsList } from "../constants";

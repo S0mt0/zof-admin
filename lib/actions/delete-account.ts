@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserById, deleteUser } from "../db/data";
+import { getUserById, deleteUser } from "../db/repository";
 import { signOut } from "@/auth";
 
 export const deleteAccount = async (userId: string) => {

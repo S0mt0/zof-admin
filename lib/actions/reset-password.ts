@@ -3,7 +3,7 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { db } from "../db";
-import { getResetPasswordTokenByToken, getUserByEmail } from "../db/data";
+import { getResetPasswordTokenByToken, getUserByEmail } from "../db/repository";
 import { ResetPasswordSchema } from "../schemas";
 
 export async function resetPassword(

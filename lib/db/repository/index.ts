@@ -3,3 +3,5 @@ export * from "./verification-token.service";
 export * from "./reset-token.service";
 export * from "./settings.service";
 export * from "./team.service";
+export * from "./activity-stats.service";
+export * from "./user-activity.service";

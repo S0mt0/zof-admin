@@ -5,7 +5,7 @@ import { User, Calendar, Edit3 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-header";
 
 import { ProfileOverview } from "./profile-overview";
-import { ActivityStats } from "./activity-stats";
+import { ActivityStats } from "../../../components/activity-stats";
 import { ProfileInfo } from "./profile-info";
 import { SecuritySettings } from "./security-settings";
 import { NotificationPreferences } from "./notification-preferences";
@@ -13,33 +13,33 @@ import { DeleteAccount } from "./delete-account";
 
 interface ProfilePageProps {
   profile: IUser;
-  numberOfBlogs: number;
-  numberOfEvents: number;
-  numberOfTeamMembers: number;
+  blogs: number;
+  events: number;
+  team: number;
 }
 
 export function ProfilePage({
   profile,
-  numberOfBlogs,
-  numberOfEvents,
-  numberOfTeamMembers,
+  blogs,
+  events,
+  team,
 }: ProfilePageProps) {
   const stats = [
     {
       title: "Blog Posts Created",
-      value: numberOfBlogs,
+      value: blogs,
       icon: Edit3,
       gradient: "from-blue-400 to-blue-600",
     },
     {
       title: "Events Managed",
-      value: numberOfEvents,
+      value: events,
       icon: Calendar,
       gradient: "from-emerald-400 to-emerald-600",
     },
     {
       title: "Team Members Added",
-      value: numberOfTeamMembers,
+      value: team,
       icon: User,
       gradient: "from-purple-400 to-purple-600",
     },
