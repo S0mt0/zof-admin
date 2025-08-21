@@ -3,8 +3,7 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { SignUpSchema } from "../schemas";
-import { db } from "../db";
-import { getUserByEmail } from "../db/repository";
+import { createUser, getUserByEmail } from "../db/repository";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { allowedAdminEmailsList } from "../constants";
@@ -21,13 +20,11 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
 
   if (existingUser) return { error: "Email taken, try another one." };
 
-  await db.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-      role: allowedAdminEmailsList.includes(email) ? "admin" : "user",
-    },
+  await createUser({
+    name,
+    email,
+    password: hashedPassword,
+    role: allowedAdminEmailsList.includes(email) ? "admin" : "user",
   });
 
   const token = (await generateVerificationToken(email)).token;

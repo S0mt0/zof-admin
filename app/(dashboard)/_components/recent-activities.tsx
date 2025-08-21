@@ -1,5 +1,4 @@
 import { unstable_cache } from "next/cache";
-import { PackageOpen } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination-v2";
 import { getRecentActivities } from "@/lib/db/repository/user-activity.service";
@@ -36,46 +35,45 @@ export async function RecentActivities({
     <Card className="col-span-4">
       <CardHeader>
         <CardTitle>Recent Activity</CardTitle>
-        <CardDescription>Latest updates across your dashboard</CardDescription>
+        <CardDescription>
+          {data?.length
+            ? "Latest updates across your dashboard"
+            : "Your recent activities will appear here"}
+        </CardDescription>
       </CardHeader>
-      {data.length > 1 ? (
-        <CardContent>
-          <div className="space-y-4">
-            {data.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50"
-              >
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{activity.action}</p>
-                  <p className="text-sm text-gray-500">{activity.title}</p>
-                </div>
-                <div className="text-sm text-gray-400">
-                  {formatDistanceToNow(activity.time, {
-                    addSuffix: true,
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
 
-          <Pagination
-            currentPage={pagination.page}
-            totalPages={pagination.totalPages}
-            showingStart={(pagination.page - 1) * pagination.limit + 1}
-            showingEnd={Math.min(
-              pagination.page * pagination.limit,
-              pagination.total
-            )}
-            totalItems={pagination.total}
-            itemName="activities"
-          />
-        </CardContent>
-      ) : (
-        <CardContent className="flex items-center justify-center">
-          <PackageOpen className="text-muted-foreground/20 w-16 h-16" />
-        </CardContent>
-      )}
+      <CardContent>
+        <div className="space-y-4">
+          {data.map((activity) => (
+            <div
+              key={activity.id}
+              className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50"
+            >
+              <div className="flex-1">
+                <p className="text-sm font-medium">{activity.action}</p>
+                <p className="text-sm text-gray-500">{activity.title}</p>
+              </div>
+              <div className="text-sm text-gray-400">
+                {formatDistanceToNow(activity.time, {
+                  addSuffix: true,
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+          showingStart={(pagination.page - 1) * pagination.limit + 1}
+          showingEnd={Math.min(
+            pagination.page * pagination.limit,
+            pagination.total
+          )}
+          totalItems={pagination.total}
+          itemName="activities"
+        />
+      </CardContent>
     </Card>
   );
 }

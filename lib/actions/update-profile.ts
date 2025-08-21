@@ -1,6 +1,6 @@
 "use server";
 import * as z from "zod";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import bcrypt from "bcryptjs";
 
 import {
@@ -25,7 +25,7 @@ export const updateProfile = async (
   try {
     await updateUser(userId, validatedFields.data);
 
-    revalidatePath("/profile");
+    revalidateTag("profile");
     return { success: "Profile updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };

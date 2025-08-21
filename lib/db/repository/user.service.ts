@@ -37,6 +37,18 @@ export const updateUser = async (id: string, data: Partial<IUser>) => {
   }
 };
 
+export const createUser = async (
+  data: Pick<IUser, "email" | "name"> & Partial<IUser>
+) => {
+  try {
+    return (await db.user.create({
+      data,
+    })) as IUser;
+  } catch (e) {
+    return null;
+  }
+};
+
 export const deleteUser = async (id: string) => {
   try {
     return (await db.user.delete({

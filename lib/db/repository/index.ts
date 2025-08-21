@@ -5,3 +5,5 @@ export * from "./settings.service";
 export * from "./team.service";
 export * from "./activity-stats.service";
 export * from "./user-activity.service";
+export * from "./blog.service";
+export * from "./event.service";

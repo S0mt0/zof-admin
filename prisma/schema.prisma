@@ -118,8 +118,8 @@ model Blog {
   createdBy    String     @db.ObjectId
   
   // Relations
-  authorId    String     @db.ObjectId
-  author      User       @relation(fields: [authorId], references: [id])
+  authorId    String?     @db.ObjectId
+  author      User?       @relation(fields: [authorId], references: [id])
   comments    Comment[]
 
 
@@ -148,7 +148,7 @@ model Event {
   featured             Boolean     @default(false)
   tags                 String[]
   ticketPrice          Float?
-  registrationRequired Boolean     @default(true)
+  registrationRequired Boolean     @default(false)
   createdBy            String     @db.ObjectId
   
   // Relations
