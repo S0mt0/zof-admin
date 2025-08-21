@@ -13,6 +13,7 @@ import { getUserByEmail, getUserById, updateUser } from "../db/repository";
 import { update } from "@/auth";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
+import { createUserActivity } from "../db/repository";
 
 export const updateProfile = async (
   values: z.infer<typeof ProfileSchema>,
@@ -24,6 +25,12 @@ export const updateProfile = async (
 
   try {
     await updateUser(userId, validatedFields.data);
+
+    await createUserActivity(
+      userId,
+      "Profile updated",
+      "User updated profile information"
+    );
 
     revalidateTag("profile");
     return { success: "Profile updated successfully!" };
@@ -39,6 +46,12 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
 
   try {
     await updateUser(userId, { image: imageUrl });
+
+    await createUserActivity(
+      userId,
+      "Profile photo updated",
+      "User changed profile image"
+    );
 
     revalidateTag("profile");
     return { success: "Profile image updated successfully!" };
@@ -81,6 +94,12 @@ export const updateEmail = async (
 
     await update({ user: { email: user?.email } });
 
+    await createUserActivity(
+      userId,
+      "Email address updated",
+      "User changed their account email address"
+    );
+
     revalidateTag("profile");
     return {
       success:
@@ -117,6 +136,12 @@ export const updatePassword = async (
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     await updateUser(userId, { password: hashedPassword });
 
+    await createUserActivity(
+      userId,
+      "Password changed",
+      "User updated account password"
+    );
+
     revalidateTag("profile");
     return { success: "Password updated successfully!" };
   } catch (error) {
@@ -136,6 +161,13 @@ export const updateNotificationPreferences = async (
 
   try {
     await updateUser(userId, validatedFields.data);
+
+    await createUserActivity(
+      userId,
+      "Notification preferences updated",
+      "User changed notification settings"
+    );
+
     revalidateTag("profile");
     return { success: "Notification preferences updated!" };
   } catch (error) {

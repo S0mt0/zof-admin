@@ -16,3 +16,21 @@ export const getRecentActivities = async (
     },
   });
 };
+
+export const createUserActivity = async (
+  userId: string,
+  title: string,
+  description: string
+) => {
+  try {
+    return await db.userActivity.create({
+      data: {
+        userId,
+        title,
+        description,
+      },
+    });
+  } catch (e) {
+    return null;
+  }
+};

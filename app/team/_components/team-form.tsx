@@ -44,7 +44,7 @@ import { createTeamMemberAction, updateTeamMemberAction } from "@/lib/actions";
 import { getInitials, handleFileUpload } from "@/lib/utils";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
 
 interface TeamFormProps {
   initialData?: TeamMember | null;
@@ -124,29 +124,30 @@ export default function TeamForm({
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File size must be less than 5MB");
+      toast.error("File size must not be more than 8MB");
       e.target.value = "";
       return;
     }
 
+    const uploadAvatar = async () => {};
+
     const dismiss = toast.loading("Uploading...");
     startTransition(() => {
-      void (async () => {
-        try {
-          const objectUrl = await handleFileUpload(e, "profile");
+      handleFileUpload(e, "profile")
+        .then((objectUrl) => {
           if (!objectUrl) {
             toast.error("Upload failed");
             return;
           }
           form.setValue("avatar", objectUrl);
-          toast.success("Photo uploaded");
-        } catch (err) {
+        })
+        .catch((err) => {
           toast.error("Something went wrong");
-        } finally {
+        })
+        .finally(() => {
           toast.dismiss(dismiss);
           e.target.value = "";
-        }
-      })();
+        });
     });
   };
 
@@ -161,7 +162,7 @@ export default function TeamForm({
           }
         });
       } else if (mode === "edit" && initialData?.id) {
-        updateTeamMemberAction(initialData.id, values).then((res) => {
+        updateTeamMemberAction(initialData.id, values, addedBy).then((res) => {
           if (res?.error) toast.error(res.error);
           if (res?.success) toast.success(res.success);
         });

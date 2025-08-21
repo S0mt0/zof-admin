@@ -32,6 +32,7 @@ import {
   Phone,
 } from "lucide-react";
 import { deleteTeamMemberAction, emailTeamMemberAction } from "@/lib/actions";
+import { useCurrentUser } from "@/lib/hooks";
 
 interface TeamPageProps {
   members: TeamMember[];
@@ -41,6 +42,7 @@ export default function TeamPageClient({ members }: TeamPageProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition();
+  const currentUser = useCurrentUser();
 
   const [emailOpen, setEmailOpen] = useState(false);
   const [emailTo, setEmailTo] = useState("");
@@ -72,7 +74,7 @@ export default function TeamPageClient({ members }: TeamPageProps) {
   const handleDelete = (member: TeamMember) => {
     if (!confirm(`Remove ${member.name}?`)) return;
     startTransition(() => {
-      deleteTeamMemberAction(member.id).then((res) => {
+      deleteTeamMemberAction(member.id, currentUser?.id).then((res) => {
         if (res?.error) toast.error(res.error);
         if (res?.success) toast.success(res.success);
       });

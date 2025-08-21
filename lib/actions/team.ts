@@ -10,6 +10,7 @@ import {
   updateTeamMember,
   deleteTeamMember,
   getUniqueTeamMember,
+  createUserActivity,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
 
@@ -48,7 +49,15 @@ export const createTeamMemberAction = async (
       github: data.socialLinks?.github || null,
     } as Omit<TeamMember, "id" | "createdAt" | "updatedAt">;
 
-    await createTeamMember(toCreate);
+    const created = await createTeamMember(toCreate);
+    if (created) {
+      await createUserActivity(
+        addedBy,
+        "New team member added",
+        `${created.name} joined as ${created.role}`
+      );
+    }
+
     revalidatePath("/team");
     return { success: "Team member created" };
   } catch (e) {
@@ -58,7 +67,8 @@ export const createTeamMemberAction = async (
 
 export const updateTeamMemberAction = async (
   id: string,
-  values: z.infer<typeof TeamMemberSchema>
+  values: z.infer<typeof TeamMemberSchema>,
+  updatedBy?: string
 ) => {
   const validated = TeamMemberSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
@@ -82,7 +92,15 @@ export const updateTeamMemberAction = async (
       github: data.socialLinks?.github || null,
     };
 
-    await updateTeamMember(id, toUpdate);
+    const updated = await updateTeamMember(id, toUpdate);
+    if (updated && updatedBy) {
+      await createUserActivity(
+        updatedBy,
+        "Team member details updated",
+        `${updated.name}'s profile was updated`
+      );
+    }
+
     revalidatePath("/team");
     return { success: "Team member updated" };
   } catch (e) {
@@ -90,9 +108,23 @@ export const updateTeamMemberAction = async (
   }
 };
 
-export const deleteTeamMemberAction = async (id: string) => {
+export const deleteTeamMemberAction = async (
+  id: string,
+  deletedBy?: string
+) => {
   try {
+    const existing = await getTeamMemberById(id);
+
     await deleteTeamMember(id);
+
+    if (existing && deletedBy) {
+      await createUserActivity(
+        deletedBy,
+        "Team member removed",
+        `${existing.name} was removed from the team`
+      );
+    }
+
     revalidatePath("/team");
     return { success: "Team member removed" };
   } catch (e) {
