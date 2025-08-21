@@ -63,6 +63,7 @@ export const createTeamMemberAction = async (
     revalidateTag("teams");
     revalidateTag("recent-activities");
     revalidateTag("user-activity-stats");
+    revalidateTag("all-activity-stats");
     return { success: "Team member created" };
   } catch (e) {
     return { error: "Could not create team member" };
