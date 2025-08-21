@@ -18,6 +18,16 @@ export const getTeamMemberById = async (id: string) => {
   }
 };
 
+export const getTeamMemberByEmail = async (email: string) => {
+  try {
+    return (await db.teamMember.findFirst({
+      where: { email },
+    })) as TeamMember | null;
+  } catch (e) {
+    return null;
+  }
+};
+
 export const getUniqueTeamMember = async (name: string, email: string) => {
   try {
     return (await db.teamMember.findFirst({

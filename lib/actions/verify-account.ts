@@ -1,7 +1,12 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { db } from "../db";
-import { getUserByEmail, getVerificationTokenByToken } from "../db/repository";
+import {
+  createUserActivity,
+  getUserByEmail,
+  getVerificationTokenByToken,
+} from "../db/repository";
 
 export async function verifyToken(token: string) {
   const existingToken = await getVerificationTokenByToken(token);
@@ -13,7 +18,7 @@ export async function verifyToken(token: string) {
   const existingUser = await getUserByEmail(existingToken.email);
   if (!existingUser) return { error: "User does not exist!" };
 
-  await db.user.update({
+  const user = await db.user.update({
     where: { id: existingUser.id },
     data: {
       emailVerified: new Date(),
@@ -26,6 +31,12 @@ export async function verifyToken(token: string) {
       id: existingToken.id,
     },
   });
+
+  await createUserActivity(
+    user.id,
+    "Email verified",
+    "You successfully verified your account email address"
+  );
 
   return { success: "Email verified 🎉" };
 }

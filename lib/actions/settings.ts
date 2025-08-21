@@ -1,7 +1,7 @@
 "use server";
 
 import * as z from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { FoundationInfoSchema, WebsiteSettingsSchema } from "../schemas";
 import {
@@ -11,7 +11,9 @@ import {
   getWebsiteSettings,
   updateWebsiteSettings,
   createWebsiteSettings,
+  createUserActivity,
 } from "../db/repository";
+import { currentUser } from "../utils";
 
 export const updateFoundationInfoAction = async (
   values: z.infer<typeof FoundationInfoSchema>
@@ -28,6 +30,16 @@ export const updateFoundationInfoAction = async (
     } else {
       await createFoundationInfo(validatedFields.data);
     }
+
+    const user = await currentUser();
+
+    await createUserActivity(
+      user?.id!,
+      "ZOF webiste updated",
+      "Zita-Onyeka Foundation website info was just updated by you."
+    );
+
+    revalidateTag("recent-activities");
 
     revalidatePath("/settings");
     return { success: "Foundation information updated successfully!" };

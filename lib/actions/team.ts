@@ -1,7 +1,7 @@
 "use server";
 
 import * as z from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { TeamMemberSchema } from "../schemas";
 import {
   listTeamMembers,
@@ -11,8 +11,10 @@ import {
   deleteTeamMember,
   getUniqueTeamMember,
   createUserActivity,
+  getTeamMemberByEmail,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
+import { currentUser } from "../utils";
 
 export const listTeamAction = async () => {
   const members = await listTeamMembers();
@@ -58,7 +60,8 @@ export const createTeamMemberAction = async (
       );
     }
 
-    revalidatePath("/team");
+    revalidateTag("teams");
+    revalidateTag("recent-activities");
     return { success: "Team member created" };
   } catch (e) {
     return { error: "Could not create team member" };
@@ -101,7 +104,9 @@ export const updateTeamMemberAction = async (
       );
     }
 
-    revalidatePath("/team");
+    revalidateTag("teams");
+    revalidateTag("team-member");
+    revalidateTag("recent-activities");
     return { success: "Team member updated" };
   } catch (e) {
     return { error: "Could not update team member" };
@@ -125,7 +130,8 @@ export const deleteTeamMemberAction = async (
       );
     }
 
-    revalidatePath("/team");
+    revalidateTag("teams");
+    revalidateTag("recent-activities");
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };
@@ -147,6 +153,16 @@ export const emailTeamMemberAction = async (
       text: message,
       html: `<p>${message}</p>`,
     });
+
+    const user = await currentUser();
+    const teamMember = await getTeamMemberByEmail(to);
+
+    await createUserActivity(
+      user?.id!,
+      "Email Sent",
+      `You successfully sent an email to a member of the team ${teamMember?.name}.`
+    );
+
     return { success: "Email sent" };
   } catch (e) {
     return { error: "Failed to send email" };

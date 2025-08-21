@@ -29,10 +29,11 @@ export const updateProfile = async (
     await createUserActivity(
       userId,
       "Profile updated",
-      "User updated profile information"
+      "You updated your profile information"
     );
 
     revalidateTag("profile");
+    revalidateTag("recent-activities");
     return { success: "Profile updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -50,9 +51,10 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
     await createUserActivity(
       userId,
       "Profile photo updated",
-      "User changed profile image"
+      "You changed your profile image"
     );
 
+    revalidateTag("recent-activities");
     revalidateTag("profile");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
@@ -97,10 +99,11 @@ export const updateEmail = async (
     await createUserActivity(
       userId,
       "Email address updated",
-      "User changed their account email address"
+      "You changed your account email address"
     );
 
     revalidateTag("profile");
+    revalidateTag("recent-activities");
     return {
       success:
         "Email updated successfully! A confirmation mail has been sent to your new email.",
@@ -139,10 +142,11 @@ export const updatePassword = async (
     await createUserActivity(
       userId,
       "Password changed",
-      "User updated account password"
+      "You changed your account password"
     );
 
     revalidateTag("profile");
+    revalidateTag("recent-activities");
     return { success: "Password updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -165,10 +169,11 @@ export const updateNotificationPreferences = async (
     await createUserActivity(
       userId,
       "Notification preferences updated",
-      "User changed notification settings"
+      "You changed your notification settings"
     );
 
     revalidateTag("profile");
+    revalidateTag("recent-activities");
     return { success: "Notification preferences updated!" };
   } catch (error) {
     return { error: "Something went wrong!" };

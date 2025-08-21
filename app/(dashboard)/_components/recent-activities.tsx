@@ -50,8 +50,8 @@ export async function RecentActivities({
               className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50"
             >
               <div className="flex-1">
-                <p className="text-sm font-medium">{activity.action}</p>
-                <p className="text-sm text-gray-500">{activity.title}</p>
+                <p className="text-sm font-medium">{activity.title}</p>
+                <p className="text-sm text-gray-500">{activity.description}</p>
               </div>
               <div className="text-sm text-gray-400">
                 {formatDistanceToNow(activity.time, {
