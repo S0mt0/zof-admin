@@ -42,7 +42,7 @@ export default async function RootLayout({
             <AppSidebar />
             <SidebarInset>
               {children}
-              <Toaster />
+              <Toaster closeButton={true} />
             </SidebarInset>
           </SidebarProvider>
         </SessionProvider>

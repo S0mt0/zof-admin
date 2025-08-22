@@ -40,12 +40,12 @@ const navigationItems = [
     icon: MessageSquare,
     gradient: "from-pink-400 to-pink-600",
   },
-  {
-    title: "Donations",
-    url: "/donations",
-    icon: Heart,
-    gradient: "from-rose-400 to-rose-600",
-  },
+  // {
+  //   title: "Donations",
+  //   url: "/donations",
+  //   icon: Heart,
+  //   gradient: "from-rose-400 to-rose-600",
+  // },
   {
     title: "Team Members",
     url: "/team",

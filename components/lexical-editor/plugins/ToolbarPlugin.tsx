@@ -68,7 +68,6 @@ import { $createTextNode, TextNode } from "lexical";
 import { X, Check } from "lucide-react";
 import { handleFileUpload } from "@/lib/utils/helpers.utils";
 import { toast } from "sonner";
-import * as PopoverPrimitive from "@radix-ui/react-popover";
 
 interface ToolbarPluginProps {
   onImageUpload?: (file: File) => Promise<string>;
@@ -334,63 +333,101 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     editor.focus();
   };
 
-  const handleDeviceFileChosen: React.ChangeEventHandler<
-    HTMLInputElement
-  > = async (e) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleDeviceFileChosen: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     if (!file.type.startsWith("image/")) {
       toast.error("Please select a valid image file.");
       return;
     }
+
     const maxBytes = 8 * 1024 * 1024;
     if (file.size > maxBytes) {
       toast.error("Image must be 8MB or less.");
       return;
     }
 
+    setSelectedFile(file);
+  };
+
+  const handleUploadAndInsert = async () => {
+    if (!selectedFile && !imageUrlInput.trim()) {
+      toast.error("Please select a file or enter a URL");
+      return;
+    }
+
+    if (selectedFile && imageUrlInput.trim()) {
+      toast.error("You can only select a file or enter a URL at a time");
+      return;
+    }
+
     try {
-      const dismiss = toast.loading("Uploading image...");
+      setIsUploading(true);
+
       let uploadedUrl: string | undefined;
 
-      if (onImageUpload) {
-        uploadedUrl = await onImageUpload(file);
-      } else {
-        const syntheticEvent = {
-          target: { files: [file] },
-        } as unknown as React.ChangeEvent<HTMLInputElement>;
+      if (selectedFile) {
+        const dismiss = toast.loading("Uploading image...");
+        // Upload from device
+        if (onImageUpload) {
+          try {
+            uploadedUrl = await onImageUpload(selectedFile);
+          } catch (error) {
+            throw error;
+          } finally {
+            toast.dismiss(dismiss);
+          }
+        } else {
+          try {
+            const syntheticEvent = {
+              target: { files: [selectedFile] },
+            } as unknown as React.ChangeEvent<HTMLInputElement>;
 
-        uploadedUrl = await handleFileUpload(syntheticEvent, "documents");
+            uploadedUrl = await handleFileUpload(syntheticEvent, "documents");
+          } catch (error) {
+            throw error;
+          } finally {
+            toast.dismiss(dismiss);
+          }
+        }
+
+        if (uploadedUrl) {
+          doInsertImageWithUrl(uploadedUrl, selectedFile.name, imageCaption);
+          setSelectedFile(null);
+          setImageCaption("");
+          setIsImagePopoverOpen(false);
+          setIsUploading(false);
+          toast.success("Image uploaded");
+        } else {
+          toast.error("Failed to upload image");
+        }
+      } else if (imageUrlInput.trim()) {
+        // Insert from URL
+        try {
+          new URL(imageUrlInput.trim());
+          doInsertImageWithUrl(imageUrlInput.trim(), "Image", imageCaption);
+          setImageUrlInput("");
+          setImageCaption("");
+          setIsImagePopoverOpen(false);
+          toast.success("Image inserted");
+        } catch {
+          toast.error("Please enter a valid image URL.");
+        } finally {
+          setIsUploading(false);
+        }
       }
-
-      if (uploadedUrl) {
-        doInsertImageWithUrl(uploadedUrl, file.name, imageCaption);
-        toast.success("Image uploaded");
-      } else {
-        toast.error("Failed to upload image");
-      }
-
-      toast.dismiss(dismiss);
-      setIsImagePopoverOpen(false);
     } catch (err) {
       console.error("Failed to upload image:", err);
       toast.error("Failed to upload image");
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
-
-  const handleInsertImageFromUrl = () => {
-    if (!imageUrlInput.trim()) return;
-    try {
-      // Basic URL validation
-      new URL(imageUrlInput.trim());
-      doInsertImageWithUrl(imageUrlInput.trim(), "Image", imageCaption);
-      setImageUrlInput("");
-      setImageCaption("");
-      setIsImagePopoverOpen(false);
-    } catch {
-      alert("Please enter a valid image URL.");
+      setIsUploading(false);
     }
   };
 
@@ -764,6 +801,12 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                     accept="image/*"
                     onChange={handleDeviceFileChosen}
                   />
+                  {selectedFile && (
+                    <div className="flex items-center gap-2 p-2 bg-muted rounded text-xs">
+                      <span className="text-green-600">✓</span>
+                      <span className="truncate">{selectedFile.name}</span>
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Images only, up to 8MB.
                   </p>
@@ -777,7 +820,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
-                        handleInsertImageFromUrl();
+                        handleUploadAndInsert();
                       }
                     }}
                   />
@@ -793,7 +836,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
-                        handleInsertImageFromUrl();
+                        handleUploadAndInsert();
                       }
                     }}
                   />
@@ -806,12 +849,17 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                       setIsImagePopoverOpen(false);
                       setImageCaption("");
                       setImageUrlInput("");
+                      setSelectedFile(null);
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button size="sm" onClick={handleInsertImageFromUrl}>
-                    Insert
+                  <Button
+                    size="sm"
+                    onClick={handleUploadAndInsert}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? "Uploading..." : "Insert"}
                   </Button>
                 </div>
               </div>
