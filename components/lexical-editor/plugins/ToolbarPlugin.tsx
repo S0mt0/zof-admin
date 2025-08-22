@@ -26,10 +26,6 @@ import {
   Bold,
   Italic,
   Underline,
-  Undo,
-  Redo,
-  ImageIcon,
-  Youtube,
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -40,6 +36,11 @@ import {
   Minus,
   Link,
 } from "lucide-react";
+import { TfiLayoutLineSolid } from "react-icons/tfi";
+import { FaImage } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa";
+import { BiUndo, BiRedo } from "react-icons/bi";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -91,6 +92,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isImagePopoverOpen, setIsImagePopoverOpen] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState("");
+  const [imageCaption, setImageCaption] = useState("");
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -313,10 +315,15 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     editor.focus();
   };
 
-  const doInsertImageWithUrl = (url: string, alt = "Image") => {
+  const doInsertImageWithUrl = (
+    url: string,
+    alt = "Image",
+    caption?: string
+  ) => {
     editor.update(() => {
       const imageNode = $createImageNode({
         altText: alt,
+        caption,
         src: url,
       });
       const selection = $getSelection();
@@ -357,7 +364,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
       }
 
       if (uploadedUrl) {
-        doInsertImageWithUrl(uploadedUrl, file.name);
+        doInsertImageWithUrl(uploadedUrl, file.name, imageCaption);
         toast.success("Image uploaded");
       } else {
         toast.error("Failed to upload image");
@@ -378,8 +385,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     try {
       // Basic URL validation
       new URL(imageUrlInput.trim());
-      doInsertImageWithUrl(imageUrlInput.trim());
+      doInsertImageWithUrl(imageUrlInput.trim(), "Image", imageCaption);
       setImageUrlInput("");
+      setImageCaption("");
       setIsImagePopoverOpen(false);
     } catch {
       alert("Please enter a valid image URL.");
@@ -425,14 +433,14 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           size="sm"
           onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
         >
-          <Undo className="h-4 w-4" />
+          <BiUndo className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         >
-          <Redo className="h-4 w-4" />
+          <BiRedo className="h-4 w-4" />
         </Button>
 
         <div className="w-px h-6 bg-border mx-1" />
@@ -699,7 +707,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem onClick={() => setIsImagePopoverOpen(true)}>
-              <ImageIcon className="h-4 w-4 mr-2" />
+              <FaImage className="h-4 w-4 mr-2 fill-sky-700" />
               Image
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -714,6 +722,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                 editor.focus();
               }}
             >
+              <TfiLayoutLineSolid className="h-4 w-4 mr-2" />
               Horizontal Rule
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -736,7 +745,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                 }
               }}
             >
-              <Youtube />
+              <FaYoutube className="h-4 w-4 mr-2 fill-red-600" />
               YouTube Video
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -772,18 +781,38 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                       }
                     }}
                   />
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsImagePopoverOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button size="sm" onClick={handleInsertImageFromUrl}>
-                      Insert
-                    </Button>
-                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Caption (optional)
+                  </label>
+                  <Input
+                    placeholder="Enter image caption..."
+                    value={imageCaption}
+                    onChange={(e) => setImageCaption(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleInsertImageFromUrl();
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setIsImagePopoverOpen(false);
+                      setImageCaption("");
+                      setImageUrlInput("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button size="sm" onClick={handleInsertImageFromUrl}>
+                    Insert
+                  </Button>
                 </div>
               </div>
             </div>

@@ -13,6 +13,7 @@ import { $applyNodeReplacement, DecoratorNode } from "lexical";
 
 export interface ImagePayload {
   altText: string;
+  caption?: string;
   height?: number;
   key?: NodeKey;
   src: string;
@@ -22,7 +23,18 @@ export interface ImagePayload {
 function convertImageElement(domNode: Node): null | DOMConversionOutput {
   if (domNode instanceof HTMLImageElement) {
     const { alt: altText, src, width, height } = domNode;
-    const node = $createImageNode({ altText, height, src, width });
+    let caption: string | undefined;
+
+    // Check if the image is inside a figure with a figcaption
+    const parent = domNode.parentElement;
+    if (parent?.tagName === "FIGURE") {
+      const figcaption = parent.querySelector("figcaption");
+      if (figcaption) {
+        caption = figcaption.textContent || undefined;
+      }
+    }
+
+    const node = $createImageNode({ altText, caption, height, src, width });
     return { node };
   }
   return null;
@@ -31,6 +43,7 @@ function convertImageElement(domNode: Node): null | DOMConversionOutput {
 export type SerializedImageNode = Spread<
   {
     altText: string;
+    caption?: string;
     height?: number;
     src: string;
     width?: number;
@@ -42,6 +55,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   // Use React.JSX.Element instead of JSX.Element
   __src: string;
   __altText: string;
+  __caption?: string;
   __width: "inherit" | number;
   __height: "inherit" | number;
 
@@ -53,6 +67,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     return new ImageNode(
       node.__src,
       node.__altText,
+      node.__caption,
       node.__width,
       node.__height,
       node.__key
@@ -60,9 +75,10 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { altText, height, width, src } = serializedNode;
+    const { altText, caption, height, width, src } = serializedNode;
     const node = $createImageNode({
       altText,
+      caption,
       height,
       src,
       width,
@@ -71,6 +87,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   }
 
   exportDOM(): DOMExportOutput {
+    const container = document.createElement("figure");
     const element = document.createElement("img");
     element.setAttribute("src", this.__src);
     element.setAttribute("alt", this.__altText);
@@ -78,11 +95,25 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     element.setAttribute("height", this.__height.toString());
     element.style.display = "block";
     element.style.margin = "1rem auto";
-    element.style.maxWidth = "600px";
+    element.style.maxWidth = "700px";
     element.style.width = "100%";
     element.style.objectFit = "cover";
     element.style.objectPosition = "center";
-    return { element };
+
+    container.appendChild(element);
+
+    if (this.__caption) {
+      const caption = document.createElement("figcaption");
+      caption.textContent = this.__caption;
+      caption.style.textAlign = "center";
+      caption.style.fontSize = "0.875rem";
+      caption.style.color = "var(--muted-foreground)";
+      caption.style.marginTop = "0.5rem";
+      caption.style.fontStyle = "italic";
+      container.appendChild(caption);
+    }
+
+    return { element: container };
   }
 
   static importDOM(): DOMConversionMap | null {
@@ -97,6 +128,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   constructor(
     src: string,
     altText: string,
+    caption?: string,
     width?: "inherit" | number,
     height?: "inherit" | number,
     key?: NodeKey
@@ -104,6 +136,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     super(key);
     this.__src = src;
     this.__altText = altText;
+    this.__caption = caption;
     this.__width = width || "inherit";
     this.__height = height || "inherit";
   }
@@ -111,6 +144,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   exportJSON(): SerializedImageNode {
     return {
       altText: this.getAltText(),
+      caption: this.__caption,
       height: this.__height === "inherit" ? 0 : this.__height,
       src: this.getSrc(),
       type: "image",
@@ -153,29 +187,39 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   decorate(): React.JSX.Element {
     // Use React.JSX.Element instead of JSX.Element
     return (
-      <img
-        src={this.__src || "/placeholder.svg"}
-        alt={this.__altText}
-        style={{
-          height: this.__height === "inherit" ? "inherit" : this.__height,
-          width: this.__width === "inherit" ? "100%" : this.__width,
-          display: "block",
-          margin: "1rem auto",
-        }}
-        className="w-full max-w-[600px] h-auto block mx-auto object-cover object-center"
-      />
+      <div className="image-container">
+        <img
+          src={this.__src || "/placeholder.svg"}
+          alt={this.__altText}
+          style={{
+            height: this.__height === "inherit" ? "inherit" : this.__height,
+            width: this.__width === "inherit" ? "100%" : this.__width,
+            display: "block",
+            margin: "1rem auto",
+          }}
+          className="w-full max-w-[700px] h-auto block mx-auto object-cover object-center"
+        />
+        {this.__caption && (
+          <figcaption className="text-center text-sm text-muted-foreground mt-2 italic">
+            {this.__caption}
+          </figcaption>
+        )}
+      </div>
     );
   }
 }
 
 export function $createImageNode({
   altText,
+  caption,
   height,
   src,
   width,
   key,
 }: ImagePayload): ImageNode {
-  return $applyNodeReplacement(new ImageNode(src, altText, width, height, key));
+  return $applyNodeReplacement(
+    new ImageNode(src, altText, caption, width, height, key)
+  );
 }
 
 export function $isImageNode(

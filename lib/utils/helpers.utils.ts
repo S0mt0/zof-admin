@@ -117,6 +117,6 @@ export const handleFileUpload = async (
     return objectUrl;
   } catch (error) {
     console.error("Error Uploading to S3: ", error);
-    throw error; // Re-throw to let the calling function handle it
+    throw error;
   }
 };
