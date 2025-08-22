@@ -12,6 +12,7 @@ import {
   FORMAT_ELEMENT_COMMAND,
   INDENT_CONTENT_COMMAND,
   OUTDENT_CONTENT_COMMAND,
+  TextFormatType,
 } from "lexical";
 import {
   $createHeadingNode,
@@ -139,7 +140,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     });
   }, [updateToolbar, editor]);
 
-  const formatText = (format: string) => {
+  const formatText = (format: TextFormatType) => {
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
     editor.focus();
   };

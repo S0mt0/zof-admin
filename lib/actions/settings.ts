@@ -39,7 +39,7 @@ export const updateFoundationInfoAction = async (
       "Zita-Onyeka Foundation website info was just updated by you."
     );
 
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
 
     revalidatePath("/settings");
     return { success: "Foundation information updated successfully!" };

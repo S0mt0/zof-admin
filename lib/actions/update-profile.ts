@@ -33,7 +33,7 @@ export const updateProfile = async (
     );
 
     revalidateTag("profile");
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     return { success: "Profile updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -54,7 +54,7 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
       "You changed your profile image"
     );
 
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     revalidateTag("profile");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
@@ -103,7 +103,7 @@ export const updateEmail = async (
     );
 
     revalidateTag("profile");
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     return {
       success:
         "Email updated successfully! A confirmation mail has been sent to your new email.",
@@ -146,7 +146,7 @@ export const updatePassword = async (
     );
 
     revalidateTag("profile");
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     return { success: "Password updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -173,7 +173,7 @@ export const updateNotificationPreferences = async (
     );
 
     revalidateTag("profile");
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     return { success: "Notification preferences updated!" };
   } catch (error) {
     return { error: "Something went wrong!" };

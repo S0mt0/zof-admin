@@ -12,7 +12,7 @@ interface Blog {
   tags: string[];
   views: number;
   createdBy: string;
-  authorId?: string;
+  authorId?: string | null;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -25,13 +25,13 @@ interface BlogFiltersProps {
     search?: string;
     status?: string;
     featured?: string;
+    limit?: string;
   };
   selectedCount: number;
   onBulkDelete: () => void;
-  onCreateNew: () => void;
 }
 
-interface BlogPageProps {
+interface BlogsTableProps {
   blogs: Blog[];
   pagination: {
     total: number;
@@ -51,22 +51,7 @@ interface BlogTableProps {
   blogs: Blog[];
   selectedBlogs: string[];
   onSelectBlog: (blogId: string) => void;
-  onSelectAll: () => void;
   onViewBlog: (blog: Blog) => void;
   onEditBlog: (blog: Blog) => void;
   onDeleteBlog: (blogId: string) => void;
-  allCurrentSelected: boolean;
-  someCurrentSelected: boolean;
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-  searchParams: {
-    page?: string;
-    search?: string;
-    status?: string;
-    featured?: string;
-  };
 }

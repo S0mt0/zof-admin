@@ -61,9 +61,9 @@ export const createTeamMemberAction = async (
     }
 
     revalidateTag("teams");
-    revalidateTag("recent-activities");
-    revalidateTag("user-activity-stats");
-    revalidateTag("all-activity-stats");
+    revalidateTag("users-recent-activities");
+    revalidateTag("profile-stats");
+    revalidateTag("app-stats");
     return { success: "Team member created" };
   } catch (e) {
     return { error: "Could not create team member" };
@@ -102,15 +102,15 @@ export const updateTeamMemberAction = async (
       await createUserActivity(
         updatedBy,
         "Team member details updated",
-        `${updated.name}'s profile was updated`
+        `You successfully updated ${updated.name}'s profile.`
       );
     }
 
     revalidateTag("teams");
     revalidateTag("team-member");
-    revalidateTag("recent-activities");
-    revalidateTag("user-activity-stats");
-    revalidateTag("all-activity-stats");
+    revalidateTag("users-recent-activities");
+    revalidateTag("profile-stats");
+
     return { success: "Team member updated" };
   } catch (e) {
     return { error: "Could not update team member" };
@@ -135,9 +135,9 @@ export const deleteTeamMemberAction = async (
     }
 
     revalidateTag("teams");
-    revalidateTag("recent-activities");
-    revalidateTag("user-activity-stats");
-    revalidateTag("all-activity-stats");
+    revalidateTag("users-recent-activities");
+    revalidateTag("profile-stats");
+    revalidateTag("app-stats");
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };
@@ -169,7 +169,7 @@ export const emailTeamMemberAction = async (
       `You successfully sent an email to a member of the team ${teamMember?.name}.`
     );
 
-    revalidateTag("recent-activities");
+    revalidateTag("users-recent-activities");
     return { success: "Email sent" };
   } catch (e) {
     return { error: "Failed to send email" };

@@ -12,3 +12,13 @@ export const foundationEmail = "onyekazita@gmail.com";
 export const foundationAddress =
   "16, Nkwere Street, Garki Area 11 FCT, Abuja Nigeria.";
 export const foundationPhone = "+234 803 786 4683";
+
+export const emptyPaginatedData = {
+  data: [],
+  pagination: {
+    total: 0,
+    page: 0,
+    limit: 0,
+    totalPages: 0,
+  },
+};

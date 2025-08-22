@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { Plus, Search, Filter, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,13 +11,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Filter, Trash2 } from "lucide-react";
 
 export function BlogFilters({
   searchParams,
   selectedCount,
   onBulkDelete,
-  onCreateNew,
 }: BlogFiltersProps) {
   const router = useRouter();
   const searchParamsObj = useSearchParams();
@@ -139,7 +139,7 @@ export function BlogFilters({
             Delete ({selectedCount})
           </Button>
         )}
-        <Button onClick={onCreateNew}>
+        <Button onClick={() => router.push("/blogs/new")}>
           <Plus className="h-4 w-4 mr-2" />
           New Blog Post
         </Button>

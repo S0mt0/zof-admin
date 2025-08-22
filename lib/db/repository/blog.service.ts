@@ -1,3 +1,4 @@
+import { emptyPaginatedData } from "@/lib/constants";
 import { db } from "../config";
 import { prismaPaginate } from "@/lib/utils/db.utils";
 
@@ -26,12 +27,34 @@ export const getBlogs = async (
     where.featured = featured === "featured";
   }
 
-  return prismaPaginate({
-    page,
-    limit,
-    model: db.blog,
-    args: {
-      where,
+  try {
+    return await prismaPaginate({
+      page,
+      limit,
+      model: db.blog,
+      args: {
+        where,
+        include: {
+          author: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    });
+  } catch (error) {
+    console.log("error fetching blogs", error);
+    return emptyPaginatedData;
+  }
+};
+
+export const getBlogById = async (id: string) => {
+  try {
+    return await db.blog.findUnique({
+      where: { id },
       include: {
         author: {
           select: {
@@ -40,64 +63,72 @@ export const getBlogs = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
-    },
-  });
-};
-
-export const getBlogById = async (id: string) => {
-  return db.blog.findUnique({
-    where: { id },
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
-        },
-      },
-    },
-  });
+    });
+  } catch (error) {
+    console.log("error getting blog", error);
+    return null;
+  }
 };
 
 export const createBlog = async (data: any) => {
-  return db.blog.create({
-    data,
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
+  try {
+    return await db.blog.create({
+      data,
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.log("error getting blog", error);
+    return null;
+  }
 };
 
 export const updateBlog = async (id: string, data: any) => {
-  return db.blog.update({
-    where: { id },
-    data,
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
+  try {
+    return await db.blog.update({
+      where: { id },
+      data,
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.log("error updating blog", error);
+    return null;
+  }
 };
 
 export const deleteBlog = async (id: string) => {
-  return db.blog.delete({
-    where: { id },
-  });
+  try {
+    return await db.blog.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.log("error deleting blog", error);
+    return null;
+  }
 };
 
 export const deleteManyBlogs = async (ids: string[]) => {
-  return db.blog.deleteMany({
-    where: {
-      id: { in: ids },
-    },
-  });
+  try {
+    return await db.blog.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+  } catch (error) {
+    console.log("error deleting blogs", error);
+    return null;
+  }
 };

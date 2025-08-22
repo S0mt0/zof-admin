@@ -1,7 +1,8 @@
 import { unstable_cache } from "next/cache";
+import { formatDistanceToNow } from "date-fns";
 
 import { Pagination } from "@/components/ui/pagination-v2";
-import { getRecentActivities } from "@/lib/db/repository/user-activity.service";
+import { getUsersRecentActivities } from "@/lib/db/repository/user-activity.service";
 import {
   Card,
   CardContent,
@@ -9,9 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
 
-export async function RecentActivities({
+export async function UsersRecentActivities({
   page = 1,
   limit = 5,
   userId,
@@ -20,16 +20,16 @@ export async function RecentActivities({
   limit?: number;
   userId: string;
 }) {
-  const recentActivities = unstable_cache(
-    getRecentActivities,
-    ["recent-activities"],
+  const usersRecentActivities = unstable_cache(
+    getUsersRecentActivities,
+    ["users-recent-activities"],
     {
-      tags: ["recent-activities"],
+      tags: ["users-recent-activities"],
       revalidate: false,
     }
   );
 
-  const { data, pagination } = await recentActivities(page, limit, userId);
+  const { data, pagination } = await usersRecentActivities(page, limit, userId);
 
   return (
     <Card className="col-span-4">

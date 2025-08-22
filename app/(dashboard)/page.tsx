@@ -4,25 +4,21 @@ import { unstable_cache } from "next/cache";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ActivityStats } from "@/components/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
-import { RecentActivities } from "./_components/recent-activities";
+import { UsersRecentActivities } from "./_components/recent-activities";
 import { currentUser } from "@/lib/utils";
 import { getActivityStats } from "@/lib/db/repository";
 
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: { page?: string; limit?: string };
 }) {
   const user = await currentUser();
 
-  const activityStats = unstable_cache(
-    getActivityStats,
-    ["all-activity-stats"],
-    {
-      tags: ["all-activity-stats"],
-      revalidate: false,
-    }
-  );
+  const activityStats = unstable_cache(getActivityStats, ["app-stats"], {
+    tags: ["app-stats"],
+    revalidate: false,
+  });
   const { blogs, events, team, messages } = await activityStats();
 
   const cards = [
@@ -53,6 +49,7 @@ export default async function Dashboard({
   ];
 
   const page = Number(searchParams.page) || 1;
+  const limit = Number(searchParams.limit) || 5;
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -65,7 +62,7 @@ export default async function Dashboard({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <RecentActivities page={page} limit={5} userId={user?.id!} />
+        <UsersRecentActivities page={page} limit={limit} userId={user?.id!} />
         <QuickActions />
       </div>
     </div>
