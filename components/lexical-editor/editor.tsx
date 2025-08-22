@@ -182,7 +182,7 @@ export default function RichTextEditor({
     <div
       className={`rounded-xl border border-border bg-card shadow-sm overflow-hidden ${className}`}
     >
-      <LexicalComposer initialConfig={initialConfig as unknown as any}>
+      <LexicalComposer initialConfig={initialConfig}>
         <div className="bg-card">
           <ToolbarPlugin onImageUpload={onImageUpload} disabled={disabled} />
           <div className="relative">

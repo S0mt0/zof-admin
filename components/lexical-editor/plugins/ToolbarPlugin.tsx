@@ -67,6 +67,7 @@ import { $createTextNode, TextNode } from "lexical";
 import { X, Check } from "lucide-react";
 import { handleFileUpload } from "@/lib/utils/helpers.utils";
 import { toast } from "sonner";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 
 interface ToolbarPluginProps {
   onImageUpload?: (file: File) => Promise<string>;
@@ -332,32 +333,36 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      alert("Please select a valid image file.");
+      toast.error("Please select a valid image file.");
       return;
     }
     const maxBytes = 8 * 1024 * 1024;
     if (file.size > maxBytes) {
-      alert("Image must be 8MB or less.");
+      toast.error("Image must be 8MB or less.");
       return;
     }
 
     try {
       const dismiss = toast.loading("Uploading image...");
       let uploadedUrl: string | undefined;
+
       if (onImageUpload) {
         uploadedUrl = await onImageUpload(file);
       } else {
         const syntheticEvent = {
           target: { files: [file] },
         } as unknown as React.ChangeEvent<HTMLInputElement>;
+
         uploadedUrl = await handleFileUpload(syntheticEvent, "documents");
       }
+
       if (uploadedUrl) {
         doInsertImageWithUrl(uploadedUrl, file.name);
         toast.success("Image uploaded");
       } else {
         toast.error("Failed to upload image");
       }
+
       toast.dismiss(dismiss);
       setIsImagePopoverOpen(false);
     } catch (err) {
@@ -731,6 +736,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                 }
               }}
             >
+              <Youtube />
               YouTube Video
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -738,57 +744,49 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
 
         {/* Image Popover */}
         {isImagePopoverOpen && (
-          <div className="relative">
-            <Popover
-              open={isImagePopoverOpen}
-              onOpenChange={setIsImagePopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <span />
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-80">
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">From device</label>
-                    <Input
-                      ref={fileInputRef as any}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleDeviceFileChosen}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Images only, up to 8MB.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">From URL</label>
-                    <Input
-                      placeholder="https://example.com/image.jpg"
-                      value={imageUrlInput}
-                      onChange={(e) => setImageUrlInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleInsertImageFromUrl();
-                        }
-                      }}
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsImagePopoverOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={handleInsertImageFromUrl}>
-                        Insert
-                      </Button>
-                    </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-background border rounded-lg p-6 w-80 max-w-[90vw]">
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">From device</label>
+                  <Input
+                    ref={fileInputRef as any}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleDeviceFileChosen}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Images only, up to 8MB.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">From URL</label>
+                  <Input
+                    placeholder="https://example.com/image.jpg"
+                    value={imageUrlInput}
+                    onChange={(e) => setImageUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleInsertImageFromUrl();
+                      }
+                    }}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsImagePopoverOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleInsertImageFromUrl}>
+                      Insert
+                    </Button>
                   </div>
                 </div>
-              </PopoverContent>
-            </Popover>
+              </div>
+            </div>
           </div>
         )}
       </div>

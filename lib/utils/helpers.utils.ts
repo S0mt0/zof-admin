@@ -90,23 +90,33 @@ export function obscureEmail(email: string): string {
 
 export const handleFileUpload = async (
   e: React.ChangeEvent<HTMLInputElement>,
-  folder: S3FileFolders
+  folder: "profile" | "blogs" | "events" | "documents"
 ) => {
   const file = e.target.files?.[0];
   if (!file) return;
 
-  const { url } = await getUploadUrl(file.name, file.type, folder);
-
   try {
-    await fetch(url, {
+    console.log("Getting upload URL for:", file.name, file.type, folder);
+    const { url } = await getUploadUrl(file.name, file.type, folder);
+    console.log("Got signed URL:", url);
+
+    const response = await fetch(url, {
       method: "PUT",
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": file.type },
       body: file,
     });
 
+    if (!response.ok) {
+      throw new Error(
+        `Upload failed: ${response.status} ${response.statusText}`
+      );
+    }
+
     const objectUrl = url.split("?")[0];
+    console.log("Upload successful, object URL:", objectUrl);
     return objectUrl;
   } catch (error) {
-    console.log("Error Uploading to S3: ", error);
+    console.error("Error Uploading to S3: ", error);
+    throw error; // Re-throw to let the calling function handle it
   }
 };
