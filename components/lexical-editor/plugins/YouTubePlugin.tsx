@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
-import { useEffect } from "react"
-import { YouTubeNode } from "../nodes/YouTubeNode"
-import type { JSX } from "react"
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect } from "react";
+import { YouTubeNode } from "../nodes/YouTubeNode";
+import type { JSX } from "react";
 
 export function YouTubePlugin(): JSX.Element | null {
-  const [editor] = useLexicalComposerContext()
+  const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    if (!editor.hasNodes([YouTubeNode])) {
-      throw new Error("YouTubePlugin: YouTubeNode not registered on editor")
+    if (!editor.hasNodes([YouTubeNode as unknown as any])) {
+      throw new Error("YouTubePlugin: YouTubeNode not registered on editor");
     }
-  }, [editor])
+  }, [editor]);
 
-  return null
+  return null;
 }

@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Quicksand } from "next/font/google";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -44,6 +46,8 @@ export default async function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </SessionProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

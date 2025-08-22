@@ -123,7 +123,7 @@ function InitialValuePlugin({ value }: { value: string }) {
       editor.update(() => {
         const parser = new DOMParser();
         const dom = parser.parseFromString(value, "text/html");
-        const nodes = $generateNodesFromDOM(editor, dom);
+        const nodes = $generateNodesFromDOM(editor as unknown as any, dom);
         $getRoot().select();
         $getRoot().clear();
         $getRoot().append(...nodes);
@@ -163,12 +163,16 @@ export default function RichTextEditor({
       ImageNode,
       YouTubeNode,
       HorizontalRuleNode,
-    ],
+    ] as unknown as ReadonlyArray<any>,
     editable: !disabled,
   };
 
-  const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
-    editor.update(() => {
+  const handleChange = (
+    editorState: any,
+    editor: LexicalEditor,
+    _tags: Set<string>
+  ) => {
+    editorState.read(() => {
       const htmlString = $generateHtmlFromNodes(editor, null);
       onChange(htmlString);
     });
@@ -176,27 +180,27 @@ export default function RichTextEditor({
 
   return (
     <div
-      className={`border border-gray-300 rounded-lg overflow-hidden ${className}`}
+      className={`rounded-xl border border-border bg-card shadow-sm overflow-hidden ${className}`}
     >
-      <LexicalComposer initialConfig={initialConfig}>
-        <div className="bg-white">
+      <LexicalComposer initialConfig={initialConfig as unknown as any}>
+        <div className="bg-card">
           <ToolbarPlugin onImageUpload={onImageUpload} disabled={disabled} />
           <div className="relative">
             <RichTextPlugin
               contentEditable={
                 <ContentEditable
-                  className="min-h-[200px] p-4 outline-none resize-none overflow-auto"
+                  className="min-h-[220px] p-4 outline-none resize-none overflow-auto prose max-w-none dark:prose-invert"
                   style={{ caretColor: disabled ? "transparent" : "auto" }}
                 />
               }
               placeholder={
-                <div className="absolute top-4 left-4 text-gray-400 pointer-events-none">
+                <div className="absolute top-4 left-4 text-muted-foreground pointer-events-none">
                   {placeholder}
                 </div>
               }
               ErrorBoundary={LexicalErrorBoundary}
             />
-            <OnChangePlugin onChange={handleChange} />
+            <OnChangePlugin onChange={handleChange as unknown as any} />
             <InitialValuePlugin value={value} />
             <HistoryPlugin />
             <AutoFocusPlugin />
@@ -204,7 +208,9 @@ export default function RichTextEditor({
             <ListPlugin />
             <ImagesPlugin />
             <YouTubePlugin />
-            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+            <MarkdownShortcutPlugin
+              transformers={TRANSFORMERS as unknown as any}
+            />
             <AutoLinkPlugin
               matchers={[
                 (text: string) => {

@@ -19,10 +19,9 @@ import {
   type HeadingTagType,
 } from "@lexical/rich-text";
 import { $createCodeNode } from "@lexical/code";
-import { $setBlocksType } from "@lexical/selection";
+import { $setBlocksType, $patchStyleText } from "@lexical/selection";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { INSERT_TABLE_COMMAND } from "@lexical/table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Bold,
   Italic,
@@ -40,8 +39,6 @@ import {
   Type,
   Minus,
   Link,
-  Table,
-  RectangleHorizontalIcon as HorizontalRule,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,13 +63,10 @@ import { Input } from "@/components/ui/input";
 import { $createImageNode } from "../nodes/ImageNode";
 import { $createYouTubeNode } from "../nodes/YouTubeNode";
 import { $createHorizontalRuleNode } from "../nodes/HorizontalRuleNode";
-import {
-  INSERT_UNORDERED_LIST_COMMAND,
-  INSERT_ORDERED_LIST_COMMAND,
-  INSERT_CHECK_LIST_COMMAND,
-} from "@lexical/list";
 import { $createTextNode, TextNode } from "lexical";
 import { X, Check } from "lucide-react";
+import { handleFileUpload } from "@/lib/utils/helpers.utils";
+import { toast } from "sonner";
 
 interface ToolbarPluginProps {
   onImageUpload?: (file: File) => Promise<string>;
@@ -93,6 +87,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
   const [elementFormat, setElementFormat] = useState("left");
   const [isLinkEditMode, setIsLinkEditMode] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isImagePopoverOpen, setIsImagePopoverOpen] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState("");
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -114,7 +111,20 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         setBlockType(element.getType());
       }
 
-      setElementFormat(element.getFormatTyp() || "left");
+      // Determine element alignment format safely across node types
+      const formatGetter =
+        (
+          element as unknown as {
+            getFormatType?: () => string;
+            getFormat?: () => string;
+          }
+        ).getFormatType ||
+        (element as unknown as { getFormat?: () => string }).getFormat;
+      const nextFormat =
+        typeof formatGetter === "function"
+          ? formatGetter.call(element)
+          : undefined;
+      setElementFormat(nextFormat || "left");
     }
   }, [editor]);
 
@@ -172,15 +182,10 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createCodeNode());
+          $setBlocksType(selection, () => $createCodeNode() as unknown as any);
         }
       });
     }
-    editor.focus();
-  };
-
-  const formatCheckList = () => {
-    editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
     editor.focus();
   };
 
@@ -204,23 +209,14 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
   const changeFontSize = (increment: number) => {
     const newSize = Math.max(6, Math.min(72, fontSize + increment));
     setFontSize(newSize);
-    applyStyleText({ fontSize: `${newSize}px` });
+    applyStyleToSelection({ "font-size": `${newSize}px` });
   };
 
-  const applyStyleText = (styles: Record<string, string>) => {
+  const applyStyleToSelection = (styles: Record<string, string>) => {
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        selection.getNodes().forEach((node) => {
-          const element = node.getParent();
-          if (element) {
-            const key = element.getKey();
-            const domElement = editor.getElementByKey(key);
-            if (domElement) {
-              Object.assign(domElement.style, styles);
-            }
-          }
-        });
+        $patchStyleText(selection, styles);
       }
     });
     editor.focus();
@@ -267,13 +263,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           return false;
         });
 
-        if (hasHighlight) {
-          // Remove highlight
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight");
-        } else {
-          // Add highlight
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight");
-        }
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight");
       }
     });
     editor.focus();
@@ -286,6 +276,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         selection.getNodes().forEach((node) => {
           if (node.getTextContent()) {
             const textNode = $createTextNode(node.getTextContent());
+            textNode.setStyle("");
             node.replace(textNode);
           }
         });
@@ -298,7 +289,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        // Only enable the popup if there’s an actual text selection
         setIsLinkEditMode(true);
       }
     });
@@ -322,108 +312,78 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     editor.focus();
   };
 
-  const insertImage = async () => {
-    if (!onImageUpload) {
-      const url = prompt("Enter image URL:");
-      if (url) {
-        editor.update(() => {
-          const imageNode = $createImageNode({
-            altText: "Image",
-            src: url,
-          });
-          const selection = $getSelection();
-          if ($isRangeSelection(selection)) {
-            selection.insertNodes([imageNode]);
-          }
-        });
-      }
-      return;
-    }
-
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file && onImageUpload) {
-        try {
-          const url = await onImageUpload(file);
-          editor.update(() => {
-            const imageNode = $createImageNode({
-              altText: file.name,
-              src: url,
-            });
-            const selection = $getSelection();
-            if ($isRangeSelection(selection)) {
-              selection.insertNodes([imageNode]);
-            }
-          });
-        } catch (error) {
-          console.error("Failed to upload image:", error);
-        }
-      }
-    };
-    input.click();
-    editor.focus();
-  };
-
-  const insertInlineImage = async () => {
-    const url = prompt("Enter image URL:");
-    if (url) {
-      editor.update(() => {
-        const imageNode = $createImageNode({
-          altText: "Inline Image",
-          src: url,
-          width: 100,
-          height: 100,
-        });
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          selection.insertNodes([imageNode]);
-        }
-      });
-    }
-    editor.focus();
-  };
-
-  const insertYouTube = () => {
-    const url = prompt("Enter YouTube URL:");
-    if (url) {
-      const videoID = getYouTubeVideoID(url);
-      if (videoID) {
-        editor.update(() => {
-          const youtubeNode = $createYouTubeNode(videoID);
-          const selection = $getSelection();
-          if ($isRangeSelection(selection)) {
-            selection.insertNodes([youtubeNode]);
-          }
-        });
-      } else {
-        alert("Invalid YouTube URL");
-      }
-    }
-    editor.focus();
-  };
-
-  const insertHorizontalRule = () => {
+  const doInsertImageWithUrl = (url: string, alt = "Image") => {
     editor.update(() => {
-      const hrNode = $createHorizontalRuleNode();
+      const imageNode = $createImageNode({
+        altText: alt,
+        src: url,
+      });
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        selection.insertNodes([hrNode]);
+        selection.insertNodes([imageNode]);
       }
     });
     editor.focus();
   };
 
-  const insertTable = () => {
-    editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns: "3", rows: "3" });
-    editor.focus();
+  const handleDeviceFileChosen: React.ChangeEventHandler<
+    HTMLInputElement
+  > = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file.");
+      return;
+    }
+    const maxBytes = 8 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      alert("Image must be 8MB or less.");
+      return;
+    }
+
+    try {
+      const dismiss = toast.loading("Uploading image...");
+      let uploadedUrl: string | undefined;
+      if (onImageUpload) {
+        uploadedUrl = await onImageUpload(file);
+      } else {
+        const syntheticEvent = {
+          target: { files: [file] },
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+        uploadedUrl = await handleFileUpload(syntheticEvent, "documents");
+      }
+      if (uploadedUrl) {
+        doInsertImageWithUrl(uploadedUrl, file.name);
+        toast.success("Image uploaded");
+      } else {
+        toast.error("Failed to upload image");
+      }
+      toast.dismiss(dismiss);
+      setIsImagePopoverOpen(false);
+    } catch (err) {
+      console.error("Failed to upload image:", err);
+      toast.error("Failed to upload image");
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleInsertImageFromUrl = () => {
+    if (!imageUrlInput.trim()) return;
+    try {
+      // Basic URL validation
+      new URL(imageUrlInput.trim());
+      doInsertImageWithUrl(imageUrlInput.trim());
+      setImageUrlInput("");
+      setIsImagePopoverOpen(false);
+    } catch {
+      alert("Please enter a valid image URL.");
+    }
   };
 
   const getYouTubeVideoID = (url: string): string | null => {
     const match = url.match(
-      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
     );
     return match ? match[1] : null;
   };
@@ -442,8 +402,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         return "Quote";
       case "code":
         return "Code Block";
-      case "check-list-item":
-        return "Check List";
       default:
         return "Normal";
     }
@@ -455,7 +413,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
 
   return (
     <div className="relative">
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-border bg-muted/40">
         {/* Undo/Redo */}
         <Button
           variant="ghost"
@@ -472,7 +430,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           <Redo className="h-4 w-4" />
         </Button>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="w-px h-6 bg-border mx-1" />
 
         {/* Block Type Dropdown */}
         <DropdownMenu>
@@ -507,32 +465,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                 Heading 3
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
-              }
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-sm">1.</span>
-                Numbered List
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
-              }
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-sm">•</span>
-                Bullet List
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={formatCheckList}>
-              <span className="flex items-center gap-2">
-                <span className="text-sm">☑</span>
-                Check List
-              </span>
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={formatQuote}>
               <span className="flex items-center gap-2">
                 <span className="text-sm">"</span>
@@ -553,7 +485,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           value={fontFamily}
           onValueChange={(value) => {
             setFontFamily(value);
-            applyStyleText({ fontFamily: value });
+            applyStyleToSelection({ "font-family": value });
           }}
         >
           <SelectTrigger className="w-32">
@@ -580,7 +512,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           </Button>
         </div>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="w-px h-6 bg-border mx-1" />
 
         {/* Text Formatting */}
         <Button
@@ -643,18 +575,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                 Strikethrough
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatText("subscript")}>
-              <span className="flex items-center gap-2">
-                <span className="text-sm">X₂</span>
-                Subscript
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatText("superscript")}>
-              <span className="flex items-center gap-2">
-                <span className="text-sm">X₂</span>
-                Superscript
-              </span>
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={toggleHighlight}>
               <span className="flex items-center gap-2">
                 <span className="text-sm bg-yellow-200 px-1">H</span>
@@ -670,7 +590,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="w-px h-6 bg-border mx-1" />
 
         {/* Alignment */}
         <DropdownMenu>
@@ -703,14 +623,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
             <DropdownMenuItem onClick={() => formatAlignment("justify")}>
               <AlignJustify className="h-4 w-4 mr-2" />
               Justify Align
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatAlignment("start")}>
-              <AlignLeft className="h-4 w-4 mr-2" />
-              Start Align
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => formatAlignment("end")}>
-              <AlignRight className="h-4 w-4 mr-2" />
-              End Align
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleOutdent}>
               <span className="flex items-center gap-2">
@@ -746,7 +658,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                   value={fontColor}
                   onChange={(e) => {
                     setFontColor(e.target.value);
-                    applyStyleText({ color: e.target.value });
+                    applyStyleToSelection({ color: e.target.value });
                   }}
                   className="w-full h-8 rounded border"
                 />
@@ -758,7 +670,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
                   value={bgColor}
                   onChange={(e) => {
                     setBgColor(e.target.value);
-                    applyStyleText({ backgroundColor: e.target.value });
+                    applyStyleToSelection({
+                      "background-color": e.target.value,
+                    });
                   }}
                   className="w-full h-8 rounded border"
                 />
@@ -767,9 +681,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           </PopoverContent>
         </Popover>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="w-px h-6 bg-border mx-1" />
 
-        {/* Insert Dropdown */}
+        {/* Insert Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-1">
@@ -779,28 +693,104 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuItem onClick={insertHorizontalRule}>
-              <HorizontalRule className="h-4 w-4 mr-2" />
-              Horizontal Rule
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={insertImage}>
+            <DropdownMenuItem onClick={() => setIsImagePopoverOpen(true)}>
               <ImageIcon className="h-4 w-4 mr-2" />
               Image
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={insertInlineImage}>
-              <ImageIcon className="h-4 w-4 mr-2" />
-              Inline Image
+            <DropdownMenuItem
+              onClick={() => {
+                editor.update(() => {
+                  const hrNode = $createHorizontalRuleNode();
+                  const selection = $getSelection();
+                  if ($isRangeSelection(selection)) {
+                    selection.insertNodes([hrNode]);
+                  }
+                });
+                editor.focus();
+              }}
+            >
+              Horizontal Rule
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={insertTable}>
-              <Table className="h-4 w-4 mr-2" />
-              Table
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={insertYouTube}>
-              <Youtube className="h-4 w-4 mr-2" />
+            <DropdownMenuItem
+              onClick={() => {
+                const url = prompt("Enter YouTube URL:");
+                if (url) {
+                  const videoID = getYouTubeVideoID(url);
+                  if (videoID) {
+                    editor.update(() => {
+                      const youtubeNode = $createYouTubeNode(videoID);
+                      const selection = $getSelection();
+                      if ($isRangeSelection(selection)) {
+                        selection.insertNodes([youtubeNode]);
+                      }
+                    });
+                    editor.focus();
+                  } else {
+                    alert("Invalid YouTube URL");
+                  }
+                }
+              }}
+            >
               YouTube Video
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Image Popover */}
+        {isImagePopoverOpen && (
+          <div className="relative">
+            <Popover
+              open={isImagePopoverOpen}
+              onOpenChange={setIsImagePopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <span />
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-80">
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">From device</label>
+                    <Input
+                      ref={fileInputRef as any}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleDeviceFileChosen}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Images only, up to 8MB.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">From URL</label>
+                    <Input
+                      placeholder="https://example.com/image.jpg"
+                      value={imageUrlInput}
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleInsertImageFromUrl();
+                        }
+                      }}
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsImagePopoverOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleInsertImageFromUrl}>
+                        Insert
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
       </div>
 
       {/* Link Editor Popup */}

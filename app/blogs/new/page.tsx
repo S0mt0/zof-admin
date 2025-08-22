@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ToolConstructable } from "@editorjs/editorjs";
-import EditorJS from "@editorjs/editorjs";
+import { Save, ArrowLeft, Eye, Upload, ChevronDown } from "lucide-react";
 
+import RichTextEditor from "@/components/lexical-editor/editor";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Save, ArrowLeft, Eye, Upload, ChevronDown } from "lucide-react";
 
 export default function NewBlogPostPage() {
   const router = useRouter();
-  const editorRef = useRef<EditorJS | null>(null);
-  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [content, setContent] = useState<string>("");
   const [formData, setFormData] = useState({
     title: "",
     excerpt: "",
@@ -42,123 +40,6 @@ export default function NewBlogPostPage() {
     featured: false,
   });
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const initEditor = async () => {
-      // Only run on client side
-      if (typeof window === "undefined") return;
-
-      if (!editorRef.current) {
-        // Load EditorJS and plugins
-        const EditorJS = (await import("@editorjs/editorjs")).default;
-
-        const Header = (await import("@editorjs/header"))
-          .default as unknown as ToolConstructable;
-
-        const List = (await import("@editorjs/list"))
-          .default as unknown as ToolConstructable;
-
-        const Paragraph = (await import("@editorjs/paragraph"))
-          .default as unknown as ToolConstructable;
-
-        const Image = (await import("@editorjs/image"))
-          .default as unknown as ToolConstructable;
-
-        const Quote = (await import("@editorjs/quote"))
-          .default as unknown as ToolConstructable;
-
-        const Code = (await import("@editorjs/code"))
-          .default as unknown as ToolConstructable;
-
-        const Delimiter = (await import("@editorjs/delimiter"))
-          .default as unknown as ToolConstructable;
-
-        const Table = (await import("@editorjs/table"))
-          .default as unknown as ToolConstructable;
-
-        editorRef.current = new EditorJS({
-          holder: "editorjs",
-          placeholder: "Start writing your blog post content...",
-          tools: {
-            header: {
-              class: Header,
-              config: {
-                levels: [1, 2, 3],
-                Level: 2,
-              },
-            },
-            paragraph: {
-              class: Paragraph,
-              inlineToolbar: true,
-            },
-            list: {
-              class: List,
-              inlineToolbar: true,
-            },
-            image: {
-              class: Image,
-              config: {
-                uploader: {
-                  uploadByFile: async (file: File) => {
-                    // Simulate file upload
-                    return new Promise((resolve) => {
-                      setTimeout(() => {
-                        resolve({
-                          success: 1,
-                          file: {
-                            url: "/placeholder.svg?height=400&width=800",
-                          },
-                        });
-                      }, 1000);
-                    });
-                  },
-                  uploadByUrl: async (url: string) => {
-                    return {
-                      success: 1,
-                      file: { url },
-                    };
-                  },
-                },
-              },
-            },
-            quote: {
-              class: Quote,
-              inlineToolbar: true,
-            },
-            code: {
-              class: Code,
-            },
-            delimiter: Delimiter,
-            table: {
-              class: Table,
-              inlineToolbar: true,
-            },
-          },
-          data: {
-            blocks: [
-              {
-                type: "paragraph",
-                data: {
-                  text: "Start writing your amazing blog post here...",
-                },
-              },
-            ],
-          },
-        });
-
-        setIsEditorReady(true);
-      }
-    };
-
-    initEditor();
-
-    return () => {
-      if (editorRef.current && editorRef.current.destroy) {
-        editorRef.current.destroy();
-        editorRef.current = null;
-      }
-    };
-  }, []);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -203,8 +84,6 @@ export default function NewBlogPostPage() {
   };
 
   const handleSave = async (status: string) => {
-    if (!editorRef.current) return;
-
     // Validation for publishing
     if (status === "published") {
       if (!formData.title.trim()) {
@@ -223,12 +102,10 @@ export default function NewBlogPostPage() {
 
     setIsLoading(true);
     try {
-      const editorData = await editorRef.current.save();
-
       const blogPost = {
         ...formData,
         status,
-        content: editorData,
+        content,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -253,11 +130,8 @@ export default function NewBlogPostPage() {
   };
 
   const handlePreview = async () => {
-    if (!editorRef.current) return;
-
     try {
-      const editorData = await editorRef.current.save();
-      console.log("Preview data:", { ...formData, content: editorData });
+      console.log("Preview data:", { ...formData, content });
       alert("Preview functionality would open in a new tab");
     } catch (error) {
       console.error("Error generating preview:", error);
@@ -382,16 +256,12 @@ export default function NewBlogPostPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div
-                id="editorjs"
-                className="min-h-[400px] prose max-w-none"
-                style={{ outline: "none" }}
+              <RichTextEditor
+                name="blog-new-content"
+                value={content}
+                onChange={setContent}
+                placeholder="Write your blog content..."
               />
-              {!isEditorReady && (
-                <div className="flex items-center justify-center h-32">
-                  <div className="text-sm text-gray-500">Loading editor...</div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
@@ -530,7 +400,7 @@ export default function NewBlogPostPage() {
                   placeholder="Add tag..."
                   value={formData.newTag}
                   onChange={(e) => handleInputChange("newTag", e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddTag()}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddTag()}
                 />
                 <Button onClick={handleAddTag} size="sm">
                   Add

@@ -25,12 +25,12 @@
     "@editorjs/quote": "latest",
     "@editorjs/table": "latest",
     "@hookform/resolvers": "^3.9.1",
-    "@lexical/code": "^0.32.1",
+    "@lexical/code": "^0.34.0",
     "@lexical/html": "^0.34.0",
     "@lexical/link": "^0.34.0",
     "@lexical/list": "^0.34.0",
     "@lexical/markdown": "^0.34.0",
-    "@lexical/react": "^0.32.1",
+    "@lexical/react": "^0.34.0",
     "@lexical/rich-text": "^0.34.0",
     "@lexical/selection": "^0.34.0",
     "@lexical/table": "^0.34.0",
@@ -61,6 +61,8 @@
     "@radix-ui/react-toggle": "1.1.1",
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "latest",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
@@ -100,5 +102,19 @@
     "prisma": "^6.14.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "lexical": "^0.34.0",
+      "@lexical/react": "^0.34.0",
+      "@lexical/code": "^0.34.0",
+      "@lexical/html": "^0.34.0",
+      "@lexical/link": "^0.34.0",
+      "@lexical/list": "^0.34.0",
+      "@lexical/markdown": "^0.34.0",
+      "@lexical/rich-text": "^0.34.0",
+      "@lexical/selection": "^0.34.0",
+      "@lexical/table": "^0.34.0"
+    }
   }
 }

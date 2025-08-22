@@ -4,14 +4,13 @@ import { useRef, useTransition, type ChangeEvent } from "react";
 import { Camera } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import { handleFileUpload } from "@/lib/utils";
 import { updateProfileImage } from "@/lib/actions/update-profile";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
-const MAX_FILE_SIZE = 5000000; // 5MB
+const MAX_FILE_SIZE = 8000000; // 8MB
 
 export const ProfileImage = ({
   imgUrl = "",
@@ -22,7 +21,6 @@ export const ProfileImage = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isPending, startTransition] = useTransition();
-  const { update } = useSession();
 
   const onClick = () => {
     inputRef.current?.click();
@@ -45,10 +43,8 @@ export const ProfileImage = ({
       return;
     }
 
-    // Check file size (5MB = 5 * 1024 * 1024 bytes)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File size must be less than 5MB");
+      toast.error("File size must not be more than 8MB");
       e.target.value = "";
       return;
     }
@@ -86,7 +82,7 @@ export const ProfileImage = ({
       <Image
         src={imgUrl}
         alt="my profile picture"
-        className="w-24 h-auto rounded-full"
+        className="w-24 h-auto rounded-full object-cover object-center"
         width={100}
         height={100}
         priority

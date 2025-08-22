@@ -1,57 +1,63 @@
-"use client"
+"use client";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
-import { COMMAND_PRIORITY_EDITOR } from "lexical"
-import { useEffect } from "react"
-import { DRAG_DROP_PASTE } from "@lexical/rich-text"
-import { ImageNode } from "../nodes/ImageNode"
-import type { JSX } from "react"
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { COMMAND_PRIORITY_EDITOR } from "lexical";
+import { useEffect } from "react";
+import { DRAG_DROP_PASTE } from "@lexical/rich-text";
+import { ImageNode } from "../nodes/ImageNode";
+import type { JSX } from "react";
 
-const ACCEPTABLE_IMAGE_TYPES = ["image/", "image/heic", "image/heif", "image/gif", "image/webp"]
+const ACCEPTABLE_IMAGE_TYPES = [
+  "image/",
+  "image/heic",
+  "image/heif",
+  "image/gif",
+  "image/webp",
+];
 
 export function ImagesPlugin(): JSX.Element | null {
-  const [editor] = useLexicalComposerContext()
+  const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    if (!editor.hasNodes([ImageNode])) {
-      throw new Error("ImagesPlugin: ImageNode not registered on editor")
+    if (!editor.hasNodes([ImageNode as unknown as any])) {
+      throw new Error("ImagesPlugin: ImageNode not registered on editor");
     }
 
     return editor.registerCommand<InputEvent>(
       DRAG_DROP_PASTE,
       (event) => {
-        const [isFileTransfer] = eventFiles(event)
+        const [isFileTransfer] = eventFiles(event);
         if (isFileTransfer) {
           // Handle file drop/paste
-          return true
+          return true;
         }
-        return false
+        return false;
       },
-      COMMAND_PRIORITY_EDITOR,
-    )
-  }, [editor])
+      COMMAND_PRIORITY_EDITOR
+    );
+  }, [editor]);
 
-  return null
+  return null;
 }
 
 function eventFiles(event: InputEvent): [boolean, Array<File>, boolean] {
-  let dataTransfer: null | DataTransfer = null
-  let isComposing = false
-  let types: Set<string> = new Set()
+  let dataTransfer: null | DataTransfer = null;
+  let isComposing = false;
+  let types: Set<string> = new Set();
 
   if (event.type === "dragover" || event.type === "drop") {
-    dataTransfer = (event as DragEvent).dataTransfer
+    dataTransfer = (event as unknown as DragEvent).dataTransfer;
   } else if (event.type === "paste") {
-    dataTransfer = (event as ClipboardEvent).clipboardData
-    isComposing = (event as any).isComposing
+    dataTransfer = (event as unknown as ClipboardEvent).clipboardData;
+    isComposing = (event as any).isComposing;
   }
 
   if (dataTransfer !== null) {
-    types = new Set(dataTransfer.types)
+    types = new Set(dataTransfer.types);
   }
 
-  const hasFiles = types.has("Files")
-  const hasContent = types.has("text/html") || types.has("text/plain")
+  const hasFiles = types.has("Files");
+  const hasContent = types.has("text/html") || types.has("text/plain");
 
-  return [hasFiles, [], hasContent && !isComposing]
+  return [hasFiles, [], hasContent && !isComposing];
 }

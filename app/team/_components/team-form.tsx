@@ -129,8 +129,6 @@ export default function TeamForm({
       return;
     }
 
-    const uploadAvatar = async () => {};
-
     const dismiss = toast.loading("Uploading...");
     startTransition(() => {
       handleFileUpload(e, "profile")
@@ -139,7 +137,8 @@ export default function TeamForm({
             toast.error("Upload failed");
             return;
           }
-          form.setValue("avatar", objectUrl);
+          form.setValue("avatar", objectUrl || initialValues.avatar);
+          console.log({ objectUrl });
         })
         .catch((err) => {
           toast.error("Something went wrong");
