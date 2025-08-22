@@ -424,7 +424,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         }
 
         if (uploadedUrl) {
-          console.log("Inserting image with caption:", imageCaption);
           doInsertImageWithUrl(uploadedUrl, selectedFile.name, imageCaption);
           setSelectedFile(null);
           setImageCaption("");
@@ -771,21 +770,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
               <FaImage className="h-4 w-4 mr-2 fill-sky-700" />
               Image
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                editor.update(() => {
-                  const hrNode = $createHorizontalRuleNode();
-                  const selection = $getSelection();
-                  if ($isRangeSelection(selection)) {
-                    selection.insertNodes([hrNode]);
-                  }
-                });
-                editor.focus();
-              }}
-            >
-              <TfiLayoutLineSolid className="h-4 w-4 mr-2" />
-              Horizontal Rule
-            </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => {
                 const url = prompt("Enter YouTube URL:");
@@ -808,6 +793,21 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
             >
               <FaYoutube className="h-4 w-4 mr-2 fill-red-600" />
               YouTube Video
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                editor.update(() => {
+                  const hrNode = $createHorizontalRuleNode();
+                  const selection = $getSelection();
+                  if ($isRangeSelection(selection)) {
+                    selection.insertNodes([hrNode]);
+                  }
+                });
+                editor.focus();
+              }}
+            >
+              <TfiLayoutLineSolid className="h-4 w-4 mr-2" />
+              Horizontal Rule
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

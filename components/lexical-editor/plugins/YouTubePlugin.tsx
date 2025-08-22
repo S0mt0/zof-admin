@@ -1,9 +1,10 @@
 "use client";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useEffect } from "react";
-import { YouTubeNode } from "../nodes/YouTubeNode";
 import type { JSX } from "react";
+import { useEffect } from "react";
+
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { YouTubeNode } from "../nodes/YouTubeNode";
 
 export function YouTubePlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
