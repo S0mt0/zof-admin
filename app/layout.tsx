@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react";
 
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/app-sidebar/sidebar";
 import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
