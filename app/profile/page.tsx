@@ -11,7 +11,7 @@ export default async function Page() {
     tags: ["user-activity-stats"],
     revalidate: false,
   });
-  const stats = await activityStats();
+  const stats = await activityStats(user?.id);
 
   const getUser = unstable_cache(getUserById, [user?.id!], {
     tags: ["profile"],

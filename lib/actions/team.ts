@@ -56,7 +56,7 @@ export const createTeamMemberAction = async (
       await createUserActivity(
         addedBy,
         "New team member added",
-        `${created.name} joined as ${created.role}`
+        `You added ${created.name} to the team as ${created.role}`
       );
     }
 

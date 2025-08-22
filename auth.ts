@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { allowedAdminEmailsList } from "./lib/constants";
-import { getUserById } from "./lib/db/repository";
+import { getUserById, updateUser } from "./lib/db/repository";
 
 export const {
   handlers: { GET, POST },
@@ -19,12 +19,9 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: {
-          emailVerified: new Date(),
-          role: allowedAdminEmailsList.includes(user.email!) ? "admin" : "user",
-        },
+      await updateUser(user.id!, {
+        emailVerified: new Date(),
+        role: allowedAdminEmailsList.includes(user.email!) ? "admin" : "user",
       });
     },
   },

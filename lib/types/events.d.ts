@@ -18,13 +18,9 @@ interface IEvent {
   ticketPrice?: number | null;
   registrationRequired: boolean;
   createdBy: string;
-  organizerId?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  organizer?: {
-    name: string;
-    image: string;
-  } | null;
+  createdByUser?: Partial<IUser> | null;
 }
 
 interface EventFiltersProps {

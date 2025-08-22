@@ -14,6 +14,7 @@ interface TeamMember {
   location?: string | null;
   skills: string[];
   addedBy: string;
+  addedByUser?: Partial<IUser> | null;
   linkedin?: string | null;
   twitter?: string | null;
   github?: string | null;

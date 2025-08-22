@@ -2,7 +2,19 @@ import { db } from "../config";
 
 export const listTeamMembers = async () => {
   try {
-    return await db.teamMember.findMany({ orderBy: { createdAt: "desc" } });
+    return await db.teamMember.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        addedByUser: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+          },
+        },
+      },
+    });
   } catch (e) {
     return [] as TeamMember[];
   }
@@ -10,9 +22,9 @@ export const listTeamMembers = async () => {
 
 export const getTeamMemberById = async (id: string) => {
   try {
-    return (await db.teamMember.findUnique({
+    return await db.teamMember.findUnique({
       where: { id },
-    })) as TeamMember | null;
+    });
   } catch (e) {
     return null;
   }
@@ -21,7 +33,12 @@ export const getTeamMemberById = async (id: string) => {
 export const getTeamMemberByEmail = async (email: string) => {
   try {
     return (await db.teamMember.findFirst({
-      where: { email },
+      where: {
+        email: {
+          equals: email,
+          mode: "insensitive",
+        },
+      },
     })) as TeamMember | null;
   } catch (e) {
     return null;
@@ -30,16 +47,35 @@ export const getTeamMemberByEmail = async (email: string) => {
 
 export const getUniqueTeamMember = async (name: string, email: string) => {
   try {
-    return (await db.teamMember.findFirst({
-      where: { name, email },
-    })) as TeamMember | null;
+    return await db.teamMember.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: "insensitive",
+        },
+        email: {
+          equals: email,
+          mode: "insensitive",
+        },
+      },
+      include: {
+        addedByUser: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+          },
+        },
+      },
+    });
   } catch (e) {
     return null;
   }
 };
 
 export const createTeamMember = async (
-  data: Omit<TeamMember, "id" | "createdAt" | "updatedAt">
+  data: Omit<TeamMember, "id" | "createdAt" | "updatedAt" | "addedByUser">
 ) => {
   try {
     return (await db.teamMember.create({ data })) as TeamMember;
@@ -51,7 +87,7 @@ export const createTeamMember = async (
 
 export const updateTeamMember = async (
   id: string,
-  data: Partial<TeamMember>
+  data: Partial<Omit<TeamMember, "addedByUser">>
 ) => {
   try {
     return (await db.teamMember.update({ where: { id }, data })) as TeamMember;

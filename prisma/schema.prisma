@@ -72,12 +72,13 @@ model User {
   
   // Relations
   blogs Blog[]
-  events Event[]
+  createdEvents Event[]
   donations Donation[]
   messages Message[]
   comments Comment[]
   activities UserActivity[]
   accounts      Account[]
+  addedTeamMembers TeamMember[]
 }
 
 model Account {
@@ -149,11 +150,11 @@ model Event {
   tags                 String[]
   ticketPrice          Float?
   registrationRequired Boolean     @default(false)
-  createdBy            String     @db.ObjectId
   
   // Relations
-  organizerId          String?      @db.ObjectId
-  organizer            User?        @relation(fields: [organizerId], references: [id])
+  createdBy            String     @db.ObjectId
+  createdByUser        User?        @relation(fields: [createdBy], references: [id])
+
   
   // Timestamps
   createdAt            DateTime    @default(now())
@@ -197,7 +198,11 @@ model TeamMember {
   department   String?
   location     String?
   skills       String[]
+
+    // Relations
   addedBy      String     @db.ObjectId
+  addedByUser  User?        @relation(fields: [addedBy], references: [id])
+
   
   // Social links
   linkedin     String?

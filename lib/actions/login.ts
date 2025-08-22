@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { LoginSchema } from "../schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "../constants";
-import { getUserByEmail, updateUser } from "../db/repository";
+import { getUserByEmail } from "../db/repository";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 
@@ -44,8 +44,6 @@ export const login = async (
       password,
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
-
-    await updateUser(existingUser.id, { lastLogin: new Date() });
 
     return { success: "Welcome back!" };
   } catch (error) {

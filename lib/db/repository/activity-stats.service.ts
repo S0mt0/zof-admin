@@ -3,11 +3,11 @@ import { db } from "../config";
 export async function getActivityStats(userId?: string) {
   try {
     const [blogs, events, team, messages] = await Promise.all([
-      db.blog.count(userId ? { where: { authorId: userId } } : ({} as any)),
-      db.event.count(userId ? { where: { organizerId: userId } } : ({} as any)),
-      db.teamMember.count(
-        userId ? { where: { addedBy: userId } } : ({} as any)
-      ),
+      db.blog.count({ where: userId ? { createdBy: userId } : {} }),
+      db.event.count({ where: userId ? { createdBy: userId } : {} }),
+      db.teamMember.count({
+        where: userId ? { addedBy: userId } : {},
+      }),
       db.message.count(), // Receipient or sender does not matter, so just count all
     ]);
 

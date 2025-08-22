@@ -16,10 +16,7 @@ interface Blog {
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
-  author?: {
-    name: string;
-    image: string;
-  };
+  author?: Partial<IUser> | null;
 }
 
 interface BlogFiltersProps {
