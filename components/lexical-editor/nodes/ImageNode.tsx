@@ -134,6 +134,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     key?: NodeKey
   ) {
     super(key);
+
     this.__src = src;
     this.__altText = altText;
     this.__caption = caption;
@@ -217,9 +218,15 @@ export function $createImageNode({
   width,
   key,
 }: ImagePayload): ImageNode {
-  return $applyNodeReplacement(
-    new ImageNode(src, altText, caption, width, height, key)
-  );
+  try {
+    const node = new ImageNode(src, altText, caption, width, height, key);
+
+    const result = $applyNodeReplacement(node);
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export function $isImageNode(

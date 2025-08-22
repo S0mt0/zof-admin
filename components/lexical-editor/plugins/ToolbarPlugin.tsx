@@ -5,6 +5,7 @@ import {
   $getSelection,
   $isRangeSelection,
   $createParagraphNode,
+  $getRoot,
   FORMAT_TEXT_COMMAND,
   UNDO_COMMAND,
   REDO_COMMAND,
@@ -319,18 +320,46 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     alt = "Image",
     caption?: string
   ) => {
+    console.log("Creating image node with:", { url, alt, caption });
+
+    // Ensure editor has focus first
+    editor.focus();
+
     editor.update(() => {
       const imageNode = $createImageNode({
         altText: alt,
         caption,
         src: url,
       });
+      console.log("Image node created in editor update:", imageNode);
+
       const selection = $getSelection();
+      console.log("Current selection:", selection);
+
       if ($isRangeSelection(selection)) {
+        console.log("Inserting image node into selection");
         selection.insertNodes([imageNode]);
+        console.log("Image node inserted successfully");
+      } else {
+        console.log("No valid range selection found, inserting at root");
+        // If no selection, insert at the end of the root
+        const root = $getRoot();
+        const lastChild = root.getLastChild();
+        if (lastChild) {
+          lastChild.insertAfter(imageNode);
+        } else {
+          // If root is empty, create a paragraph and insert the image
+          const paragraph = $createParagraphNode();
+          paragraph.append(imageNode);
+          root.append(paragraph);
+        }
+        console.log("Image node inserted at root");
       }
+
+      // Let's also check if the node is actually in the editor
+      const root = $getRoot();
+      console.log("Root node children:", root.getChildren());
     });
-    editor.focus();
   };
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -370,42 +399,39 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     try {
       setIsUploading(true);
 
-      let uploadedUrl: string | undefined;
-
       if (selectedFile) {
-        const dismiss = toast.loading("Uploading image...");
         // Upload from device
-        if (onImageUpload) {
-          try {
+        const dismiss = toast.loading("Uploading image...");
+
+        let uploadedUrl: string | undefined;
+
+        try {
+          if (onImageUpload) {
             uploadedUrl = await onImageUpload(selectedFile);
-          } catch (error) {
-            throw error;
-          } finally {
-            toast.dismiss(dismiss);
-          }
-        } else {
-          try {
+          } else {
             const syntheticEvent = {
               target: { files: [selectedFile] },
             } as unknown as React.ChangeEvent<HTMLInputElement>;
 
             uploadedUrl = await handleFileUpload(syntheticEvent, "documents");
-          } catch (error) {
-            throw error;
-          } finally {
-            toast.dismiss(dismiss);
           }
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast.error("Failed to upload image");
+          return;
+        } finally {
+          toast.dismiss(dismiss);
         }
 
         if (uploadedUrl) {
+          console.log("Inserting image with caption:", imageCaption);
           doInsertImageWithUrl(uploadedUrl, selectedFile.name, imageCaption);
           setSelectedFile(null);
           setImageCaption("");
           setIsImagePopoverOpen(false);
-          setIsUploading(false);
-          toast.success("Image uploaded");
+          toast.success("Image uploaded successfully");
         } else {
-          toast.error("Failed to upload image");
+          toast.error("Failed to get upload URL");
         }
       } else if (imageUrlInput.trim()) {
         // Insert from URL
@@ -415,11 +441,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           setImageUrlInput("");
           setImageCaption("");
           setIsImagePopoverOpen(false);
-          toast.success("Image inserted");
+          toast.success("Image inserted successfully");
         } catch {
           toast.error("Please enter a valid image URL.");
-        } finally {
-          setIsUploading(false);
         }
       }
     } catch (err) {
