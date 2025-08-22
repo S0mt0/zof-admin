@@ -5,3 +5,5 @@ export * from "./reset-password";
 export * from "./profile";
 export * from "./settings";
 export * from "./team";
+export * from "./blogs";
+export * from "./events";

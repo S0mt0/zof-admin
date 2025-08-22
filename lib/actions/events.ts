@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import {
   createUserActivity,
   createEvent,
@@ -18,7 +18,7 @@ export const createEventAction = async (data: any, userId: string) => {
     });
     if (created) {
       await createUserActivity(userId, "New event created", created.title);
-      revalidateTag("events");
+      revalidatePath("/events");
     }
     return { success: "Event created", data: created };
   } catch (e) {
@@ -35,7 +35,7 @@ export const updateEventAction = async (
     const updated = await updateEvent(id, data);
     if (updated) {
       await createUserActivity(userId, "Event details updated", updated.title);
-      revalidateTag("events");
+      revalidatePath("/events");
     }
     return { success: "Event updated", data: updated };
   } catch (e) {
@@ -63,7 +63,7 @@ export const deleteEventAction = async (id: string, userId: string) => {
       "Event deleted",
       existing?.title || "Event removed"
     );
-    revalidateTag("events");
+    revalidatePath("/events");
     return { success: "Event deleted" };
   } catch (e) {
     return { error: "Failed to delete event" };
@@ -72,26 +72,26 @@ export const deleteEventAction = async (id: string, userId: string) => {
 
 export const bulkDeleteEventsAction = async (ids: string[], userId: string) => {
   try {
-    const existing = await (async () => {
-      try {
-        const events = await Promise.all(
-          ids.map((id) =>
-            (async () => {
-              try {
-                return await (
-                  await import("../db/repository/event.service")
-                ).getEventById(id);
-              } catch {
-                return null;
-              }
-            })()
-          )
-        );
-        return events.filter(Boolean);
-      } catch {
-        return [];
-      }
-    })();
+    // const existing = await (async () => {
+    //   try {
+    //     const events = await Promise.all(
+    //       ids.map((id) =>
+    //         (async () => {
+    //           try {
+    //             return await (
+    //               await import("../db/repository/event.service")
+    //             ).getEventById(id);
+    //           } catch {
+    //             return null;
+    //           }
+    //         })()
+    //       )
+    //     );
+    //     return events.filter(Boolean);
+    //   } catch {
+    //     return [];
+    //   }
+    // })();
 
     await deleteManyEvents(ids);
 
@@ -100,7 +100,7 @@ export const bulkDeleteEventsAction = async (ids: string[], userId: string) => {
       "Multiple events deleted",
       `${ids.length} events removed`
     );
-    revalidateTag("events");
+    revalidatePath("/events");
     return { success: `${ids.length} events deleted` };
   } catch (e) {
     return { error: "Failed to delete events" };
