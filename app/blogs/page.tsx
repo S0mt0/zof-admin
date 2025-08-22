@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 
-import { getBlogs } from "@/lib/db/repository";
-import { Blogs } from "./_components/blog";
+import { getBlogs, getBlogsStats } from "@/lib/db/repository";
+import { Blogs } from "./_components/blog-page";
 import { currentUser } from "@/lib/utils";
 import { BlogStats } from "./_components/blog-stats";
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -37,6 +37,11 @@ export default async function Page({
     }
   );
 
+  const getBlogsStatsCached = unstable_cache(getBlogsStats, ["blogs-stats"], {
+    tags: ["blogs-stats"],
+    revalidate: false,
+  });
+
   const user = await currentUser();
 
   const { data: blogs, pagination } = await getBlogsCached(
@@ -48,6 +53,8 @@ export default async function Page({
     searchParams.featured
   );
 
+  const blogsStats = await getBlogsStatsCached();
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
@@ -55,7 +62,7 @@ export default async function Page({
         breadcrumbs={[{ label: "Blog Posts" }]}
       />
 
-      <BlogStats blogs={blogs} />
+      <BlogStats {...blogsStats} />
 
       <Blogs
         blogs={blogs}

@@ -6,6 +6,7 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
+  deleteManyEvents,
 } from "../db/repository";
 
 export const createEventAction = async (data: any, userId: string) => {
@@ -66,5 +67,42 @@ export const deleteEventAction = async (id: string, userId: string) => {
     return { success: "Event deleted" };
   } catch (e) {
     return { error: "Failed to delete event" };
+  }
+};
+
+export const bulkDeleteEventsAction = async (ids: string[], userId: string) => {
+  try {
+    const existing = await (async () => {
+      try {
+        const events = await Promise.all(
+          ids.map((id) =>
+            (async () => {
+              try {
+                return await (
+                  await import("../db/repository/event.service")
+                ).getEventById(id);
+              } catch {
+                return null;
+              }
+            })()
+          )
+        );
+        return events.filter(Boolean);
+      } catch {
+        return [];
+      }
+    })();
+
+    await deleteManyEvents(ids);
+
+    await createUserActivity(
+      userId,
+      "Multiple events deleted",
+      `${ids.length} events removed`
+    );
+    revalidateTag("events");
+    return { success: `${ids.length} events deleted` };
+  } catch (e) {
+    return { error: "Failed to delete events" };
   }
 };

@@ -2,12 +2,12 @@ import { unstable_cache } from "next/cache";
 
 import { currentUser } from "@/lib/utils";
 import { ProfilePage } from "./_components/profile-page";
-import { getActivityStats, getUserById } from "@/lib/db/repository";
+import { getAppStats, getUserById } from "@/lib/db/repository";
 
 export default async function Page() {
   const user = await currentUser();
 
-  const activityStats = unstable_cache(getActivityStats, [user?.id!], {
+  const activityStats = unstable_cache(getAppStats, [user?.id!], {
     tags: ["profile-stats"],
     revalidate: false,
   });

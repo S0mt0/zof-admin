@@ -1,43 +1,31 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Eye, Star, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface BlogStatsProps {
-  blogs: Blog[];
-}
-
-export function BlogStats({ blogs }: BlogStatsProps) {
-  const totalBlogs = blogs.length;
-  const publishedBlogs = blogs.filter(
-    (blog) => blog.status === "published"
-  ).length;
-  const draftBlogs = blogs.filter((blog) => blog.status === "draft").length;
-  const featuredBlogs = blogs.filter((blog) => blog.featured).length;
-  const totalViews = blogs.reduce((sum, blog) => sum + blog.views, 0);
-
+export function BlogStats({ draft, featured, published, total }: BlogsStats) {
   const stats = [
     {
       title: "Total Posts",
-      value: totalBlogs,
+      value: total,
       icon: FileText,
       gradient: "from-blue-400 to-blue-600",
     },
     {
       title: "Published",
-      value: publishedBlogs,
+      value: published,
       icon: Eye,
       gradient: "from-emerald-400 to-emerald-600",
     },
     {
       title: "Drafts",
-      value: draftBlogs,
+      value: draft,
       icon: Clock,
       gradient: "from-amber-400 to-amber-600",
     },
     {
       title: "Featured",
-      value: featuredBlogs,
+      value: featured,
       icon: Star,
       gradient: "from-yellow-400 to-yellow-600",
     },
@@ -57,11 +45,6 @@ export function BlogStats({ blogs }: BlogStatsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stat.value}</div>
-            {stat.title === "Total Posts" && (
-              <p className="text-xs text-muted-foreground">
-                {totalViews} total views
-              </p>
-            )}
           </CardContent>
         </Card>
       ))}

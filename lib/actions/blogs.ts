@@ -1,12 +1,13 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 import {
   createUserActivity,
   createBlog,
   updateBlog,
   deleteBlog,
+  deleteManyBlogs,
 } from "../db/repository";
 
 export const createBlogAction = async (data: any, userId: string) => {
@@ -22,7 +23,8 @@ export const createBlogAction = async (data: any, userId: string) => {
         "New blog post published",
         created.title
       );
-      revalidateTag("blogs");
+
+      revalidatePath("/blogs");
     }
     return { success: "Blog created", data: created };
   } catch (e) {
@@ -39,7 +41,7 @@ export const updateBlogAction = async (
     const updated = await updateBlog(id, data);
     if (updated) {
       await createUserActivity(userId, "Blog post updated", updated.title);
-      revalidateTag("blogs");
+      revalidatePath("/blogs");
     }
     return { success: "Blog updated", data: updated };
   } catch (e) {
@@ -68,9 +70,47 @@ export const deleteBlogAction = async (id: string, userId: string) => {
       "Blog post deleted",
       existing?.title || "Blog removed"
     );
-    revalidateTag("blogs");
+    revalidatePath("/blogs");
     return { success: "Blog deleted" };
   } catch (e) {
     return { error: "Failed to delete blog" };
+  }
+};
+
+export const bulkDeleteBlogsAction = async (ids: string[], userId: string) => {
+  try {
+    // const existing = await (async () => {
+    //   try {
+    //     const blogs = await Promise.all(
+    //       ids.map((id) =>
+    //         (async () => {
+    //           try {
+    //             return await (
+    //               await import("../db/repository/blog.service")
+    //             ).getBlogById(id);
+    //           } catch {
+    //             return null;
+    //           }
+    //         })()
+    //       )
+    //     );
+    //     return blogs.filter(Boolean);
+    //   } catch {
+    //     return [];
+    //   }
+    // })();
+
+    await deleteManyBlogs(ids);
+
+    await createUserActivity(
+      userId,
+      "Multiple blog posts deleted",
+      `${ids.length} blog posts removed`
+    );
+
+    revalidatePath("/blogs");
+    return { success: `${ids.length} blogs deleted` };
+  } catch (e) {
+    return { error: "Failed to delete blogs" };
   }
 };

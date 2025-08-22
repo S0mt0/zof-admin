@@ -39,6 +39,7 @@ export const getBlogs = async (
             select: {
               name: true,
               image: true,
+              email: true,
             },
           },
         },
@@ -60,6 +61,7 @@ export const getBlogById = async (id: string) => {
           select: {
             name: true,
             image: true,
+            email: true,
           },
         },
       },
@@ -79,6 +81,7 @@ export const createBlog = async (data: any) => {
           select: {
             name: true,
             image: true,
+            email: true,
           },
         },
       },
@@ -99,6 +102,7 @@ export const updateBlog = async (id: string, data: any) => {
           select: {
             name: true,
             image: true,
+            email: true,
           },
         },
       },

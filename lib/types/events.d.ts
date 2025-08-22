@@ -29,10 +29,10 @@ interface EventFiltersProps {
     search?: string;
     status?: string;
     featured?: string;
+    limit?: string;
   };
   selectedCount: number;
   onBulkDelete: () => void;
-  onCreateNew: () => void;
 }
 
 interface EventPageProps {
@@ -48,6 +48,7 @@ interface EventPageProps {
     search?: string;
     status?: string;
     featured?: string;
+    limit?: string;
   };
 }
 
@@ -73,5 +74,24 @@ interface EventTableProps {
     search?: string;
     status?: string;
     featured?: string;
+    limit?: string;
   };
 }
+
+interface EventTableContentProps {
+  events: IEvent[];
+  selectedEvents: string[];
+  onSelectEvent: (eventId: string) => void;
+  onViewEvent: (event: IEvent) => void;
+  onEditEvent: (event: IEvent) => void;
+  onManageAttendees: (event: IEvent) => void;
+  onDeleteEvent: (eventId: string) => void;
+}
+
+type EventsStats = {
+  total: number;
+  upcoming: number;
+  completed: number;
+  draft: number;
+  featured: number;
+};

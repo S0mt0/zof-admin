@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { toast } from "sonner";
+
 import { EventFilters } from "./event-filters";
 import { EventTable } from "./event-table";
-import { EventStats } from "./event-stats";
+import EventEmptyState from "./event-empty-state";
+import {
+  deleteEventAction,
+  bulkDeleteEventsAction,
+} from "@/lib/actions/events";
+import { useCurrentUser } from "@/lib/hooks";
 
 interface EventPageProps {
   events: IEvent[];
@@ -30,6 +36,7 @@ export function EventPage({
 }: EventPageProps) {
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const router = useRouter();
+  const user = useCurrentUser();
 
   const handleSelectEvent = (eventId: string) => {
     setSelectedEvents((prev) =>
@@ -54,7 +61,7 @@ export function EventPage({
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedEvents.length === 0) return;
 
     if (
@@ -62,9 +69,18 @@ export function EventPage({
         `Are you sure you want to delete ${selectedEvents.length} event(s)?`
       )
     ) {
-      console.log("Bulk deleting events:", selectedEvents);
-      setSelectedEvents([]);
-      // Add actual bulk delete logic here
+      try {
+        const result = await bulkDeleteEventsAction(selectedEvents, user?.id!);
+        if (result.success) {
+          toast.success(result.success);
+          setSelectedEvents([]);
+          router.refresh();
+        } else {
+          toast.error(result.error);
+        }
+      } catch (error) {
+        toast.error("Failed to delete events");
+      }
     }
   };
 
@@ -80,9 +96,19 @@ export function EventPage({
     console.log("Managing attendees for event:", event);
   };
 
-  const handleDeleteEvent = (eventId: string) => {
+  const handleDeleteEvent = async (eventId: string) => {
     if (confirm("Are you sure you want to delete this event?")) {
-      console.log("Deleting event:", eventId);
+      try {
+        const result = await deleteEventAction(eventId, user?.id!);
+        if (result.success) {
+          toast.success(result.success);
+          router.refresh();
+        } else {
+          toast.error(result.error);
+        }
+      } catch (error) {
+        toast.error("Failed to delete event");
+      }
     }
   };
 
@@ -94,17 +120,25 @@ export function EventPage({
     selectedEvents.includes(event.id)
   );
 
+  if (events.length === 0) {
+    return (
+      <div>
+        <EventFilters
+          searchParams={searchParams}
+          selectedCount={selectedEvents.length}
+          onBulkDelete={handleBulkDelete}
+        />
+        <EventEmptyState />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader title="Events" breadcrumbs={[{ label: "Events" }]} />
-
-      <EventStats events={events} />
-
+    <div>
       <EventFilters
         searchParams={searchParams}
         selectedCount={selectedEvents.length}
         onBulkDelete={handleBulkDelete}
-        onCreateNew={() => router.push("/events/new")}
       />
 
       <EventTable

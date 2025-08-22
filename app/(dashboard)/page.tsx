@@ -6,7 +6,7 @@ import { ActivityStats } from "@/components/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
 import { UsersRecentActivities } from "./_components/recent-activities";
 import { currentUser } from "@/lib/utils";
-import { getActivityStats } from "@/lib/db/repository";
+import { getAppStats } from "@/lib/db/repository";
 
 export default async function Dashboard({
   searchParams,
@@ -15,7 +15,7 @@ export default async function Dashboard({
 }) {
   const user = await currentUser();
 
-  const activityStats = unstable_cache(getActivityStats, ["app-stats"], {
+  const activityStats = unstable_cache(getAppStats, ["app-stats"], {
     tags: ["app-stats"],
     revalidate: false,
   });

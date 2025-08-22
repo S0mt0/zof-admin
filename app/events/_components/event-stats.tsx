@@ -3,46 +3,34 @@ import { Calendar, Users, Star, Clock } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface EventStatsProps {
-  events: IEvent[];
-}
-
-export function EventStats({ events }: EventStatsProps) {
-  const totalEvents = events.length;
-  const upcomingEvents = events.filter(
-    (event) => event.status === "upcoming"
-  ).length;
-  const completedEvents = events.filter(
-    (event) => event.status === "completed"
-  ).length;
-  const featuredEvents = events.filter((event) => event.featured).length;
-  const totalAttendees = events.reduce(
-    (sum, event) => sum + event.currentAttendees,
-    0
-  );
-
+export function EventStats({
+  completed,
+  featured,
+  total,
+  upcoming,
+}: EventsStats) {
   const stats = [
     {
       title: "Total Events",
-      value: totalEvents,
+      value: total,
       icon: Calendar,
       gradient: "from-blue-400 to-blue-600",
     },
     {
       title: "Upcoming",
-      value: upcomingEvents,
+      value: upcoming,
       icon: Clock,
       gradient: "from-emerald-400 to-emerald-600",
     },
     {
       title: "Completed",
-      value: completedEvents,
+      value: completed,
       icon: Users,
       gradient: "from-purple-400 to-purple-600",
     },
     {
       title: "Featured",
-      value: featuredEvents,
+      value: featured,
       icon: Star,
       gradient: "from-yellow-400 to-yellow-600",
     },
@@ -62,11 +50,6 @@ export function EventStats({ events }: EventStatsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stat.value}</div>
-            {stat.title === "Total Events" && (
-              <p className="text-xs text-muted-foreground">
-                {totalAttendees} total attendees
-              </p>
-            )}
           </CardContent>
         </Card>
       ))}

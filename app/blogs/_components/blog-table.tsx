@@ -12,25 +12,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination-v2";
 import { TableContent } from "./table-content";
 
-export function EventTable({
-  events,
-  selectedEvents,
-  onSelectEvent,
+export function BlogTable({
+  blogs,
+  selectedBlogs,
+  onSelectBlog,
   onSelectAll,
-  onViewEvent,
-  onEditEvent,
-  onManageAttendees,
-  onDeleteEvent,
+  onViewBlog,
+  onEditBlog,
+  onDeleteBlog,
   allCurrentSelected,
   someCurrentSelected,
   pagination,
-}: EventTableProps) {
+}: BlogTableWrapperProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Events</CardTitle>
+        <CardTitle>All Blog Posts</CardTitle>
         <CardDescription>
-          Manage your events, track attendance, and update event details.
+          Manage your blog posts, edit content, and track performance.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -48,24 +47,21 @@ export function EventTable({
                   }}
                 />
               </TableHead>
-              <TableHead>Event</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Date & Time
-              </TableHead>
-              <TableHead className="hidden lg:table-cell">Location</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead className="hidden md:table-cell">Featured</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="hidden sm:table-cell">Featured</TableHead>
+              <TableHead className="hidden sm:table-cell">Date</TableHead>
+              <TableHead className="hidden lg:table-cell">Author</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableContent
-            events={events}
-            selectedEvents={selectedEvents}
-            onSelectEvent={onSelectEvent}
-            onViewEvent={onViewEvent}
-            onEditEvent={onEditEvent}
-            onManageAttendees={onManageAttendees}
-            onDeleteEvent={onDeleteEvent}
+            blogs={blogs}
+            selectedBlogs={selectedBlogs}
+            onSelectBlog={onSelectBlog}
+            onViewBlog={onViewBlog}
+            onEditBlog={onEditBlog}
+            onDeleteBlog={onDeleteBlog}
           />
         </Table>
 
@@ -78,7 +74,7 @@ export function EventTable({
             pagination.total
           )}
           totalItems={pagination.total}
-          itemName="events"
+          itemName="posts"
         />
       </CardContent>
     </Card>

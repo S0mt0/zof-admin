@@ -55,3 +55,36 @@ interface BlogTableProps {
   onEditBlog: (blog: Blog) => void;
   onDeleteBlog: (blogId: string) => void;
 }
+
+interface BlogTableWrapperProps {
+  blogs: Blog[];
+  selectedBlogs: string[];
+  onSelectBlog: (blogId: string) => void;
+  onSelectAll: () => void;
+  onViewBlog: (blog: Blog) => void;
+  onEditBlog: (blog: Blog) => void;
+  onDeleteBlog: (blogId: string) => void;
+  allCurrentSelected: boolean;
+  someCurrentSelected: boolean;
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+  searchParams: {
+    page?: string;
+    search?: string;
+    status?: string;
+    featured?: string;
+    limit?: string;
+  };
+}
+
+type BlogsStats = {
+  total: number;
+  published: number;
+  draft: number;
+  scheduled: number;
+  featured: number;
+};

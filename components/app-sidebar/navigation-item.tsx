@@ -34,12 +34,12 @@ const navigationItems = [
     icon: Calendar,
     gradient: "from-purple-400 to-purple-600",
   },
-  {
-    title: "Messages",
-    url: "/messages",
-    icon: MessageSquare,
-    gradient: "from-pink-400 to-pink-600",
-  },
+  // {
+  //   title: "Messages",
+  //   url: "/messages",
+  //   icon: MessageSquare,
+  //   gradient: "from-pink-400 to-pink-600",
+  // },
   // {
   //   title: "Donations",
   //   url: "/donations",

@@ -72,7 +72,18 @@ export const TableContent = ({
           <TableCell className="hidden sm:table-cell">
             {format(blog.createdAt, "yyyy-MM-dd")}
           </TableCell>
-          <TableCell className="hidden lg:table-cell">{blog.views}</TableCell>
+          <TableCell className="hidden lg:table-cell">
+            {blog.author ? (
+              <div>
+                <div className="font-medium">{blog.author.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {blog.author.email}
+                </div>
+              </div>
+            ) : (
+              <span className="text-muted-foreground">Unknown</span>
+            )}
+          </TableCell>
           <TableCell className="text-right">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
