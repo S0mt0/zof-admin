@@ -168,7 +168,7 @@ export default function RichTextEditor({
   };
 
   const handleChange = (
-    editorState: any,
+    editorState: EditorState,
     editor: LexicalEditor,
     _tags: Set<string>
   ) => {
@@ -200,7 +200,7 @@ export default function RichTextEditor({
               }
               ErrorBoundary={LexicalErrorBoundary}
             />
-            <OnChangePlugin onChange={handleChange as unknown as any} />
+            <OnChangePlugin onChange={handleChange} />
             <InitialValuePlugin value={value} />
             <HistoryPlugin />
             <AutoFocusPlugin />
@@ -208,9 +208,7 @@ export default function RichTextEditor({
             <ListPlugin />
             <ImagesPlugin />
             <YouTubePlugin />
-            <MarkdownShortcutPlugin
-              transformers={TRANSFORMERS as unknown as any}
-            />
+            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
             <AutoLinkPlugin
               matchers={[
                 (text: string) => {

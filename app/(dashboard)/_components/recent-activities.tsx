@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PackageOpen } from "lucide-react";
 
 export async function UsersRecentActivities({
   page = 1,
@@ -41,6 +42,12 @@ export async function UsersRecentActivities({
             : "Your recent activities will appear here"}
         </CardDescription>
       </CardHeader>
+
+      {!data?.length && (
+        <div className="flex items-center justify-center w-full mt-10">
+          <PackageOpen className="w-14 h-14 text-muted-foreground/30" />
+        </div>
+      )}
 
       <CardContent>
         <div className="space-y-4">

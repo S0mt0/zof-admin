@@ -11,5 +11,5 @@ export const BlogFormSchema = z.object({
   bannerImage: z.string().optional(),
   featured: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
-  publishedAt: z.string().optional(),
+  publishedAt: z.date().optional(),
 });

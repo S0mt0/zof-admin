@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -71,10 +72,12 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
       bannerImage: initialData?.bannerImage || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
-      publishedAt: initialData?.publishedAt
-        ? new Date(initialData.publishedAt as any).toISOString().slice(0, 16)
-        : "",
+      //   publishedAt: initialData?.publishedAt
+      //     ? new Date(initialData.publishedAt).toISOString().slice(0, 16)
+      //     : "",
+      publishedAt: initialData?.publishedAt || new Date(),
     }),
+
     [initialData]
   );
 
@@ -131,7 +134,6 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
             return;
           }
           form.setValue("bannerImage", objectUrl || initialValues.bannerImage);
-          console.log({ objectUrl });
         })
         .catch((err) => {
           toast.error("Something went wrong");
@@ -204,6 +206,7 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
   const values = form.watch();
   const arraysEqual = (a: string[] = [], b: string[] = []) =>
     a.length === b.length && a.every((v, i) => v === b[i]);
+
   const hasChanges =
     values.title !== initialValues.title ||
     values.excerpt !== initialValues.excerpt ||
@@ -384,10 +387,11 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
                     !form.getValues("title").trim() ||
                     !form.getValues("excerpt").trim() ||
                     form.getValues("excerpt").length < 20 ||
-                    !content.trim()
+                    content.trim().length < 100 // this works fine
                   }
                   className="w-full"
                   onClick={() => form.setValue("status", "published")}
+                  //   onClick={() => console.log({ content })}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {isPending ? "Publishing..." : "Publish"}
