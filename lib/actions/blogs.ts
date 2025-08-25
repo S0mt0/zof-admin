@@ -12,7 +12,7 @@ import {
 } from "../db/repository";
 
 export const createBlogAction = async (data: any, userId: string) => {
-  console.log({ data });
+  // console.log({ data });
 
   try {
     const created = await createBlog({

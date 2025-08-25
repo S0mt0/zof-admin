@@ -79,6 +79,7 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
       publishedAt: initialData?.publishedAt
         ? new Date(initialData.publishedAt).toISOString().slice(0, 16)
         : "",
+      custom: "",
       // publishedAt: initialData?.publishedAt || new Date(),
     }),
 

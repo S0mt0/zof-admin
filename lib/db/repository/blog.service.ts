@@ -87,7 +87,8 @@ export const createBlog = async (data: any) => {
       },
     });
   } catch (error) {
-    console.log("error getting blog", error);
+    // console.log("error creating blog", error);
+    throw error;
     return null;
   }
 };

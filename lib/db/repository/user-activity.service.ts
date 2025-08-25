@@ -38,6 +38,7 @@ export const createUserActivity = async (
       },
     });
   } catch (e) {
+    throw e;
     return null;
   }
 };
