@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import {
   createUserActivity,
@@ -11,7 +12,7 @@ import {
 } from "../db/repository";
 
 export const createBlogAction = async (data: any, userId: string) => {
-  console.log(data);
+  console.log({ data });
 
   try {
     const created = await createBlog({
@@ -27,10 +28,14 @@ export const createBlogAction = async (data: any, userId: string) => {
         created.title
       );
 
+      console.log({ created });
+
       revalidatePath("/blogs");
+      return { success: "Blog created", data: created };
     }
-    return { success: "Blog created", data: created };
+    redirect("/blogs");
   } catch (e) {
+    console.log(e);
     return { error: "Failed to create blog" };
   }
 };

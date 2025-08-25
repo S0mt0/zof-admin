@@ -44,8 +44,13 @@ import {
 
 import RichTextEditor from "@/components/lexical-editor/editor";
 import { BlogFormSchema } from "@/lib/schemas";
+
+// Extend BlogFormSchema to include tagsInput
+const ExtendedBlogFormSchema = BlogFormSchema.extend({
+  tagsInput: z.string().optional(),
+});
 import { createBlogAction, updateBlogAction } from "@/lib/actions/blogs";
-import { handleFileUpload } from "@/lib/utils";
+import { generateSlug, handleFileUpload } from "@/lib/utils";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
@@ -58,9 +63,8 @@ interface BlogFormProps {
 
 export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
   const [isPending, startTransition] = useTransition();
-  const [content, setContent] = useState(initialData?.content || "");
-  const [tagsInput, setTagsInput] = useState("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [submitType, setSubmitType] = useState<"draft" | "published">("draft");
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const initialValues = useMemo(
@@ -72,27 +76,26 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
       bannerImage: initialData?.bannerImage || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
-      //   publishedAt: initialData?.publishedAt
-      //     ? new Date(initialData.publishedAt).toISOString().slice(0, 16)
-      //     : "",
-      publishedAt: initialData?.publishedAt || new Date(),
+      publishedAt: initialData?.publishedAt
+        ? new Date(initialData.publishedAt).toISOString().slice(0, 16)
+        : "",
+      // publishedAt: initialData?.publishedAt || new Date(),
     }),
 
     [initialData]
   );
-
-  const form = useForm<z.infer<typeof BlogFormSchema>>({
-    resolver: zodResolver(BlogFormSchema),
+  const form = useForm<z.infer<typeof ExtendedBlogFormSchema>>({
+    resolver: zodResolver(ExtendedBlogFormSchema),
     defaultValues: initialValues,
   });
 
   const addTag = () => {
-    const tag = tagsInput.trim();
+    const tag = (form.getValues("tagsInput") ?? "").trim();
     if (!tag) return;
     const current = form.getValues("tags") || [];
     if (current.includes(tag)) return;
     form.setValue("tags", [...current, tag]);
-    setTagsInput("");
+    form.setValue("tagsInput", "");
   };
 
   const removeTag = (tag: string) => {
@@ -146,57 +149,48 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
   };
 
   const onSubmit = (values: z.infer<typeof BlogFormSchema>) => {
-    console.log("Form values:", values);
-    console.log("Content:", content);
+    // Set status based on which button was pressed
+    values.status = submitType;
 
     // Validate content
-    if (!content.trim()) {
+    if (!values.content.trim()) {
       toast.error("Content is required");
       return;
     }
 
     const formData = {
       ...values,
-      content,
-      publishedAt:
-        values.status === "published" ? new Date().toISOString() : null,
+      publishedAt: values.status === "published" ? new Date() : null,
+      slug: generateSlug(values.title),
     };
-
-    console.log("Form data to submit:", formData);
 
     startTransition(() => {
       if (mode === "create") {
         createBlogAction(formData, userId)
           .then((res) => {
-            console.log("Create response:", res);
             if (res?.error) {
               toast.error(res.error);
-              console.error("Create error:", res.error);
             }
             if (res?.success) {
               toast.success(res.success);
               router.push("/blogs");
             }
           })
-          .catch((err) => {
-            console.error("Create action error:", err);
+          .catch(() => {
             toast.error("Failed to create blog");
           });
       } else if (mode === "edit" && initialData?.id) {
         updateBlogAction(initialData.id, formData, userId)
           .then((res) => {
-            console.log("Update response:", res);
             if (res?.error) {
               toast.error(res.error);
-              console.error("Update error:", res.error);
             }
             if (res?.success) {
               toast.success(res.success);
               router.push("/blogs");
             }
           })
-          .catch((err) => {
-            console.error("Update action error:", err);
+          .catch(() => {
             toast.error("Failed to update blog");
           });
       }
@@ -210,7 +204,7 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
   const hasChanges =
     values.title !== initialValues.title ||
     values.excerpt !== initialValues.excerpt ||
-    content !== initialValues.content ||
+    values.content !== initialValues.content ||
     values.status !== initialValues.status ||
     values.bannerImage !== initialValues.bannerImage ||
     values.featured !== initialValues.featured ||
@@ -347,15 +341,9 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
               <CardContent>
                 <RichTextEditor
                   name="blog-content"
-                  value={content}
-                  onChange={setContent}
+                  value={form.watch("content")}
+                  onChange={(val) => form.setValue("content", val)}
                   placeholder="Write your blog content..."
-                />
-                {/* Hidden content field for form validation */}
-                <input
-                  type="hidden"
-                  {...form.register("content")}
-                  value={content}
                 />
               </CardContent>
             </Card>
@@ -374,7 +362,7 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
                   disabled={isPending || !form.getValues("title").trim()}
                   className="w-full"
                   variant="outline"
-                  onClick={() => form.setValue("status", "draft")}
+                  onClick={() => setSubmitType("draft")}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {isPending ? "Saving..." : "Save Draft"}
@@ -387,11 +375,10 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
                     !form.getValues("title").trim() ||
                     !form.getValues("excerpt").trim() ||
                     form.getValues("excerpt").length < 20 ||
-                    content.trim().length < 100 // this works fine
+                    form.watch("content").trim().length < 100
                   }
                   className="w-full"
-                  onClick={() => form.setValue("status", "published")}
-                  //   onClick={() => console.log({ content })}
+                  onClick={() => setSubmitType("published")}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {isPending ? "Publishing..." : "Publish"}
@@ -477,8 +464,8 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
                 <div className="flex gap-2">
                   <Input
                     placeholder="Add tag..."
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
+                    value={form.getValues("tagsInput")}
+                    onChange={(e) => form.setValue("tagsInput", e.target.value)}
                     onKeyDown={(e) =>
                       e.key === "Enter" && (e.preventDefault(), addTag())
                     }

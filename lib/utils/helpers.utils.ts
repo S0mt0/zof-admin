@@ -120,3 +120,6 @@ export const handleFileUpload = async (
     throw error;
   }
 };
+
+export const generateSlug = (title: string) =>
+  title.replace(/[^a-zA-Z0-9]/g, " ").replace(/\s+/g, "-");
