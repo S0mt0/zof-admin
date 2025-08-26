@@ -108,15 +108,15 @@ model Account {
 model Blog {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   title       String     @unique
-  slug        String     
-  excerpt     String?
-  content     String     // Lexical editor content
-  bannerImage String?
+  slug        String     @unique
+  excerpt     String
+  content     String     
+  bannerImage String
   status      BlogStatus @default(draft)
   featured    Boolean    @default(false)
   tags        String[]
   views       Int        @default(0)
-  createdBy    String     @db.ObjectId
+  createdBy    String     @db.ObjectId // In most cases, it's the same as authorId
   
   // Relations
   authorId    String?     @db.ObjectId
@@ -137,14 +137,14 @@ model Event {
   id                   String      @id @default(auto()) @map("_id") @db.ObjectId
   title                String      @unique
   description          String
-  content              String?     // Lexical editor content
+  content              String     
   date                 DateTime
   startTime            String
   endTime              String?
   location             String
   maxAttendees         Int?
   currentAttendees     Int         @default(0)
-  bannerImage          String?
+  bannerImage          String
   status               EventStatus @default(draft)
   featured             Boolean     @default(false)
   tags                 String[]

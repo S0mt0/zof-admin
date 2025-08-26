@@ -30,16 +30,6 @@ import { ImagesPlugin } from "./plugins/ImagesPlugin";
 import { YouTubePlugin } from "./plugins/YouTubePlugin";
 import { theme } from "./theme";
 
-interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  name: string;
-  onImageUpload?: (file: File) => Promise<string>;
-  className?: string;
-  disabled?: boolean;
-}
-
 function onError(error: Error) {
   console.error("editor_error: ", error);
 }
@@ -69,7 +59,7 @@ export default function RichTextEditor({
   value,
   onChange,
   placeholder = "Enter some text...",
-  name,
+  name = "editor",
   onImageUpload,
   className = "",
   disabled = false,

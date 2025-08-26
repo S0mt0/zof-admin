@@ -1,123 +1,243 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { format } from "date-fns";
 
 import {
   createUserActivity,
   createBlog,
-  updateBlog,
   deleteBlog,
   deleteManyBlogs,
+  updateBlogBySlug,
 } from "../db/repository";
+import { capitalize, currentUser } from "../utils";
+import { MailService } from "../utils/mail.service";
 
-export const createBlogAction = async (data: any, userId: string) => {
-  // console.log({ data });
+export const createBlogAction = async (data: Partial<Blog>) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session. Please log in again." };
 
   try {
-    const created = await createBlog({
-      ...data,
-      authorId: userId,
-      createdBy: userId,
-    });
-
-    if (created) {
-      await createUserActivity(
-        userId,
-        "New blog post published",
-        created.title
-      );
-
-      console.log({ created });
-
-      revalidatePath("/blogs");
-      return { success: "Blog created", data: created };
-    }
-    redirect("/blogs");
-  } catch (e) {
-    console.log(e);
-    return { error: "Failed to create blog" };
-  }
-};
-
-export const updateBlogAction = async (
-  id: string,
-  data: any,
-  userId: string
-) => {
-  try {
-    const updated = await updateBlog(id, data);
-    if (updated) {
-      await createUserActivity(userId, "Blog post updated", updated.title);
-      revalidatePath("/blogs");
-    }
-    return { success: "Blog updated", data: updated };
-  } catch (e) {
-    return { error: "Failed to update blog" };
-  }
-};
-
-export const deleteBlogAction = async (id: string, userId: string) => {
-  try {
-    const existing = await (async () => {
-      // lightweight fetch of title for activity message
+    const existingBlog = await (async () => {
       try {
         const blog = await (
           await import("../db/repository/blog.service")
-        ).getBlogById(id);
+        ).getBlogByTitle(data.title!);
+
         return blog;
       } catch {
         return null;
       }
     })();
 
-    await deleteBlog(id);
+    if (existingBlog)
+      return {
+        error: "A blog with the same title already exists, try again.",
+      };
 
-    await createUserActivity(
-      userId,
-      "Blog post deleted",
-      existing?.title || "Blog removed"
-    );
-    revalidatePath("/blogs");
+    const newBlog = await createBlog({
+      ...data,
+      authorId: user.id,
+      createdBy: user.id,
+    });
+
+    if (newBlog) {
+      await createUserActivity(
+        user.id!,
+        "New blog post created",
+        newBlog.title
+      );
+
+      revalidateTag("app-stats");
+      revalidateTag("profile-stats");
+      revalidatePath("/blogs");
+      return { success: "Blog created" };
+    }
+  } catch (e: any) {
+    console.log({ e });
+    return { error: "Failed to create blog" };
+  }
+};
+
+export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session. Please log in again." };
+
+  try {
+    const blog = await (async () => {
+      try {
+        const blog = await (
+          await import("../db/repository/blog.service")
+        ).getBlogBySlug(slug);
+
+        return blog;
+      } catch {
+        return null;
+      }
+    })();
+
+    if (!blog) return { error: "Blog post not found" };
+
+    if (
+      blog.createdBy !== user.id &&
+      user.role !== "admin" &&
+      user.role !== "editor"
+    )
+      return {
+        error:
+          "Permission denied. Only admins or editors can update this blog post.",
+      };
+
+    const updated = await updateBlogBySlug(slug, data);
+    if (updated) {
+      await createUserActivity(user.id, "Blog post updated", updated.title);
+
+      if (
+        updated.createdBy !== user.id &&
+        updated.author?.email &&
+        updated.author.emailNotifications
+      ) {
+        const mailer = new MailService();
+        await mailer.sendBlogUpdateEmail(user as any, updated);
+
+        await createUserActivity(
+          updated?.authorId!,
+          "Blog post updated",
+          `Your blog post titled "${updated.title}" was updated by ${
+            user.role === "admin" ? "an administrator" : "an editor"
+          }, ${capitalize(user.name!)} on ${format(
+            updated.updatedAt,
+            "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+          )}.`
+        );
+      }
+
+      revalidateTag("app-stats");
+      revalidateTag("profile-stats");
+      revalidatePath("/blogs");
+    }
+    return { success: "Blog post updated" };
+  } catch (e) {
+    return { error: "Failed to update blog" };
+  }
+};
+
+export const deleteBlogAction = async (id: string) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session. Please log in again." };
+
+  try {
+    const blog = await (async () => {
+      try {
+        const blog = await (
+          await import("../db/repository/blog.service")
+        ).getBlogById(id);
+
+        return blog;
+      } catch {
+        return null;
+      }
+    })();
+
+    if (!blog) return { error: "Blog post does not exist" };
+
+    if (
+      blog.createdBy !== user.id &&
+      user.role !== "admin" &&
+      user.role !== "editor"
+    )
+      return {
+        error:
+          "Permission denied. Only admins or editors can delete this blog post.",
+      };
+
+    const deleted = await deleteBlog(blog.id);
+
+    if (deleted) {
+      await createUserActivity(
+        user.id,
+        "Blog post deleted",
+        capitalize(deleted.title)
+      );
+
+      if (
+        deleted.createdBy !== user.id &&
+        deleted.author?.email &&
+        deleted.author.emailNotifications
+      ) {
+        const mailer = new MailService();
+        await mailer.sendBlogDeleteEmail(user as any, deleted);
+
+        await createUserActivity(
+          deleted?.authorId!,
+          "Blog post deleted",
+          `Your blog post titled 
+        "${capitalize(deleted.title)}" was deleted by ${
+            user.role === "admin" ? "an administrator" : "an editor"
+          }, ${capitalize(user.name!)} on ${format(
+            deleted.updatedAt,
+            "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+          )}.`
+        );
+      }
+
+      revalidateTag("app-stats");
+      revalidateTag("profile-stats");
+      revalidatePath("/blogs");
+    }
+
     return { success: "Blog deleted" };
   } catch (e) {
     return { error: "Failed to delete blog" };
   }
 };
 
-export const bulkDeleteBlogsAction = async (ids: string[], userId: string) => {
+export const bulkDeleteBlogsAction = async (ids: string[]) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session. Please log in again." };
+
+  if (user.role !== "admin" && user.role !== "editor")
+    return {
+      error: "Permission denied.",
+    };
+
   try {
-    // const existing = await (async () => {
-    //   try {
-    //     const blogs = await Promise.all(
-    //       ids.map((id) =>
-    //         (async () => {
-    //           try {
-    //             return await (
-    //               await import("../db/repository/blog.service")
-    //             ).getBlogById(id);
-    //           } catch {
-    //             return null;
-    //           }
-    //         })()
-    //       )
-    //     );
-    //     return blogs.filter(Boolean);
-    //   } catch {
-    //     return [];
-    //   }
-    // })();
+    const result = await deleteManyBlogs(ids);
+    if (!result) return { error: "No blogs were deleted." };
 
-    await deleteManyBlogs(ids);
+    if (result.count >= 5) {
+      const users = await (async () => {
+        return await (
+          await import("../db/repository/user.service")
+        ).getAllUsers({ emailNotifications: true });
+      })();
 
-    await createUserActivity(
-      userId,
-      "Multiple blog posts deleted",
-      `${ids.length} blog posts removed`
-    );
+      const usersEmail = users
+        .filter((u) => u.email !== user.email)
+        .map((u) => u.email);
 
-    revalidatePath("/blogs");
-    return { success: `${ids.length} blogs deleted` };
+      if (usersEmail.length > 0) {
+        const mailer = new MailService();
+        await mailer.sendBlogBulkDeleteEmail(
+          user as any,
+          usersEmail,
+          result.count
+        );
+
+        await createUserActivity(
+          user.id,
+          "Multiple blog posts deleted",
+          `${result.count} blog posts removed`
+        );
+      }
+
+      revalidateTag("app-stats");
+      revalidateTag("profile-stats");
+      revalidatePath("/blogs");
+    }
+
+    return { success: `${result.count} blogs deleted` };
   } catch (e) {
     return { error: "Failed to delete blogs" };
   }

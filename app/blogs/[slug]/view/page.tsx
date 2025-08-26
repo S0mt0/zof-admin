@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Edit, Eye, Calendar, User, Tag } from "lucide-react"
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Edit, Eye, Calendar, User, Tag } from "lucide-react";
 
 // Mock data - in real app, this would come from API
 const mockBlogPosts = [
@@ -40,37 +40,37 @@ const mockBlogPosts = [
     bannerImage: "/placeholder.svg?height=400&width=800",
     readTime: "5 min read",
   },
-]
+];
 
 export default function ViewBlogPostPage() {
-  const router = useRouter()
-  const params = useParams()
-  const postId = Number.parseInt(params.id as string)
+  const router = useRouter();
+  const params = useParams();
+  const postId = Number.parseInt(params.slug as string);
 
-  const [post, setPost] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [post, setPost] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Load blog post data
-    const foundPost = mockBlogPosts.find((p) => p.id === postId)
+    const foundPost = mockBlogPosts.find((p) => p.id === postId);
     if (foundPost) {
-      setPost(foundPost)
+      setPost(foundPost);
     }
-    setIsLoading(false)
-  }, [postId])
+    setIsLoading(false);
+  }, [postId]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "published":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200"
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
       case "draft":
-        return "bg-amber-100 text-amber-800 border-amber-200"
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "scheduled":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-blue-100 text-blue-800 border-blue-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -82,7 +82,7 @@ export default function ViewBlogPostPage() {
           <div className="h-4 bg-gray-200 rounded w-1/2"></div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!post) {
@@ -91,7 +91,9 @@ export default function ViewBlogPostPage() {
         <DashboardHeader title="Blog Post Not Found" />
         <Card>
           <CardContent className="text-center py-8">
-            <p className="text-gray-500 mb-4">The blog post you're looking for doesn't exist.</p>
+            <p className="text-gray-500 mb-4">
+              The blog post you're looking for doesn't exist.
+            </p>
             <Button onClick={() => router.push("/blogs")}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Blog Posts
@@ -99,14 +101,17 @@ export default function ViewBlogPostPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         title="View Blog Post"
-        breadcrumbs={[{ label: "Blog Posts", href: "/blogs" }, { label: post.title }]}
+        breadcrumbs={[
+          { label: "Blog Posts", href: "/blogs" },
+          { label: post.title },
+        ]}
       />
 
       <div className="grid gap-6 lg:grid-cols-4">
@@ -126,7 +131,9 @@ export default function ViewBlogPostPage() {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge className={getStatusColor(post.status)}>{post.status}</Badge>
+                  <Badge className={getStatusColor(post.status)}>
+                    {post.status}
+                  </Badge>
                   {post.tags.map((tag: string) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       <Tag className="h-3 w-3 mr-1" />
@@ -135,7 +142,9 @@ export default function ViewBlogPostPage() {
                   ))}
                 </div>
 
-                <CardTitle className="text-2xl lg:text-3xl">{post.title}</CardTitle>
+                <CardTitle className="text-2xl lg:text-3xl">
+                  {post.title}
+                </CardTitle>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
@@ -157,9 +166,14 @@ export default function ViewBlogPostPage() {
 
             <CardContent>
               <div className="prose prose-gray max-w-none">
-                <div className="text-lg text-gray-600 mb-6 font-medium">{post.excerpt}</div>
+                <div className="text-lg text-gray-600 mb-6 font-medium">
+                  {post.excerpt}
+                </div>
 
-                <div className="space-y-4" dangerouslySetInnerHTML={{ __html: post.content }} />
+                <div
+                  className="space-y-4"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
               </div>
             </CardContent>
           </Card>
@@ -173,12 +187,19 @@ export default function ViewBlogPostPage() {
               <CardTitle>Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button onClick={() => router.push(`/blogs/${post.id}/edit`)} className="w-full">
+              <Button
+                onClick={() => router.push(`/blogs/${post.id}/edit`)}
+                className="w-full"
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Post
               </Button>
 
-              <Button onClick={() => router.push("/blogs")} variant="ghost" className="w-full">
+              <Button
+                onClick={() => router.push("/blogs")}
+                variant="ghost"
+                className="w-full"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Blog Posts
               </Button>
@@ -197,7 +218,10 @@ export default function ViewBlogPostPage() {
               </div>
               <div className="flex justify-between text-sm">
                 <span>Status:</span>
-                <Badge className={getStatusColor(post.status)} variant="outline">
+                <Badge
+                  className={getStatusColor(post.status)}
+                  variant="outline"
+                >
                   {post.status}
                 </Badge>
               </div>
@@ -241,7 +265,9 @@ export default function ViewBlogPostPage() {
                 </div>
                 <div>
                   <p className="font-medium">{post.author}</p>
-                  <p className="text-sm text-muted-foreground">Content Creator</p>
+                  <p className="text-sm text-muted-foreground">
+                    Content Creator
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -249,5 +275,5 @@ export default function ViewBlogPostPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

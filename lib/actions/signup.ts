@@ -22,7 +22,7 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
 
   await createUser({
     name,
-    email,
+    email: email.toLocaleLowerCase(),
     password: hashedPassword,
     role: allowedAdminEmailsList.includes(email) ? "admin" : "user",
   });

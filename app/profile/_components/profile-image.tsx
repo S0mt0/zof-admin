@@ -82,7 +82,7 @@ export const ProfileImage = ({
       <Image
         src={imgUrl}
         alt="my profile picture"
-        className="w-24 h-auto rounded-full object-cover object-center"
+        className="w-24 h-auto aspect-square rounded-full object-cover object-center"
         width={100}
         height={100}
         priority

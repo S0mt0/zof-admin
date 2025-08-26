@@ -1,8 +1,7 @@
 import { unstable_cache } from "next/cache";
 
-import { getBlogs, getBlogsStats } from "@/lib/db/repository";
+import { getAllBlogs, getBlogsStats } from "@/lib/db/repository";
 import { Blogs } from "./_components/blog-page";
-import { currentUser } from "@/lib/utils";
 import { BlogStats } from "./_components/blog-stats";
 import { DashboardHeader } from "@/components/dashboard-header";
 
@@ -21,7 +20,7 @@ export default async function Page({
   const limit = Number(searchParams?.limit) || 10;
 
   const getBlogsCached = unstable_cache(
-    getBlogs,
+    getAllBlogs,
     [
       "blogs",
       page.toString(),
@@ -37,21 +36,18 @@ export default async function Page({
     }
   );
 
+  const { data: blogs, pagination } = await getBlogsCached({
+    page,
+    limit,
+    search: searchParams.search,
+    status: searchParams.status,
+    featured: searchParams.featured,
+  });
+
   const getBlogsStatsCached = unstable_cache(getBlogsStats, ["blogs-stats"], {
     tags: ["blogs-stats"],
     revalidate: false,
   });
-
-  const user = await currentUser();
-
-  const { data: blogs, pagination } = await getBlogsCached(
-    user?.id!,
-    page,
-    limit,
-    searchParams.search,
-    searchParams.status,
-    searchParams.featured
-  );
 
   const blogsStats = await getBlogsStatsCached();
 

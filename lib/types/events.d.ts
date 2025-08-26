@@ -4,14 +4,14 @@ interface IEvent {
   id: string;
   title: string;
   description: string;
-  content: string | null;
+  content: string;
   date: Date;
   startTime: string;
   endTime: string | null;
   location: string;
   maxAttendees: number | null;
   currentAttendees: number;
-  bannerImage: string | null;
+  bannerImage: string;
   status: EventStatus;
   featured: boolean;
   tags: string[];

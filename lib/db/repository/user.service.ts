@@ -24,6 +24,15 @@ export const getUserById = async (id: string) => {
   }
 };
 
+export const getAllUsers = async (where: Record<string, any> = {}) => {
+  try {
+    return await db.user.findMany({ where });
+  } catch (e) {
+    console.error({ e });
+    return [];
+  }
+};
+
 export const updateUser = async (id: string, data: Partial<IUser>) => {
   try {
     return (await db.user.update({

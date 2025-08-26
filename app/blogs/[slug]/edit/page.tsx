@@ -1,24 +1,21 @@
-import { currentUser } from "@/lib/utils";
-import { DashboardHeader } from "@/components/dashboard-header";
-import BlogForm from "../../_components/blog-form";
-import { getBlogById } from "@/lib/db/repository";
 import { notFound } from "next/navigation";
+
+import { DashboardHeader } from "@/components/dashboard-header";
+import BlogForm from "../../_components/blog-form/form";
+import { getBlogBySlug } from "@/lib/db/repository";
 
 interface EditBlogPostPageProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 
 export default async function EditBlogPostPage({
   params,
 }: EditBlogPostPageProps) {
-  const user = await currentUser();
-  const blog = await getBlogById(params.id);
+  const blog = await getBlogBySlug(params.slug);
 
-  if (!blog) {
-    notFound();
-  }
+  if (!blog) notFound();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -29,7 +26,7 @@ export default async function EditBlogPostPage({
           { label: "Edit Post" },
         ]}
       />
-      <BlogForm mode="edit" initialData={blog} userId={user?.id || ""} />
+      <BlogForm mode="edit" initialData={blog} />
     </div>
   );
 }

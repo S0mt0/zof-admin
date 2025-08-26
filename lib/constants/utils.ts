@@ -22,3 +22,13 @@ export const emptyPaginatedData = {
     totalPages: 0,
   },
 };
+
+export const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/heic",
+];
+
+export const MAX_IMAGE_SIZE = 8 * 1000 * 1024; // 8MB

@@ -4,9 +4,9 @@ interface Blog {
   id: string;
   title: string;
   slug: string;
-  excerpt: string | null;
+  excerpt: string;
   content: string;
-  bannerImage: string | null;
+  bannerImage: string;
   status: BlogStatus;
   featured: boolean;
   tags: string[];
@@ -88,17 +88,3 @@ type BlogsStats = {
   scheduled: number;
   featured: number;
 };
-
-interface BlogFormProps {
-  initialData?: Blog | null;
-  mode: "create" | "edit";
-  userId: string;
-}
-
-interface BlogFormData
-  extends Omit<
-    Blog,
-    "id" | "authorId" | "createdAt" | "updatedAt" | "views" | "createdBy"
-  > {
-  newTag: string;
-}
