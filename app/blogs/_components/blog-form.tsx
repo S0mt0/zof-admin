@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { ChevronDown, Save, Upload, Eye, ArrowLeft } from "lucide-react";
+import { ChevronDown, Save, Upload, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import RichTextEditor from "@/components/lexical-editor/editor";
 import { BlogFormSchema } from "@/lib/schemas";
 
@@ -85,6 +84,23 @@ export default function BlogForm({ initialData, mode, userId }: BlogFormProps) {
 
     [initialData]
   );
+
+  // const blogData: Blog = useMemo(
+  //   () => ({
+  //     title: initialData?.title || "",
+  //     excerpt: initialData?.excerpt || "",
+  //     content: initialData?.content || "",
+  //     status: initialData?.status || "draft",
+  //     bannerImage: initialData?.bannerImage || "",
+  //     featured: initialData?.featured || false,
+  //     tags: initialData?.tags || [],
+  //     slug: initialData?.slug || "",
+  //     publishedAt: initialData?.publishedAt || new Date(),
+  //   }),
+
+  //   [initialData]
+  // );
+
   const form = useForm<z.infer<typeof ExtendedBlogFormSchema>>({
     resolver: zodResolver(ExtendedBlogFormSchema),
     defaultValues: initialValues,

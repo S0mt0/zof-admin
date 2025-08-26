@@ -16,17 +16,19 @@ import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect, useState } from "react";
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
+import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
+
+import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { YouTubeNode } from "./nodes/YouTubeNode";
 import { ToolbarPlugin } from "./plugins/ToolbarPlugin";
 import { ImagesPlugin } from "./plugins/ImagesPlugin";
 import { YouTubePlugin } from "./plugins/YouTubePlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useEffect, useState } from "react";
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
-import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
-import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
+import { theme } from "./theme";
 
 interface RichTextEditorProps {
   value: string;
@@ -38,80 +40,8 @@ interface RichTextEditorProps {
   disabled?: boolean;
 }
 
-const theme = {
-  ltr: "ltr",
-  rtl: "rtl",
-  placeholder: "text-gray-400",
-  paragraph: "mb-2",
-  quote: "border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4",
-  heading: {
-    h1: "text-3xl font-bold mb-4",
-    h2: "text-2xl font-bold mb-3",
-    h3: "text-xl font-bold mb-2",
-    h4: "text-lg font-bold mb-2",
-    h5: "text-base font-bold mb-1",
-    h6: "text-sm font-bold mb-1",
-  },
-  list: {
-    nested: {
-      listitem: "list-none",
-    },
-    ol: "list-decimal list-inside mb-2",
-    ul: "list-disc list-inside mb-2",
-    listitem: "mb-1",
-  },
-  image: "max-w-full h-auto mx-auto block my-4",
-  link: "text-blue-600 hover:text-blue-800 underline",
-  text: {
-    bold: "font-bold",
-    italic: "italic",
-    overflowed: "overflow-hidden",
-    hashtag: "text-blue-500",
-    underline: "underline",
-    strikethrough: "line-through",
-    underlineStrikethrough: "underline line-through",
-    code: "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono",
-    highlight: "bg-yellow-200 px-1 rounded",
-  },
-  code: "bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto my-4",
-  codeHighlight: {
-    atrule: "text-purple-600",
-    attr: "text-blue-600",
-    boolean: "text-red-600",
-    builtin: "text-purple-600",
-    cdata: "text-gray-600",
-    char: "text-green-600",
-    class: "text-blue-600",
-    "class-name": "text-blue-600",
-    comment: "text-gray-500",
-    constant: "text-red-600",
-    deleted: "text-red-600",
-    doctype: "text-gray-600",
-    entity: "text-orange-600",
-    function: "text-purple-600",
-    important: "text-red-600",
-    inserted: "text-green-600",
-    keyword: "text-purple-600",
-    namespace: "text-blue-600",
-    number: "text-red-600",
-    operator: "text-gray-700",
-    prolog: "text-gray-600",
-    property: "text-blue-600",
-    punctuation: "text-gray-700",
-    regex: "text-green-600",
-    selector: "text-green-600",
-    string: "text-green-600",
-    symbol: "text-red-600",
-    tag: "text-red-600",
-    url: "text-blue-600",
-    variable: "text-orange-600",
-  },
-  checklist: "list-none",
-  "checklist-item": "flex items-center gap-2 mb-1",
-};
-
 function onError(error: Error) {
-  console.error(error);
+  console.error("editor_error: ", error);
 }
 
 function InitialValuePlugin({ value }: { value: string }) {
@@ -123,7 +53,7 @@ function InitialValuePlugin({ value }: { value: string }) {
       editor.update(() => {
         const parser = new DOMParser();
         const dom = parser.parseFromString(value, "text/html");
-        const nodes = $generateNodesFromDOM(editor as unknown as any, dom);
+        const nodes = $generateNodesFromDOM(editor, dom);
         $getRoot().select();
         $getRoot().clear();
         $getRoot().append(...nodes);
@@ -163,7 +93,7 @@ export default function RichTextEditor({
       ImageNode,
       YouTubeNode,
       HorizontalRuleNode,
-    ] as unknown as ReadonlyArray<any>,
+    ],
     editable: !disabled,
   };
 

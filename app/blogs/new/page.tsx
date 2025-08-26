@@ -1,6 +1,6 @@
 import { currentUser } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard-header";
-import BlogForm from "../_components/blog-form";
+import BlogForm from "../_components/blog-form-v2";
 
 export default async function NewBlogPostPage() {
   const user = await currentUser();
