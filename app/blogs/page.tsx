@@ -32,7 +32,7 @@ export default async function Page({
     ],
     {
       tags: ["blogs"],
-      revalidate: false,
+      revalidate: 300, // revalidate every 5 mimnutes
     }
   );
 
@@ -46,7 +46,7 @@ export default async function Page({
 
   const getBlogsStatsCached = unstable_cache(getBlogsStats, ["blogs-stats"], {
     tags: ["blogs-stats"],
-    revalidate: false,
+    revalidate: 300, // revalidate every 5 mimnutes
   });
 
   const blogsStats = await getBlogsStatsCached();

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 import { format } from "date-fns";
 
 import {
@@ -13,6 +12,7 @@ import {
 } from "../db/repository";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
+import { db } from "../db";
 
 export const createBlogAction = async (data: Partial<Blog>) => {
   const user = await currentUser();
@@ -46,12 +46,12 @@ export const createBlogAction = async (data: Partial<Blog>) => {
       await createUserActivity(
         user.id!,
         "New blog post created",
-        newBlog.title
+        capitalize(newBlog.title)
       );
 
-      revalidateTag("app-stats");
       revalidateTag("profile-stats");
       revalidatePath("/blogs");
+      revalidatePath("/");
       return { success: "Blog created" };
     }
   } catch (e: any) {
@@ -91,15 +91,17 @@ export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
 
     const updated = await updateBlogBySlug(slug, data);
     if (updated) {
-      await createUserActivity(user.id, "Blog post updated", updated.title);
+      await createUserActivity(
+        user.id,
+        "Blog post updated",
+        `Title: "${capitalize(updated.title)}"`
+      );
 
-      if (
-        updated.createdBy !== user.id &&
-        updated.author?.email &&
-        updated.author.emailNotifications
-      ) {
-        const mailer = new MailService();
-        await mailer.sendBlogUpdateEmail(user as any, updated);
+      if (updated.createdBy !== user.id && updated.author?.email) {
+        if (updated.author.emailNotifications) {
+          const mailer = new MailService();
+          await mailer.sendBlogUpdateEmail(user as any, updated);
+        }
 
         await createUserActivity(
           updated?.authorId!,
@@ -113,9 +115,9 @@ export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
         );
       }
 
-      revalidateTag("app-stats");
       revalidateTag("profile-stats");
       revalidatePath("/blogs");
+      revalidatePath("/");
     }
     return { success: "Blog post updated" };
   } catch (e) {
@@ -158,16 +160,14 @@ export const deleteBlogAction = async (id: string) => {
       await createUserActivity(
         user.id,
         "Blog post deleted",
-        capitalize(deleted.title)
+        `Title: "${capitalize(deleted.title)}"`
       );
 
-      if (
-        deleted.createdBy !== user.id &&
-        deleted.author?.email &&
-        deleted.author.emailNotifications
-      ) {
-        const mailer = new MailService();
-        await mailer.sendBlogDeleteEmail(user as any, deleted);
+      if (deleted.createdBy !== user.id && deleted.author?.email) {
+        if (deleted.author.emailNotifications) {
+          const mailer = new MailService();
+          await mailer.sendBlogDeleteEmail(user as any, deleted);
+        }
 
         await createUserActivity(
           deleted?.authorId!,
@@ -182,12 +182,12 @@ export const deleteBlogAction = async (id: string) => {
         );
       }
 
-      revalidateTag("app-stats");
       revalidateTag("profile-stats");
       revalidatePath("/blogs");
+      revalidatePath("/");
     }
 
-    return { success: "Blog deleted" };
+    return { success: "Blog post deleted successfully" };
   } catch (e) {
     return { error: "Failed to delete blog" };
   }
@@ -210,34 +210,40 @@ export const bulkDeleteBlogsAction = async (ids: string[]) => {
       const users = await (async () => {
         return await (
           await import("../db/repository/user.service")
-        ).getAllUsers({ emailNotifications: true });
+        ).getAllUsers();
       })();
 
-      const usersEmail = users
-        .filter((u) => u.email !== user.email)
+      const bulkActivities = users
+        .filter((u) => u.id !== user.id)
+        .map((u) => ({
+          userId: u.id,
+          title: "Multiple blog posts deleted",
+          description: `${result.count} blog posts were removed by ${capitalize(
+            user.name!
+          )}`,
+        }));
+
+      await db.userActivity.createMany({ data: bulkActivities });
+
+      const usersToNotifyEmails = users
+        .filter((u) => u.email !== user.email && u.emailNotifications)
         .map((u) => u.email);
 
-      if (usersEmail.length > 0) {
+      if (usersToNotifyEmails.length > 0) {
         const mailer = new MailService();
         await mailer.sendBlogBulkDeleteEmail(
           user as any,
-          usersEmail,
+          usersToNotifyEmails,
           result.count
         );
-
-        await createUserActivity(
-          user.id,
-          "Multiple blog posts deleted",
-          `${result.count} blog posts removed`
-        );
       }
-
-      revalidateTag("app-stats");
-      revalidateTag("profile-stats");
-      revalidatePath("/blogs");
     }
 
-    return { success: `${result.count} blogs deleted` };
+    revalidateTag("profile-stats");
+    revalidatePath("/blogs");
+    revalidatePath("/");
+
+    return { success: `${result.count} blog(s) deleted successfully` };
   } catch (e) {
     return { error: "Failed to delete blogs" };
   }

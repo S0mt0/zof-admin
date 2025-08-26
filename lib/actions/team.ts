@@ -1,7 +1,7 @@
 "use server";
 
 import * as z from "zod";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { TeamMemberSchema } from "../schemas";
 import {
   listTeamMembers,
@@ -61,9 +61,8 @@ export const createTeamMemberAction = async (
     }
 
     revalidateTag("teams");
-    revalidateTag("users-recent-activities");
     revalidateTag("profile-stats");
-    revalidateTag("app-stats");
+    revalidatePath("/");
     return { success: "Team member created" };
   } catch (e) {
     return { error: "Could not create team member" };
@@ -107,8 +106,7 @@ export const updateTeamMemberAction = async (
     }
 
     revalidateTag("teams");
-    revalidateTag("team-member");
-    revalidateTag("users-recent-activities");
+    revalidatePath("/");
     revalidateTag("profile-stats");
 
     return { success: "Team member updated" };
@@ -135,9 +133,8 @@ export const deleteTeamMemberAction = async (
     }
 
     revalidateTag("teams");
-    revalidateTag("users-recent-activities");
     revalidateTag("profile-stats");
-    revalidateTag("app-stats");
+    revalidatePath("/");
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };

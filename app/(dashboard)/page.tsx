@@ -17,7 +17,7 @@ export default async function Dashboard({
 
   const activityStats = unstable_cache(getAppStats, ["app-stats"], {
     tags: ["app-stats"],
-    revalidate: false,
+    revalidate: 300, // revalidate every 5 mimnutes
   });
   const { blogs, events, team, messages } = await activityStats();
 

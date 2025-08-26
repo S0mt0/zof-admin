@@ -26,7 +26,7 @@ export async function UsersRecentActivities({
     ["users-recent-activities"],
     {
       tags: ["users-recent-activities"],
-      revalidate: false,
+      revalidate: 300, // revalidate every 5 mimnutes
     }
   );
 

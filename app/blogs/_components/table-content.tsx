@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { capitalize } from "@/lib/utils";
 
 export const TableContent = ({
   blogs,
@@ -45,7 +46,7 @@ export const TableContent = ({
           </TableCell>
           <TableCell>
             <div>
-              <div className="font-medium">{blog.title}</div>
+              <div className="font-medium">{capitalize(blog.title)}</div>
               <div className="text-sm text-muted-foreground md:hidden">
                 {blog.featured ? "⭐ Featured" : "Not Featured"}
               </div>

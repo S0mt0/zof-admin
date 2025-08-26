@@ -492,6 +492,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         <Button
           variant="ghost"
           size="sm"
+          type="button"
           onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
         >
           <BiUndo className="h-4 w-4" />
@@ -499,6 +500,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         <Button
           variant="ghost"
           size="sm"
+          type="button"
           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         >
           <BiRedo className="h-4 w-4" />
@@ -509,7 +511,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         {/* Block Type Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-1">
+            <Button variant="ghost" size="sm" type="button" className="gap-1">
               <span className="text-sm">{getBlockTypeLabel()}</span>
               <ChevronDown className="h-3 w-3" />
             </Button>
@@ -577,11 +579,21 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
 
         {/* Font Size */}
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={() => changeFontSize(-6)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            type="button"
+            onClick={() => changeFontSize(-6)}
+          >
             <Minus className="h-3 w-3" />
           </Button>
           <span className="text-sm w-8 text-center">{fontSize}</span>
-          <Button variant="ghost" size="sm" onClick={() => changeFontSize(6)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            type="button"
+            onClick={() => changeFontSize(6)}
+          >
             <Plus className="h-3 w-3" />
           </Button>
         </div>
@@ -592,6 +604,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         <Button
           variant={isBold ? "default" : "ghost"}
           size="sm"
+          type="button"
           onClick={() => formatText("bold")}
         >
           <Bold className="h-4 w-4" />
@@ -599,6 +612,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         <Button
           variant={isItalic ? "default" : "ghost"}
           size="sm"
+          type="button"
           onClick={() => formatText("italic")}
         >
           <Italic className="h-4 w-4" />
@@ -606,20 +620,21 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         <Button
           variant={isUnderline ? "default" : "ghost"}
           size="sm"
+          type="button"
           onClick={() => formatText("underline")}
         >
           <Underline className="h-4 w-4" />
         </Button>
 
         {/* Link */}
-        <Button variant="ghost" size="sm" onClick={insertLink}>
+        <Button variant="ghost" size="sm" type="button" onClick={insertLink}>
           <Link className="h-4 w-4" />
         </Button>
 
         {/* Text Tools Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-1">
+            <Button variant="ghost" size="sm" type="button" className="gap-1">
               <Type className="h-4 w-4" />
               <ChevronDown className="h-3 w-3" />
             </Button>

@@ -22,7 +22,7 @@ export const ErrorCard = () => {
       break;
     case "Configuration":
       errorMessage =
-        "There was a configuration error. Please try again or contact support.";
+        "Please check your internet connection, or refresh your browser and try again.";
       break;
 
     default:

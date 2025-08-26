@@ -1,11 +1,18 @@
 import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 import { SettingsPage } from "./_components/settings-page";
+import { unstable_cache } from "next/cache";
 
 export default async function Page() {
-  const foundationInfo = await getFoundationInfo();
-  const websiteSettings = await getWebsiteSettings();
+  const getSettingsCached = unstable_cache(getWebsiteSettings, ["settings"], {
+    revalidate: 300,
+  });
 
-  console.log("fetching foundation info...");
+  const getInfoCached = unstable_cache(getFoundationInfo, ["info"], {
+    revalidate: 300,
+  });
+
+  const foundationInfo = await getInfoCached();
+  const websiteSettings = await getSettingsCached();
 
   return (
     <SettingsPage

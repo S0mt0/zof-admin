@@ -6,7 +6,7 @@ import TeamPageClient from "./_components/team-page";
 export default async function Page() {
   const teamMembers = unstable_cache(listTeamMembers, ["teams"], {
     tags: ["teams"],
-    revalidate: false,
+    revalidate: 300, // revalidate every 5 mimnutes
   });
   const members = await teamMembers();
 
