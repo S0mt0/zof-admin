@@ -40,14 +40,21 @@ function InitialValuePlugin({ value }: { value: string }) {
 
   useEffect(() => {
     if (value && isFirstRender) {
-      editor.update(() => {
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(value, "text/html");
-        const nodes = $generateNodesFromDOM(editor, dom);
-        $getRoot().select();
-        $getRoot().clear();
-        $getRoot().append(...nodes);
-      });
+      try {
+        // Try to parse as Lexical state first
+        const editorState = editor.parseEditorState(value);
+        editor.setEditorState(editorState);
+      } catch {
+        // Fallback to HTML parsing if not Lexical state
+        editor.update(() => {
+          const parser = new DOMParser();
+          const dom = parser.parseFromString(value, "text/html");
+          const nodes = $generateNodesFromDOM(editor, dom);
+          const root = $getRoot();
+          root.clear();
+          root.append(...nodes);
+        });
+      }
       setIsFirstRender(false);
     }
   }, [editor, value, isFirstRender]);
@@ -92,10 +99,8 @@ export default function RichTextEditor({
     editor: LexicalEditor,
     _tags: Set<string>
   ) => {
-    editorState.read(() => {
-      const htmlString = $generateHtmlFromNodes(editor, null);
-      onChange(htmlString);
-    });
+    const serializedState = JSON.stringify(editorState);
+    onChange(serializedState);
   };
 
   return (

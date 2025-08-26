@@ -46,15 +46,12 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
 
   const onSubmit = (values: z.infer<typeof WebsiteSettingsSchema>) => {
     startTransition(() => {
-      // Check if any values have actually changed
       const hasChanges =
         values.maintenanceMode !== websiteSettings?.maintenanceMode ||
         values.blogComments !== websiteSettings?.blogComments ||
         values.eventRegistration !== websiteSettings?.eventRegistration;
 
-      if (!hasChanges) {
-        return; // Do nothing if values didn't change
-      }
+      if (!hasChanges) return;
 
       updateWebsiteSettingsAction(values).then((data) => {
         if (data?.error) toast.error(data.error);
