@@ -2,17 +2,17 @@ import { memo, useCallback, useRef } from "react";
 
 import RichTextEditor from "./editor";
 
-// Isolated editor wrapper to prevent focus issues
 export const EditorWrapper = memo(
   ({
     value: content,
     onChange,
     disabled,
-    name,
+    name = "",
     placeholder,
     className,
+    minCount = 100,
     onImageUpload,
-  }: RichTextEditorProps) => {
+  }: RichTextEditorProps & { minCount?: number }) => {
     const editorRef = useRef<HTMLDivElement>(null);
 
     // Stable onChange handler
@@ -40,7 +40,7 @@ export const EditorWrapper = memo(
         <div className="text-xs text-muted-foreground text-right mt-2">
           {content.replace(/<[^>]*>/g, "").length} characters
           {content.replace(/<[^>]*>/g, "").length < 100 &&
-            " (minimum 100 required for publishing)"}
+            ` (minimum ${minCount} required for publishing)`}
         </div>
       </div>
     );

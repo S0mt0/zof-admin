@@ -20,6 +20,7 @@ import { BlogNotFound } from "../_components/not-found";
 import { format } from "date-fns";
 import { ShareButton } from "./_components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
+import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
 
 export default async function ViewBlogPage({
   params,
@@ -35,6 +36,8 @@ export default async function ViewBlogPage({
   const blog = await getBlogCached(params.slug);
 
   if (!blog) return <BlogNotFound />;
+
+  console.log(blog);
 
   const displayDate = blog.publishedAt || blog.createdAt;
   const readTime = getReadTime(blog.content);
@@ -143,14 +146,10 @@ export default async function ViewBlogPage({
         )}
 
         {/* Blog Content */}
-        <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
-          {/* Parse and render the blog content */}
-          {typeof blog.content === "string" ? (
-            <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-          ) : (
-            <div>Content format not supported</div>
-          )}
-        </div>
+        <LexicalContentRenderer
+          content={blog.content}
+          className="prose prose-lg dark:prose-invert max-w-none mb-12"
+        />
 
         {/* Tags */}
         {blog.tags.length > 0 && (
