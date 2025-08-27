@@ -1,19 +1,10 @@
-import {
-  ArrowLeft,
-  Tag,
-  Calendar,
-  Eye,
-  Clock,
-  Edit,
-  Share2,
-} from "lucide-react";
+import { Tag, Calendar, Eye, Clock, Edit } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -91,12 +82,12 @@ export default async function ViewBlogPage({
                   alt={blog.author?.name || "Author"}
                 />
                 <AvatarFallback>
-                  {blog.author?.name?.charAt(0)?.toUpperCase() || "A"}
+                  {getInitials(blog.author?.name) || "A"}
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
                 <p className="font-medium">
-                  {capitalize(blog.author?.name) || "Anonymous"}
+                  {capitalize(blog.author?.name) || "Zita-Onyeka Foundation"}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
@@ -125,7 +116,7 @@ export default async function ViewBlogPage({
               </Button>
               <ShareButton
                 title={`Read: "${capitalize(blog.title)}" by ${capitalize(
-                  blog.author?.name
+                  blog.author?.name || "Zita-Onyeka Foundation"
                 )}`}
                 url={`${FRONTEND_BASE_URL}/blogs/${blog.slug}`}
               />
@@ -152,6 +143,14 @@ export default async function ViewBlogPage({
         )}
 
         {/* Blog Content */}
+        <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
+          {/* Parse and render the blog content */}
+          {typeof blog.content === "string" ? (
+            <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+          ) : (
+            <div>Content format not supported</div>
+          )}
+        </div>
 
         {/* Tags */}
         {blog.tags.length > 0 && (
