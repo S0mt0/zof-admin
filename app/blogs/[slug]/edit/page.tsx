@@ -1,8 +1,7 @@
-import { notFound } from "next/navigation";
-
 import { DashboardHeader } from "@/components/dashboard-header";
 import BlogForm from "../../_components/blog-form/form";
 import { getBlogBySlug } from "@/lib/db/repository";
+import { BlogNotFound } from "../../_components/not-found";
 
 interface EditBlogPostPageProps {
   params: {
@@ -15,7 +14,7 @@ export default async function EditBlogPostPage({
 }: EditBlogPostPageProps) {
   const blog = await getBlogBySlug(params.slug);
 
-  if (!blog) notFound();
+  if (!blog) return <BlogNotFound />;
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

@@ -85,7 +85,7 @@ export default function TeamMemberCard({
                 className="cursor-pointer text-red-600 focus:text-red-600"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Remove Member
+                Remove
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

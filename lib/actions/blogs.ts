@@ -52,7 +52,8 @@ export const createBlogAction = async (data: Partial<Blog>) => {
       revalidateTag("profile-stats");
       revalidatePath("/blogs");
       revalidatePath("/");
-      return { success: "Blog created" };
+      revalidateTag("blog");
+      return { success: "Blog created", data: { blog: newBlog } };
     }
   } catch (e: any) {
     console.log({ e });
@@ -85,8 +86,7 @@ export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
       user.role !== "editor"
     )
       return {
-        error:
-          "Permission denied. Only admins or editors can update this blog post.",
+        error: "Permission denied.",
       };
 
     const updated = await updateBlogBySlug(slug, data);
@@ -116,10 +116,11 @@ export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
       }
 
       revalidateTag("profile-stats");
+      revalidateTag("blog");
       revalidatePath("/blogs");
       revalidatePath("/");
     }
-    return { success: "Blog post updated" };
+    return { success: "Blog post updated", data: { blog: updated } };
   } catch (e) {
     return { error: "Failed to update blog" };
   }
@@ -183,6 +184,7 @@ export const deleteBlogAction = async (id: string) => {
       }
 
       revalidateTag("profile-stats");
+      revalidateTag("blog");
       revalidatePath("/blogs");
       revalidatePath("/");
     }
@@ -242,6 +244,7 @@ export const bulkDeleteBlogsAction = async (ids: string[]) => {
     revalidateTag("profile-stats");
     revalidatePath("/blogs");
     revalidatePath("/");
+    revalidateTag("blog");
 
     return { success: `${result.count} blog(s) deleted successfully` };
   } catch (e) {

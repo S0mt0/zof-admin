@@ -66,7 +66,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
         <div>
           <CardTitle>Website Settings</CardTitle>
           <CardDescription>

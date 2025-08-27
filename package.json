@@ -85,6 +85,7 @@
     "react-hook-form": "^7.54.1",
     "react-icons": "^5.5.0",
     "react-resizable-panels": "^2.1.7",
+    "react-share": "^5.2.2",
     "react-spinners": "^0.17.0",
     "resend": "^4.6.0",
     "sonner": "^1.7.1",

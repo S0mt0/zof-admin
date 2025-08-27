@@ -71,8 +71,8 @@ export function Pagination({
   const hasNext = currentPage < totalPages;
 
   return (
-    <div className="flex items-center justify-between mt-6 pt-4 border-t">
-      <div className="text-sm text-muted-foreground">
+    <div className="flex items-center justify-between mt-6 pt-4 border-t flex-wrap gap-4">
+      <div className="hidden sm:block text-sm text-muted-foreground">
         Showing {showingStart} to {showingEnd} of {totalItems} {itemName}
       </div>
 

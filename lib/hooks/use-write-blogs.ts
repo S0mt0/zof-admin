@@ -187,7 +187,7 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push("/blogs");
+                router.push(`/blogs/${res.data.blog.slug}`);
               }
             })
             .catch(() => {
@@ -203,7 +203,7 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push("/blogs");
+                router.push(`/blogs/${res.data.blog?.slug}`);
               }
             })
             .catch(() => {

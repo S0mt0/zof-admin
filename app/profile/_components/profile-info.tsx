@@ -104,7 +104,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
     <div className="space-y-6">
       {/* Main Profile Information */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
           <div>
             <CardTitle>Profile Information</CardTitle>
             <CardDescription>

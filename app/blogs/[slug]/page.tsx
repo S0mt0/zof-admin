@@ -6,7 +6,6 @@ import {
   Clock,
   Edit,
   Share2,
-  Bookmark,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,7 +19,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
 import { getBlogBySlug } from "@/lib/db/repository";
-import { capitalize, getInitials } from "@/lib/utils";
+import {
+  capitalize,
+  getInitials,
+  getReadTime,
+  getStatusColor,
+} from "@/lib/utils";
+import { BlogNotFound } from "../_components/not-found";
+import { format } from "date-fns";
+import { ShareButton } from "./_components/share-button";
+import { FRONTEND_BASE_URL } from "@/lib/constants";
 
 export default async function ViewBlogPage({
   params,
@@ -30,79 +38,25 @@ export default async function ViewBlogPage({
   };
 }) {
   const getBlogCached = unstable_cache(getBlogBySlug, [params?.slug], {
+    tags: ["blog"],
     revalidate: 300,
   });
   const blog = await getBlogCached(params.slug);
 
-  if (!blog) {
-    return (
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <DashboardHeader title="Blog Post Not Found" />
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-muted-foreground mb-4">
-              The blog post you're looking for doesn't exist.
-            </p>
-            <Button asChild>
-              <Link
-                href="/blogs"
-                className="flex items-center justify-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Blog Posts
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const getStatusColor = (status: BlogStatus) => {
-    switch (status) {
-      case "published":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800";
-      case "draft":
-        return "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800";
-      case "scheduled":
-        return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
-    }
-  };
-
-  const getReadTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const wordCount = content.split(" ").length;
-    const readTime = Math.ceil(wordCount / wordsPerMinute);
-    return `${readTime} min read`;
-  };
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return "Not published";
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(new Date(date));
-  };
+  if (!blog) return <BlogNotFound />;
 
   const displayDate = blog.publishedAt || blog.createdAt;
   const readTime = getReadTime(blog.content);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container max-w-4xl mx-auto px-4 py-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/blogs" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Posts
-            </Link>
-          </Button>
-        </div>
-      </div>
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <DashboardHeader
+        title="View Blog Post"
+        breadcrumbs={[
+          { label: "Blog Posts", href: "/blogs" },
+          { label: capitalize(blog.title) },
+        ]}
+      />
 
       {/* Main Content */}
       <article className="container max-w-4xl mx-auto px-4 py-8">
@@ -118,7 +72,7 @@ export default async function ViewBlogPage({
 
           {/* Title */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-            {blog.title}
+            {capitalize(blog.title)}
           </h1>
 
           {/* Excerpt */}
@@ -130,7 +84,7 @@ export default async function ViewBlogPage({
 
           {/* Author and Meta */}
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Avatar className="h-10 w-10">
                 <AvatarImage
                   src={blog.author?.image}
@@ -142,12 +96,12 @@ export default async function ViewBlogPage({
               </Avatar>
               <div className="space-y-1">
                 <p className="font-medium">
-                  {blog.author?.name || "Anonymous"}
+                  {capitalize(blog.author?.name) || "Anonymous"}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {formatDate(displayDate)}
+                    {format(displayDate, "MMMM d, yyyy")}
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
@@ -169,13 +123,12 @@ export default async function ViewBlogPage({
                   Edit
                 </Link>
               </Button>
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-              <Button variant="outline" size="sm">
-                <Bookmark className="h-4 w-4" />
-              </Button>
+              <ShareButton
+                title={`Read: "${capitalize(blog.title)}" by ${capitalize(
+                  blog.author?.name
+                )}`}
+                url={`${FRONTEND_BASE_URL}/blogs/${blog.slug}`}
+              />
             </div>
           </div>
 
@@ -189,7 +142,7 @@ export default async function ViewBlogPage({
               <Image
                 src={blog.bannerImage}
                 alt={blog.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
                 width={1200}
                 height={675}
                 priority={true}
@@ -199,14 +152,6 @@ export default async function ViewBlogPage({
         )}
 
         {/* Blog Content */}
-        <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
-          {/* Parse and render the blog content */}
-          {typeof blog.content === "string" ? (
-            <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-          ) : (
-            <div>Content format not supported</div>
-          )}
-        </div>
 
         {/* Tags */}
         {blog.tags.length > 0 && (
@@ -220,7 +165,7 @@ export default async function ViewBlogPage({
                 {blog.tags.map((tag) => (
                   <Badge key={tag} variant="outline" className="text-sm">
                     <Tag className="h-3 w-3 mr-1" />
-                    {tag}
+                    {capitalize(tag)}
                   </Badge>
                 ))}
               </div>
