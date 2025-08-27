@@ -82,7 +82,7 @@ export const useReadBlogs = (blogs: Blog[]) => {
   );
 
   const handleViewBlog = (blog: Blog) => {
-    router.push(`/blogs/${blog.slug}/view`);
+    router.push(`/blogs/${blog.slug}`);
   };
 
   const handleEditBlog = (blog: Blog) => {

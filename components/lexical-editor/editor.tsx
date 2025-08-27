@@ -19,7 +19,7 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useEffect, useState } from "react";
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
+import { $generateNodesFromDOM } from "@lexical/html";
 import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
 
 import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
