@@ -128,7 +128,7 @@ export class YouTubeNode extends DecoratorNode<React.JSX.Element> {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen={true}
           title="YouTube video"
-          className="w-full max-w-[700px] aspect-video block mx-auto rounded-md shadow-lg my-4"
+          className="!w-full !max-w-[700px] !aspect-video block mx-auto rounded-md shadow-lg my-8"
         />
       </div>
     );

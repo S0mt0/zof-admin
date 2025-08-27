@@ -198,7 +198,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
             display: "block",
             margin: "1rem auto",
           }}
-          className="w-full max-w-[700px] h-auto block mx-auto object-cover object-center my-4 rounded-md"
+          className="!w-full !max-w-[700px] !aspect-video block mx-auto object-cover object-center my-6 rounded-md"
         />
         {this.__caption && (
           <figcaption className="text-center text-sm text-muted-foreground mt-2 italic">

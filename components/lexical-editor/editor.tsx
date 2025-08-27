@@ -1,19 +1,6 @@
 "use client";
 
-import {
-  $getRoot,
-  $isTextNode,
-  DOMConversionMap,
-  DOMExportOutput,
-  DOMExportOutputMap,
-  isHTMLElement,
-  Klass,
-  LexicalNode,
-  ParagraphNode,
-  TextNode,
-  type EditorState,
-  type LexicalEditor,
-} from "lexical";
+import { $getRoot, type EditorState, type LexicalEditor } from "lexical";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -29,85 +16,23 @@ import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect, useState } from "react";
+import { $generateNodesFromDOM } from "@lexical/html";
+import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
+
+import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { YouTubeNode } from "./nodes/YouTubeNode";
 import { ToolbarPlugin } from "./plugins/ToolbarPlugin";
 import { ImagesPlugin } from "./plugins/ImagesPlugin";
 import { YouTubePlugin } from "./plugins/YouTubePlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useEffect, useState } from "react";
-import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
-import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
-import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
 import { theme } from "./theme";
-import { parseAllowedColor, parseAllowedFontSize } from "./styleConfig";
-
-interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  name: string;
-  onImageUpload?: (file: File) => Promise<string>;
-  className?: string;
-  disabled?: boolean;
-}
-
-const removeStylesExportDOM = (
-  editor: LexicalEditor,
-  target: LexicalNode
-): DOMExportOutput => {
-  const output = target.exportDOM(editor);
-  if (output && isHTMLElement(output.element)) {
-    // Remove all inline styles and classes if the element is an HTMLElement
-    // Children are checked as well since TextNode can be nested
-    // in i, b, and strong tags.
-    for (const el of [
-      output.element,
-      ...output.element.querySelectorAll("[style],[class]"),
-    ]) {
-      el.removeAttribute("class");
-      el.removeAttribute("style");
-    }
-  }
-  return output;
-};
-
-const exportMap: DOMExportOutputMap = new Map<
-  Klass<LexicalNode>,
-  (editor: LexicalEditor, target: LexicalNode) => DOMExportOutput
->([
-  [ParagraphNode, removeStylesExportDOM],
-  [TextNode, removeStylesExportDOM],
-]);
 
 function onError(error: Error) {
-  console.error(error);
+  console.error("editor_error: ", error);
 }
-
-// const InitialValuePlugin = ({ value }: { value: string }) => {
-//   const [editor] = useLexicalComposerContext();
-
-//   useEffect(() => {
-//     if (value) {
-//       editor.update(() => {
-//         // Clear current state
-//         const root = $getRoot();
-//         root.clear();
-
-//         // Convert HTML to nodes
-//         const parser = new DOMParser();
-//         const dom = parser.parseFromString(value, "text/html");
-//         const nodes = $generateNodesFromDOM(editor, dom);
-
-//         // Insert nodes properly
-//         root.append(...nodes);
-//       });
-//     }
-//   }, [value, editor]);
-
-//   return null;
-// };
 
 function InitialValuePlugin({ value }: { value: string }) {
   const [editor] = useLexicalComposerContext();
@@ -115,14 +40,21 @@ function InitialValuePlugin({ value }: { value: string }) {
 
   useEffect(() => {
     if (value && isFirstRender) {
-      editor.update(() => {
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(value, "text/html");
-        const nodes = $generateNodesFromDOM(editor as unknown as any, dom);
-        $getRoot().select();
-        $getRoot().clear();
-        $getRoot().append(...nodes);
-      });
+      try {
+        // Try to parse as Lexical state first
+        const editorState = editor.parseEditorState(value);
+        editor.setEditorState(editorState);
+      } catch {
+        // Fallback to HTML parsing if not Lexical state
+        editor.update(() => {
+          const parser = new DOMParser();
+          const dom = parser.parseFromString(value, "text/html");
+          const nodes = $generateNodesFromDOM(editor, dom);
+          const root = $getRoot();
+          root.clear();
+          root.append(...nodes);
+        });
+      }
       setIsFirstRender(false);
     }
   }, [editor, value, isFirstRender]);
@@ -130,76 +62,11 @@ function InitialValuePlugin({ value }: { value: string }) {
   return null;
 }
 
-const getExtraStyles = (element: HTMLElement): string => {
-  // Parse styles from pasted input, but only if they match exactly the
-  // sort of styles that would be produced by exportDOM
-  let extraStyles = "";
-  const fontSize = parseAllowedFontSize(element.style.fontSize);
-  const backgroundColor = parseAllowedColor(element.style.backgroundColor);
-  const color = parseAllowedColor(element.style.color);
-  if (fontSize !== "" && fontSize !== "15px") {
-    extraStyles += `font-size: ${fontSize};`;
-  }
-  if (backgroundColor !== "" && backgroundColor !== "rgb(255, 255, 255)") {
-    extraStyles += `background-color: ${backgroundColor};`;
-  }
-  if (color !== "" && color !== "rgb(0, 0, 0)") {
-    extraStyles += `color: ${color};`;
-  }
-  return extraStyles;
-};
-
-const constructImportMap = (): DOMConversionMap => {
-  const importMap: DOMConversionMap = {};
-
-  // Wrap all TextNode importers with a function that also imports
-  // the custom styles implemented by the playground
-  for (const [tag, fn] of Object.entries(TextNode.importDOM() || {})) {
-    importMap[tag] = (importNode) => {
-      const importer = fn(importNode);
-      if (!importer) {
-        return null;
-      }
-      return {
-        ...importer,
-        conversion: (element) => {
-          const output = importer.conversion(element);
-          if (
-            output === null ||
-            output.forChild === undefined ||
-            output.after !== undefined ||
-            output.node !== null
-          ) {
-            return output;
-          }
-          const extraStyles = getExtraStyles(element);
-          if (extraStyles) {
-            const { forChild } = output;
-            return {
-              ...output,
-              forChild: (child, parent) => {
-                const textNode = forChild(child, parent);
-                if ($isTextNode(textNode)) {
-                  textNode.setStyle(textNode.getStyle() + extraStyles);
-                }
-                return textNode;
-              },
-            };
-          }
-          return output;
-        },
-      };
-    };
-  }
-
-  return importMap;
-};
-
 export default function RichTextEditor({
   value,
   onChange,
   placeholder = "Enter some text...",
-  name,
+  name = "editor",
   onImageUpload,
   className = "",
   disabled = false,
@@ -224,10 +91,6 @@ export default function RichTextEditor({
       YouTubeNode,
       HorizontalRuleNode,
     ],
-    html: {
-      export: exportMap,
-      import: constructImportMap(),
-    },
     editable: !disabled,
   };
 
@@ -236,10 +99,8 @@ export default function RichTextEditor({
     editor: LexicalEditor,
     _tags: Set<string>
   ) => {
-    editorState.read(() => {
-      const htmlString = $generateHtmlFromNodes(editor, null);
-      onChange(htmlString);
-    });
+    const serializedState = JSON.stringify(editorState);
+    onChange(serializedState);
   };
 
   return (
@@ -298,5 +159,3 @@ export default function RichTextEditor({
     </div>
   );
 }
-
-// https://youtu.be/d0GHrfvwDaU?si=lJOU5iEEHDdMyTfy

@@ -37,8 +37,6 @@ export default async function ViewBlogPage({
 
   if (!blog) return <BlogNotFound />;
 
-  console.log(blog);
-
   const displayDate = blog.publishedAt || blog.createdAt;
   const readTime = getReadTime(blog.content);
 
@@ -148,7 +146,7 @@ export default async function ViewBlogPage({
         {/* Blog Content */}
         <LexicalContentRenderer
           content={blog.content}
-          className="prose prose-lg dark:prose-invert max-w-none mb-12"
+          className="prose prose-lg dark:prose-invert w-full mt-12"
         />
 
         {/* Tags */}
