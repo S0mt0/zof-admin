@@ -31,7 +31,7 @@ import {
 import { useWriteEvents } from "@/lib/hooks";
 import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
 
-export default function NewEventPage({
+export function EventForm({
   mode,
   initialData,
 }: {

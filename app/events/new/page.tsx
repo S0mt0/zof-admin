@@ -1,5 +1,5 @@
 import { DashboardHeader } from "@/components/dashboard-header";
-import EventForm from "../_components/event-form/form";
+import { EventForm } from "../_components/event-form/form";
 
 export default async function NewEventPage() {
   return (

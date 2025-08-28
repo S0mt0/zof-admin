@@ -1,8 +1,8 @@
-import { currentUser } from "@/lib/utils";
-import { DashboardHeader } from "@/components/dashboard-header";
-import EventForm from "../../_components/event-form";
-import { getEventById } from "@/lib/db/repository";
 import { notFound } from "next/navigation";
+
+import { DashboardHeader } from "@/components/dashboard-header";
+import { getEventById } from "@/lib/db/repository";
+import { EventForm } from "../../_components/event-form/form";
 
 interface EditEventPageProps {
   params: {
@@ -11,7 +11,6 @@ interface EditEventPageProps {
 }
 
 export default async function EditEventPage({ params }: EditEventPageProps) {
-  const user = await currentUser();
   const event = await getEventById(params.id);
 
   if (!event) {
@@ -21,13 +20,13 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
-        title={`Edit: ${event.title}`}
+        title={`Edit: ${event.name}`}
         breadcrumbs={[
           { label: "Events", href: "/events" },
           { label: "Edit Event" },
         ]}
       />
-      <EventForm mode="edit" initialData={event} userId={user?.id || ""} />
+      <EventForm mode="edit" initialData={event} />
     </div>
   );
 }
