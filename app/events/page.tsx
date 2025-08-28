@@ -1,8 +1,7 @@
 import { unstable_cache } from "next/cache";
 
-import { getEvents, getEventsStats } from "@/lib/db/repository";
+import { getAllEvents, getEventsStats } from "@/lib/db/repository";
 import { EventPage } from "./_components/event-page";
-import { currentUser } from "@/lib/utils";
 import { EventStats } from "./_components/event-stats";
 import { DashboardHeader } from "@/components/dashboard-header";
 
@@ -21,7 +20,7 @@ export default async function Page({
   const limit = Number(searchParams?.limit) || 10;
 
   const getEventsCached = unstable_cache(
-    getEvents,
+    getAllEvents,
     [
       "events",
       page.toString(),
@@ -46,16 +45,13 @@ export default async function Page({
     }
   );
 
-  const user = await currentUser();
-
-  const { data: events, pagination } = await getEventsCached(
-    user?.id!,
+  const { data: events, pagination } = await getEventsCached({
     page,
     limit,
-    searchParams.search,
-    searchParams.status,
-    searchParams.featured
-  );
+    search: searchParams.search,
+    status: searchParams.status,
+    featured: searchParams.featured,
+  });
 
   const eventsStats = await getEventsStatsCached();
 

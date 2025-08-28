@@ -27,7 +27,7 @@ export const createEventAction = async (
       try {
         const event = await (
           await import("../db/repository/event.service")
-        ).getEventByTitle(data.title!);
+        ).getEventByName(data.name);
 
         return event;
       } catch {
@@ -37,7 +37,7 @@ export const createEventAction = async (
 
     if (existingEvent)
       return {
-        error: "An event with the same title already exists, try again.",
+        error: "An event with the same name already exists, try again.",
       };
 
     const newEvent = await createEvent({
@@ -49,7 +49,7 @@ export const createEventAction = async (
       await createUserActivity(
         user.id,
         "New event created",
-        capitalize(newEvent.title)
+        capitalize(newEvent.name)
       );
 
       revalidateTag("profile-stats");
@@ -102,7 +102,7 @@ export const updateEventAction = async (
       await createUserActivity(
         user.id,
         "Event details updated",
-        `Title: "${capitalize(updated.title)}"`
+        `Name: "${capitalize(updated.name)}"`
       );
 
       if (updated.createdBy !== user.id && updated?.createdByUser?.email) {
@@ -114,7 +114,7 @@ export const updateEventAction = async (
         await createUserActivity(
           updated?.createdBy!,
           "Event updated",
-          `Your event titled "${updated.title}" was updated by ${
+          `Your event named "${updated.name}" was updated by ${
             user.role === "admin" ? "an administrator" : "an editor"
           }, ${capitalize(user.name!)} on ${format(
             updated.updatedAt,
@@ -168,7 +168,7 @@ export const deleteEventAction = async (eventId: string) => {
       await createUserActivity(
         user.id,
         "Event deleted",
-        `Title: "${capitalize(deleted.title)}"`
+        `Name: "${capitalize(deleted.name)}"`
       );
 
       if (deleted.createdBy !== user.id && deleted.createdByUser?.email) {
@@ -180,8 +180,8 @@ export const deleteEventAction = async (eventId: string) => {
         await createUserActivity(
           deleted?.createdBy!,
           "Event deleted",
-          `Your event titled 
-      "${capitalize(deleted.title)}" was deleted by ${
+          `Your event named 
+      "${capitalize(deleted.name)}" was deleted by ${
             user.role === "admin" ? "an administrator" : "an editor"
           }, ${capitalize(user.name!)} on ${format(
             deleted.updatedAt,

@@ -107,7 +107,7 @@ export const updateBlogAction = async (
       if (updated.createdBy !== user.id && updated?.author?.email) {
         if (updated?.author?.emailNotifications) {
           const mailer = new MailService();
-          await mailer.sendBlogUpdateEmail(user as any, updated);
+          await mailer.sendBlogUpdateEmail(user as any, updated as any);
         }
 
         await createUserActivity(
@@ -173,7 +173,7 @@ export const deleteBlogAction = async (id: string) => {
       if (deleted.createdBy !== user.id && deleted.author?.email) {
         if (deleted?.author?.emailNotifications) {
           const mailer = new MailService();
-          await mailer.sendBlogDeleteEmail(user as any, deleted);
+          await mailer.sendBlogDeleteEmail(user as any, deleted as any);
         }
 
         await createUserActivity(

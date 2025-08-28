@@ -317,7 +317,7 @@ export class MailService {
 
     const text = `Hello ${deletedEvent?.createdByUser?.name || "there"},
 
-    Your event titled "${deletedEvent.title}" was deleted by ${
+    Your event titled "${deletedEvent.name}" was deleted by ${
       deletedBy.role === "admin" ? "an administrator" : "an editor"
     }, ${capitalize(deletedBy.name!)} on ${format(
       now,
@@ -325,7 +325,7 @@ export class MailService {
     )}.
     
     Delete Summary:
-    - Event Title: ${deletedEvent.title}
+    - Event Name: ${deletedEvent.name}
     - Author: ${deletedEvent?.createdByUser?.name || "Unknown"}
     - Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})
     - Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
@@ -339,7 +339,7 @@ export class MailService {
       <p>Hello ${deletedEvent?.createdByUser?.name || "there"},</p>
       <p>
         Your event titled 
-        <strong>"${deletedEvent.title}"</strong> was deleted by 
+        <strong>"${deletedEvent.name}"</strong> was deleted by 
         ${deletedBy.role === "admin" ? "an administrator" : "an editor"}, 
         <strong>${capitalize(deletedBy.name!)}</strong> on 
         ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}.
@@ -347,7 +347,7 @@ export class MailService {
       
       <div style="margin: 24px 0;">
         <strong>Delete Summary:</strong><br/>
-        Event Title: ${deletedEvent.title}<br/>
+        Event Name: ${deletedEvent.name}<br/>
         Author: ${deletedEvent?.createdByUser?.name || "Unknown"}<br/>
         Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})<br/>
         Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
@@ -379,7 +379,7 @@ export class MailService {
   ) {
     const text = `Hello ${updatedEvent?.createdByUser?.name || "there"},
 
-    Your event titled "${updatedEvent.title}" was updated by ${
+    Your event titled "${updatedEvent.name}" was updated by ${
       updatedBy.role === "admin" ? "an administrator" : "an editor"
     }, ${capitalize(updatedBy.name!)} on ${format(
       updatedEvent.updatedAt,
@@ -387,7 +387,7 @@ export class MailService {
     )}.
     
     Update Summary:
-    - Event Title: ${updatedEvent.title}
+    - Event Name: ${updatedEvent.name}
     - Author: ${updatedEvent?.createdByUser?.name || "Unknown"}
     - Updated By: ${capitalize(updatedBy.name!)} (${updatedBy.role})
     - Updated On: ${format(
@@ -406,7 +406,7 @@ export class MailService {
       <p>Hello ${updatedEvent?.createdByUser?.name || "there"},</p>
       <p>
         Your event titled 
-        <strong>"${updatedEvent.title}"</strong> was updated by 
+        <strong>"${updatedEvent.name}"</strong> was updated by 
         ${updatedBy.role === "admin" ? "an administrator" : "an editor"}, 
         <strong>${capitalize(updatedBy.name!)}</strong> on 
         ${format(updatedEvent.updatedAt, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}.
@@ -414,7 +414,7 @@ export class MailService {
       
       <div style="margin: 24px 0;">
         <strong>Update Summary:</strong><br/>
-        Event Title: ${updatedEvent.title}<br/>
+        Event Name: ${updatedEvent.name}<br/>
         Author: ${updatedEvent?.createdByUser?.name || "Unknown"}<br/>
         Updated By: ${capitalize(updatedBy.name!)} (${updatedBy.role})<br/>
         Updated On: ${format(

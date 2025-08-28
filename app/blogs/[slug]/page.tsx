@@ -1,7 +1,16 @@
-import { Tag, Calendar, Eye, Clock, Edit } from "lucide-react";
+import {
+  Tag,
+  Calendar,
+  Eye,
+  Clock,
+  Edit,
+  MessageCircle,
+  Mail,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
+import { format } from "date-fns";
 
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
@@ -17,7 +26,6 @@ import {
   getStatusColor,
 } from "@/lib/utils";
 import { BlogNotFound } from "../_components/not-found";
-import { format } from "date-fns";
 import { ShareButton } from "./_components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
@@ -105,6 +113,10 @@ export default async function ViewBlogPage({
                     <Eye className="h-3 w-3" />
                     {blog.views.toLocaleString()} views
                   </div>
+                  <div className="flex items-center gap-1">
+                    <MessageCircle className="h-3 w-3" />
+                    {blog.comments.length.toLocaleString()} comments
+                  </div>
                 </div>
               </div>
             </div>
@@ -148,7 +160,7 @@ export default async function ViewBlogPage({
         {/* Blog Content */}
         <LexicalContentRenderer
           content={blog.content}
-          className="prose prose-lg dark:prose-invert w-full mt-12"
+          className="prose prose-lg dark:prose-invert w-full my-12"
         />
 
         {/* Tags */}
@@ -165,6 +177,36 @@ export default async function ViewBlogPage({
                     <Tag className="h-3 w-3 mr-1" />
                     {capitalize(tag)}
                   </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Comments */}
+        {blog.comments.length > 0 && (
+          <div className="mb-8">
+            <Separator className="mb-6" />
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Comments
+              </h3>
+
+              <div className="mt-4 space-y-4 text-sm">
+                {blog.comments.map((comment, idx) => (
+                  <div className="space-y-1" key={idx}>
+                    <p className="text-sm">{comment.comment}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs">
+                        <Mail className="h-3 w-3" />
+                        {comment.authorEmail}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs">
+                        <Calendar className="h-3 w-3" />
+                        {format(comment.createdAt, "MMMM d, yyyy")}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

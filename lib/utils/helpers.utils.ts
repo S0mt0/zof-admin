@@ -122,7 +122,10 @@ export const handleFileUpload = async (
 };
 
 export const generateSlug = (title: string) =>
-  title.replace(/[^a-zA-Z0-9]/g, " ").replace(/\s+/g, "-");
+  title
+    .replace(/[^a-zA-Z0-9]/g, " ")
+    .replace(/\s+/g, "-")
+    .toLocaleLowerCase();
 
 export const getReadTime = (content: string) => {
   const wordsPerMinute = 200;

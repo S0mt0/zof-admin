@@ -1,19 +1,17 @@
-import { currentUser } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard-header";
-import EventForm from "../_components/event-form";
+import EventForm from "../_components/event-form/form";
 
 export default async function NewEventPage() {
-  const user = await currentUser();
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         title="Create New Event"
         breadcrumbs={[
-          { label: "Events", href: "/events" },
-          { label: "New Event" },
+          { label: "Event", href: "/events" },
+          { label: "New Post" },
         ]}
       />
-      <EventForm mode="create" userId={user?.id || ""} />
+      <EventForm mode="create" />
     </div>
   );
 }

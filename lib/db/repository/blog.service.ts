@@ -92,6 +92,14 @@ export const getBlogByTitle = async (title: string) => {
             emailNotifications: true,
           },
         },
+        comments: {
+          select: {
+            authorName: true,
+            authorEmail: true,
+            comment: true,
+            createdAt: true,
+          },
+        },
       },
     });
   } catch (error) {
@@ -111,6 +119,14 @@ export const getBlogBySlug = async (slug: string) => {
             image: true,
             email: true,
             emailNotifications: true,
+          },
+        },
+        comments: {
+          select: {
+            authorName: true,
+            authorEmail: true,
+            comment: true,
+            createdAt: true,
           },
         },
       },

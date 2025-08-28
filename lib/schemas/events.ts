@@ -1,16 +1,13 @@
 import * as z from "zod";
 
 export const EventFormSchema = z.object({
-  title: z
-    .string({ message: "Title is required" })
-    .min(3, { message: "Title must be at least 3 characters" }),
-  description: z
-    .string()
-    .min(20, { message: "Description must be at least 20 characters" })
-    .max(300, { message: "Description must not exceed 300 characters" }),
-  content: z
-    .string({ message: "Content is required" })
-    .min(100, { message: "Content must not be less than 100 characters" }),
+  name: z
+    .string({ message: "Event name is required" })
+    .min(3, { message: "Event name must be at least 3 characters" }),
+  detail: z.string({ message: "Content is required" }).optional(),
+  organizer: z.string().optional(),
+  excerpt: z.string().optional(),
+  slug: z.string(),
   date: z.date({ message: "Date is required" }),
   startTime: z.string({ message: "Start time is required" }),
   endTime: z.string().optional(),
@@ -25,6 +22,6 @@ export const EventFormSchema = z.object({
     .default("draft"),
   featured: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
-  ticketPrice: z.number().optional(),
+  ticketPrice: z.string().optional(),
   registrationRequired: z.boolean().default(false),
 });

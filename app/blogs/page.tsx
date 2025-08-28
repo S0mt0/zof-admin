@@ -61,7 +61,7 @@ export default async function Page({
       <BlogStats {...blogsStats} />
 
       <Blogs
-        blogs={blogs}
+        blogs={blogs as any}
         pagination={pagination}
         searchParams={searchParams}
       />

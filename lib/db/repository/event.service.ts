@@ -9,7 +9,6 @@ export const getAllEvents = async ({
   search,
   status,
 }: {
-  userId: string;
   page: number;
   limit: number;
   search?: string;
@@ -20,8 +19,8 @@ export const getAllEvents = async ({
 
   if (search) {
     where.OR = [
-      { title: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
+      { name: { contains: search, mode: "insensitive" } },
+      { excerpt: { contains: search, mode: "insensitive" } },
       { location: { contains: search, mode: "insensitive" } },
     ];
   }
@@ -81,10 +80,10 @@ export const getEventById = async (id: string) => {
   }
 };
 
-export const getEventByTitle = async (title: string) => {
+export const getEventByName = async (name: string) => {
   try {
     return await db.event.findUnique({
-      where: { title },
+      where: { name },
       include: {
         createdByUser: {
           select: {
@@ -97,7 +96,28 @@ export const getEventByTitle = async (title: string) => {
       },
     });
   } catch (error) {
-    console.log("error getting event by title", error);
+    console.log("error getting event by name", error);
+    return null;
+  }
+};
+
+export const getEventBySlug = async (slug: string) => {
+  try {
+    return await db.event.findUnique({
+      where: { slug },
+      include: {
+        createdByUser: {
+          select: {
+            name: true,
+            image: true,
+            email: true,
+            emailNotifications: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.log("error getting event by name", error);
     return null;
   }
 };

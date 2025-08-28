@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import { bulkDeleteBlogsAction, deleteBlogAction } from "../actions/blogs";
 
-export const useReadBlogs = (blogs: Blog[]) => {
+export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const router = useRouter();
 

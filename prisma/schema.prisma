@@ -75,7 +75,6 @@ model User {
   createdEvents Event[]
   donations Donation[]
   messages Message[]
-  comments Comment[]
   activities UserActivity[]
   accounts      Account[]
   addedTeamMembers TeamMember[]
@@ -135,9 +134,10 @@ model Blog {
 
 model Event {
   id                   String      @id @default(auto()) @map("_id") @db.ObjectId
-  title                String      @unique
-  description          String
-  content              String     
+  name                 String      @unique
+  slug                 String      @unique
+  detail               String?     
+  excerpt               String?     
   date                 DateTime
   startTime            String
   endTime              String?
@@ -145,10 +145,11 @@ model Event {
   maxAttendees         Int?
   currentAttendees     Int         @default(0)
   bannerImage          String
+  organizer            String?
   status               EventStatus @default(draft)
   featured             Boolean     @default(false)
   tags                 String[]
-  ticketPrice          Float?
+  ticketPrice          String?
   registrationRequired Boolean     @default(false)
   
   // Relations
@@ -237,12 +238,12 @@ model Message {
 
 
 model Comment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  comment String
-  blog    Blog   @relation(fields: [blogId], references: [id])
-  blogId  String @db.ObjectId
-  author  User   @relation(fields: [authorId], references: [id])
-  authorId String @db.ObjectId
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  comment         String
+  authorName      String
+  authorEmail     String
+  blog            Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  blogId          String @db.ObjectId
   
   // Timestamps
   createdAt DateTime @default(now())
