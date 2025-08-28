@@ -9,10 +9,7 @@ import {
   Users,
   Clock,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useWriteEvents } from "@/lib/hooks";
+import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
 
 export default function NewEventPage({
   mode,
@@ -49,7 +47,6 @@ export default function NewEventPage({
     submitType,
     addTag,
     handleBackButton,
-    handleCurrentAttendeesChange,
     handleDateChange,
     handleDetailChange,
     handleEndTimeChange,
@@ -83,49 +80,46 @@ export default function NewEventPage({
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="title">Event Title</Label>
+                <Label htmlFor="name">
+                  Event Title <span className="text-red-500">*</span>
+                </Label>
                 <Input
-                  id="title"
+                  id="name"
                   placeholder="Enter your event title..."
-                  value={formData.title}
-                  onChange={(e) => handleInputChange("title", e.target.value)}
+                  value={formData.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
                   className="text-lg font-medium"
+                  disabled={isPending}
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">
-                  Short Description <span className="text-red-500">*</span>
-                </Label>
+                <Label htmlFor="excerpt">Short Description</Label>
                 <Textarea
-                  id="description"
+                  id="excerpt"
                   placeholder="Brief description of your event..."
-                  value={formData.description}
-                  onChange={(e) => {
-                    if (e.target.value.length <= 300) {
-                      handleInputChange("description", e.target.value);
-                    }
-                  }}
+                  value={formData.excerpt || ""}
+                  onChange={(e) => handleExcerptChange(e.target.value)}
                   rows={3}
                   maxLength={300}
                   className={
-                    formData.description.length > 250 ? "border-amber-300" : ""
+                    formData.excerpt && formData.excerpt.length > 250
+                      ? "border-amber-300"
+                      : ""
                   }
+                  disabled={isPending}
                 />
                 <div className="flex justify-between text-xs mt-1">
-                  <span className="text-muted-foreground">
-                    {formData.status !== "draft"
-                      ? "Required for publishing"
-                      : "Optional for drafts"}
-                  </span>
+                  <span className="text-muted-foreground">Optional</span>
                   <span
-                    className={`${
-                      formData.description.length > 250
+                    className={
+                      formData.excerpt && formData.excerpt.length > 250
                         ? "text-amber-600"
                         : "text-muted-foreground"
-                    }`}
+                    }
                   >
-                    {300 - formData.description.length} characters remaining
+                    {300 - (formData.excerpt ? formData.excerpt.length : 0)}{" "}
+                    characters remaining
                   </span>
                 </div>
               </div>
@@ -136,17 +130,25 @@ export default function NewEventPage({
                   <Input
                     id="date"
                     type="date"
-                    value={formData.date}
-                    onChange={(e) => handleInputChange("date", e.target.value)}
+                    value={
+                      formData.date instanceof Date
+                        ? formData.date.toISOString().slice(0, 10)
+                        : ""
+                    }
+                    onChange={(e) => handleDateChange(new Date(e.target.value))}
+                    disabled={isPending}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="time">Start Time</Label>
+                  <Label htmlFor="startTime">
+                    Start Time <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    id="time"
+                    id="startTime"
                     type="time"
-                    value={formData.time}
-                    onChange={(e) => handleInputChange("time", e.target.value)}
+                    value={formData.startTime}
+                    onChange={(e) => handleStartTimeChange(e.target.value)}
+                    disabled={isPending}
                   />
                 </div>
               </div>
@@ -157,10 +159,9 @@ export default function NewEventPage({
                   <Input
                     id="endTime"
                     type="time"
-                    value={formData.endTime}
-                    onChange={(e) =>
-                      handleInputChange("endTime", e.target.value)
-                    }
+                    value={formData.endTime || ""}
+                    onChange={(e) => handleEndTimeChange(e.target.value)}
+                    disabled={isPending}
                   />
                 </div>
                 <div>
@@ -169,23 +170,25 @@ export default function NewEventPage({
                     id="maxAttendees"
                     type="number"
                     placeholder="e.g., 100"
-                    value={formData.maxAttendees}
+                    value={formData.maxAttendees || ""}
                     onChange={(e) =>
-                      handleInputChange("maxAttendees", e.target.value)
+                      handleMaxAttendeesChange(Number(e.target.value))
                     }
+                    disabled={isPending}
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location">
+                  Location <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="location"
                   placeholder="Event venue or address..."
                   value={formData.location}
-                  onChange={(e) =>
-                    handleInputChange("location", e.target.value)
-                  }
+                  onChange={(e) => handleLocationChange(e.target.value)}
+                  disabled={isPending}
                 />
               </div>
 
@@ -193,11 +196,21 @@ export default function NewEventPage({
                 <Label htmlFor="ticketPrice">Ticket Price (optional)</Label>
                 <Input
                   id="ticketPrice"
-                  placeholder="e.g., $25 or Free"
-                  value={formData.ticketPrice}
-                  onChange={(e) =>
-                    handleInputChange("ticketPrice", e.target.value)
-                  }
+                  placeholder="e.g., ₦25 or Free"
+                  value={formData.ticketPrice || ""}
+                  onChange={(e) => handleTicketPriceChange(e.target.value)}
+                  disabled={isPending}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="organizer">Organizer</Label>
+                <Input
+                  id="organizer"
+                  placeholder="Organizer name or organization..."
+                  value={formData.organizer || ""}
+                  onChange={(e) => handleOrganizerChange(e.target.value)}
+                  disabled={isPending}
                 />
               </div>
             </CardContent>
@@ -206,7 +219,9 @@ export default function NewEventPage({
           {/* Banner Image */}
           <Card>
             <CardHeader>
-              <CardTitle>Event Banner</CardTitle>
+              <CardTitle>
+                Event Banner <span className="text-red-500">*</span>
+              </CardTitle>
               <CardDescription>
                 Upload a banner image for your event
               </CardDescription>
@@ -222,8 +237,9 @@ export default function NewEventPage({
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={handleImageUpload}
+                    onClick={onBannerClick}
                     className="absolute top-2 right-2"
+                    disabled={isPending}
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Change
@@ -231,7 +247,7 @@ export default function NewEventPage({
                 </div>
               ) : (
                 <div
-                  onClick={handleImageUpload}
+                  onClick={onBannerClick}
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
                 >
                   <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
@@ -240,6 +256,16 @@ export default function NewEventPage({
                   </p>
                 </div>
               )}
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/heic"
+                className="hidden"
+                onChange={onBannerChange}
+                multiple={false}
+                disabled={isPending}
+                hidden
+              />
             </CardContent>
           </Card>
 
@@ -252,16 +278,12 @@ export default function NewEventPage({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div
-                id="event-editorjs"
-                className="min-h-[400px] prose max-w-none"
-                style={{ outline: "none" }}
+              <EditorWrapper
+                value={formData.detail || ""}
+                onChange={handleDetailChange}
+                disabled={isPending}
+                placeholder="Describe your event in detail..."
               />
-              {!isEditorReady && (
-                <div className="flex items-center justify-center h-32">
-                  <div className="text-sm text-gray-500">Loading editor...</div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
@@ -275,36 +297,44 @@ export default function NewEventPage({
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
-                onClick={() => handleSave("draft")}
-                disabled={isLoading || !formData.title.trim()}
+                type="submit"
+                disabled={isPending || !hasChanges || !formData.name.trim()}
                 className="w-full"
                 variant="outline"
+                onClick={() => setSubmitType("draft")}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isLoading ? "Saving..." : "Save Draft"}
+                {isPending && submitType === "draft"
+                  ? "Saving..."
+                  : "Save Draft"}
               </Button>
 
               <Button
-                onClick={() => handleSave("upcoming")}
+                type="submit"
                 disabled={
-                  isLoading ||
-                  !formData.title.trim() ||
-                  !formData.description.trim() ||
-                  formData.description.length < 50 ||
+                  isPending ||
+                  !hasChanges ||
+                  !formData.name.trim() ||
                   !formData.date ||
-                  !formData.time ||
-                  !formData.location.trim()
+                  !formData.startTime ||
+                  !formData.location.trim() ||
+                  !formData.detail?.trim()
                 }
                 className="w-full"
+                onClick={() => setSubmitType("upcoming")}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isLoading ? "Publishing..." : "Publish Event"}
+                {isPending && submitType === "upcoming"
+                  ? "Publishing..."
+                  : "Publish Event"}
               </Button>
 
               <Button
-                onClick={() => router.push("/events")}
+                type="button"
+                onClick={handleBackButton}
                 variant="ghost"
                 className="w-full"
+                disabled={isPending}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Events
@@ -320,12 +350,16 @@ export default function NewEventPage({
             <CardContent className="space-y-3">
               <div className="flex items-center text-sm">
                 <Calendar className="h-4 w-4 mr-2 text-blue-500" />
-                <span>{formData.date || "Date not set"}</span>
+                <span>
+                  {formData.date instanceof Date
+                    ? formData.date.toISOString().slice(0, 10)
+                    : "Date not set"}
+                </span>
               </div>
               <div className="flex items-center text-sm">
                 <Clock className="h-4 w-4 mr-2 text-green-500" />
                 <span>
-                  {formData.time || "Time not set"}
+                  {formData.startTime || "Time not set"}
                   {formData.endTime && ` - ${formData.endTime}`}
                 </span>
               </div>
@@ -348,29 +382,90 @@ export default function NewEventPage({
             <CardContent>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between"
+                    disabled={isPending}
+                  >
                     <span className="capitalize">{formData.status}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full">
-                  <DropdownMenuItem
-                    onClick={() => handleInputChange("status", "draft")}
-                  >
+                  <DropdownMenuItem onClick={() => handleStatusChange("draft")}>
                     Draft
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleInputChange("status", "upcoming")}
+                    onClick={() => handleStatusChange("upcoming")}
                   >
                     Upcoming
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleInputChange("status", "cancelled")}
+                    onClick={() => handleStatusChange("cancelled")}
                   >
                     Cancelled
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange("completed")}
+                  >
+                    Completed
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </CardContent>
+          </Card>
+
+          {/* Featured */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Featured</CardTitle>
+              <CardDescription>
+                Featured events will be displayed on the main website landing
+                page
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => handleFeaturedChange(e.target.checked)}
+                  disabled={isPending}
+                />
+                <label
+                  htmlFor="featured"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Mark as featured
+                </label>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Registration Required */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Registration Required</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="registrationRequired"
+                  checked={formData.registrationRequired}
+                  onChange={(e) =>
+                    handleRegistrationRequiredChange(e.target.checked)
+                  }
+                  disabled={isPending}
+                />
+                <label
+                  htmlFor="registrationRequired"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Require registration for this event
+                </label>
+              </div>
             </CardContent>
           </Card>
 
@@ -378,16 +473,30 @@ export default function NewEventPage({
           <Card>
             <CardHeader>
               <CardTitle>Tags</CardTitle>
+              <CardDescription>
+                Add tags to help categorize your event
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex gap-2">
                 <Input
                   placeholder="Add tag..."
                   value={formData.newTag}
-                  onChange={(e) => handleInputChange("newTag", e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddTag()}
+                  onChange={(e) => handleNewTagChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addTag();
+                    }
+                  }}
+                  disabled={isPending}
                 />
-                <Button onClick={handleAddTag} size="sm">
+                <Button
+                  type="button"
+                  onClick={addTag}
+                  size="sm"
+                  disabled={isPending}
+                >
                   Add
                 </Button>
               </div>
@@ -396,8 +505,8 @@ export default function NewEventPage({
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="cursor-pointer"
-                    onClick={() => handleRemoveTag(tag)}
+                    className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
+                    onClick={() => removeTag(tag)}
                   >
                     {tag} ×
                   </Badge>

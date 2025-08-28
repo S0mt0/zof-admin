@@ -42,7 +42,6 @@ export const createEventAction = async (
 
     const newEvent = await createEvent({
       ...data,
-      organizerId: user.id,
       createdBy: user.id,
     });
     if (newEvent) {

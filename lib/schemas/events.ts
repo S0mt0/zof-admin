@@ -4,7 +4,7 @@ export const EventFormSchema = z.object({
   name: z
     .string({ message: "Event name is required" })
     .min(3, { message: "Event name must be at least 3 characters" }),
-  detail: z.string({ message: "Content is required" }).optional(),
+  detail: z.string().optional(),
   organizer: z.string().optional(),
   excerpt: z.string().optional(),
   slug: z.string(),
