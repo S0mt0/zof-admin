@@ -37,6 +37,8 @@ export default async function ViewBlogPage({
 
   if (!blog) return <BlogNotFound />;
 
+  console.log("type of publishedAt: ", blog.publishedAt);
+
   const displayDate = blog.publishedAt || blog.createdAt;
   const readTime = getReadTime(blog.content);
 

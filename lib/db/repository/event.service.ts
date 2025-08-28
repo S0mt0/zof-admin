@@ -2,15 +2,21 @@ import { emptyPaginatedData } from "@/lib/constants";
 import { db } from "../config";
 import { prismaPaginate } from "@/lib/utils/db.utils";
 
-export const getEvents = async (
-  userId: string,
-  page: number,
-  limit: number,
-  search?: string,
-  status?: string,
-  featured?: string
-) => {
-  const where: any = { createdBy: userId };
+export const getAllEvents = async ({
+  limit,
+  page,
+  featured,
+  search,
+  status,
+}: {
+  userId: string;
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+  featured?: string;
+}) => {
+  const where: any = {};
 
   if (search) {
     where.OR = [
@@ -41,6 +47,7 @@ export const getEvents = async (
               name: true,
               image: true,
               email: true,
+              emailNotifications: true,
             },
           },
         },
@@ -63,12 +70,34 @@ export const getEventById = async (id: string) => {
             name: true,
             image: true,
             email: true,
+            emailNotifications: true,
           },
         },
       },
     });
   } catch (error) {
     console.log("error getting event", error);
+    return null;
+  }
+};
+
+export const getEventByTitle = async (title: string) => {
+  try {
+    return await db.event.findUnique({
+      where: { title },
+      include: {
+        createdByUser: {
+          select: {
+            name: true,
+            image: true,
+            email: true,
+            emailNotifications: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.log("error getting event by title", error);
     return null;
   }
 };
@@ -83,6 +112,7 @@ export const createEvent = async (data: any) => {
             name: true,
             image: true,
             email: true,
+            emailNotifications: true,
           },
         },
       },
@@ -104,6 +134,7 @@ export const updateEvent = async (id: string, data: any) => {
             name: true,
             image: true,
             email: true,
+            emailNotifications: true,
           },
         },
       },
@@ -118,6 +149,16 @@ export const deleteEvent = async (id: string) => {
   try {
     return await db.event.delete({
       where: { id },
+      include: {
+        createdByUser: {
+          select: {
+            name: true,
+            image: true,
+            email: true,
+            emailNotifications: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.log("error deleting event", error);

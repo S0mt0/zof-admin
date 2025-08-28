@@ -128,7 +128,6 @@ export const createBlog = async (data: any) => {
     });
   } catch (error) {
     console.log("error creating blog", error);
-    throw error;
     return null;
   }
 };
@@ -151,7 +150,6 @@ export const updateBlog = async (id: string, data: any) => {
     });
   } catch (error) {
     console.log("error updating blog", error);
-    throw error;
     return null;
   }
 };
@@ -174,7 +172,6 @@ export const updateBlogBySlug = async (slug: string, data: any) => {
     });
   } catch (error) {
     console.log("error updating blog", error);
-    throw error;
     return null;
   }
 };

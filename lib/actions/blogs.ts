@@ -2,6 +2,7 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { format } from "date-fns";
+import * as z from "zod";
 
 import {
   createUserActivity,
@@ -13,8 +14,11 @@ import {
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { db } from "../db";
+import { BlogFormSchema } from "../schemas";
 
-export const createBlogAction = async (data: Partial<Blog>) => {
+export const createBlogAction = async (
+  data: z.infer<typeof BlogFormSchema>
+) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
 
@@ -44,7 +48,7 @@ export const createBlogAction = async (data: Partial<Blog>) => {
 
     if (newBlog) {
       await createUserActivity(
-        user.id!,
+        user.id,
         "New blog post created",
         capitalize(newBlog.title)
       );
@@ -61,7 +65,10 @@ export const createBlogAction = async (data: Partial<Blog>) => {
   }
 };
 
-export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
+export const updateBlogAction = async (
+  slug: string,
+  data: z.infer<typeof BlogFormSchema>
+) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
 
@@ -97,8 +104,8 @@ export const updateBlogAction = async (slug: string, data: Partial<Blog>) => {
         `Title: "${capitalize(updated.title)}"`
       );
 
-      if (updated.createdBy !== user.id && updated.author?.email) {
-        if (updated.author.emailNotifications) {
+      if (updated.createdBy !== user.id && updated?.author?.email) {
+        if (updated?.author?.emailNotifications) {
           const mailer = new MailService();
           await mailer.sendBlogUpdateEmail(user as any, updated);
         }
@@ -151,8 +158,7 @@ export const deleteBlogAction = async (id: string) => {
       user.role !== "editor"
     )
       return {
-        error:
-          "Permission denied. Only admins or editors can delete this blog post.",
+        error: "Permission denied.",
       };
 
     const deleted = await deleteBlog(blog.id);
@@ -165,7 +171,7 @@ export const deleteBlogAction = async (id: string) => {
       );
 
       if (deleted.createdBy !== user.id && deleted.author?.email) {
-        if (deleted.author.emailNotifications) {
+        if (deleted?.author?.emailNotifications) {
           const mailer = new MailService();
           await mailer.sendBlogDeleteEmail(user as any, deleted);
         }

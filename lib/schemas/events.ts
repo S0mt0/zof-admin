@@ -11,13 +11,15 @@ export const EventFormSchema = z.object({
   content: z
     .string({ message: "Content is required" })
     .min(100, { message: "Content must not be less than 100 characters" }),
-  date: z.string().min(1, { message: "Date is required" }),
-  startTime: z.string().min(1, { message: "Start time is required" }),
+  date: z.date({ message: "Date is required" }),
+  startTime: z.string({ message: "Start time is required" }),
   endTime: z.string().optional(),
   location: z.string().min(1, { message: "Location is required" }),
   maxAttendees: z.number().optional(),
   currentAttendees: z.number().default(0),
-  bannerImage: z.string(),
+  bannerImage: z
+    .string()
+    .url({ message: "Please upload a banner image for your event" }),
   status: z
     .enum(["upcoming", "draft", "completed", "cancelled"])
     .default("draft"),

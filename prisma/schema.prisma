@@ -116,7 +116,7 @@ model Blog {
   featured    Boolean    @default(false)
   tags        String[]
   views       Int        @default(0)
-  createdBy    String     @db.ObjectId // In most cases, it's the same as authorId
+  createdBy   String     @db.ObjectId // In most cases, it's the same as authorId
   
   // Relations
   authorId    String?     @db.ObjectId
@@ -152,8 +152,8 @@ model Event {
   registrationRequired Boolean     @default(false)
   
   // Relations
-  createdBy            String     @db.ObjectId
-  createdByUser        User?        @relation(fields: [createdBy], references: [id])
+  createdBy            String      @db.ObjectId
+  createdByUser        User?       @relation(fields: [createdBy], references: [id])
 
   
   // Timestamps

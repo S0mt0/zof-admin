@@ -11,21 +11,21 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 
-import { BlogFormSchema } from "@/lib/schemas";
+import { EventFormSchema } from "@/lib/schemas";
 
-import { createBlogAction, updateBlogAction } from "@/lib/actions/blogs";
+import { createEventAction, updateEventAction } from "@/lib/actions/events";
 import { generateSlug, handleFileUpload } from "@/lib/utils";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 
-interface BlogFormData extends z.infer<typeof BlogFormSchema> {
+interface EventFormData extends z.infer<typeof EventFormSchema> {
   newTag: string;
 }
 
-export const useWriteBlogs = ({
+export const useWriteEvents = ({
   initialData,
   mode,
 }: {
-  initialData?: Blog | null;
+  initialData?: IEvent | null;
   mode: "create" | "edit";
 }) => {
   const router = useRouter();
@@ -33,24 +33,28 @@ export const useWriteBlogs = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   // Initialize form data
-  const initialFormData: BlogFormData = useMemo(
+  const initialFormData: EventFormData = useMemo(
     () => ({
       title: initialData?.title || "",
-      excerpt: initialData?.excerpt || "",
+      description: initialData?.description || "",
       content: initialData?.content || "",
       status: initialData?.status || "draft",
+      currentAttendees: initialData?.currentAttendees || 0,
+      registrationRequired: initialData?.registrationRequired || false,
       bannerImage: initialData?.bannerImage || "",
+      startTime: initialData?.startTime || "",
+      location: initialData?.location || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
-      publishedAt: initialData?.publishedAt || new Date(),
+      date: initialData?.date || new Date(),
       newTag: "",
     }),
     [initialData]
   );
 
-  const [formData, setFormData] = useState<BlogFormData>(initialFormData);
+  const [formData, setFormData] = useState<EventFormData>(initialFormData);
   const [isPending, startTransition] = useTransition();
-  const [submitType, setSubmitType] = useState<"draft" | "published">("draft");
+  const [submitType, setSubmitType] = useState<EventStatus>("draft");
 
   // Update form data when initialData changes (for edit mode)
   useEffect(() => {
@@ -62,8 +66,8 @@ export const useWriteBlogs = ({
     setFormData((prev) => ({ ...prev, title: value }));
   }, []);
 
-  const handleExcerptChange = useCallback((value: string) => {
-    setFormData((prev) => ({ ...prev, excerpt: value }));
+  const handleDescriptionChange = useCallback((value: string) => {
+    setFormData((prev) => ({ ...prev, description: value }));
   }, []);
 
   const handleContentChange = useCallback((value: string) => {
@@ -131,7 +135,7 @@ export const useWriteBlogs = ({
 
     const dismiss = toast.loading("Uploading...");
     startTransition(() => {
-      handleFileUpload(e, "blogs")
+      handleFileUpload(e, "events")
         .then((objectUrl) => {
           if (!objectUrl) {
             toast.error("Upload failed");
@@ -157,7 +161,7 @@ export const useWriteBlogs = ({
     (e: React.FormEvent) => {
       e.preventDefault();
 
-      const validationResult = BlogFormSchema.safeParse(formData);
+      const validationResult = EventFormSchema.safeParse(formData);
 
       if (!validationResult.success) {
         const firstError = validationResult.error.errors[0];
@@ -169,41 +173,40 @@ export const useWriteBlogs = ({
 
       const submissionData = {
         ...payload,
-        publishedAt: mode === "create" ? new Date() : payload.publishedAt,
-        slug: generateSlug(payload.title),
+        date: new Date(payload.date),
         status: submitType,
       };
 
       const loading = toast.loading("Please wait...");
       startTransition(() => {
         if (mode === "create") {
-          createBlogAction(submissionData)
+          createEventAction(submissionData)
             .then((res) => {
               if (res?.error) {
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs/${res.data.blog.slug}`);
+                router.push(`/events/${res.data.event?.id}`);
               }
             })
             .catch(() => {
-              toast.error("Failed to create blog");
+              toast.error("Failed to create event");
             })
             .finally(() => {
               toast.dismiss(loading);
             });
-        } else if (mode === "edit" && initialData?.slug) {
-          updateBlogAction(initialData.slug, submissionData)
+        } else if (mode === "edit" && initialData?.id) {
+          updateEventAction(initialData.id, submissionData)
             .then((res) => {
               if (res?.error) {
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs/${res.data.blog?.slug}`);
+                router.push(`/events/${res.data.event?.id}`);
               }
             })
             .catch(() => {
-              toast.error("Failed to update blog");
+              toast.error("Failed to update event");
             })
             .finally(() => {
               toast.dismiss(loading);
@@ -221,7 +224,7 @@ export const useWriteBlogs = ({
 
     return (
       formData.title !== initialFormData.title ||
-      formData.excerpt !== initialFormData.excerpt ||
+      formData.description !== initialFormData.description ||
       formData.content !== initialFormData.content ||
       formData.status !== initialFormData.status ||
       formData.bannerImage !== initialFormData.bannerImage ||
@@ -230,7 +233,7 @@ export const useWriteBlogs = ({
     );
   }, [formData, initialFormData]);
 
-  const handleBackButton = () => router.push("/blogs");
+  const handleBackButton = () => router.push("/events");
 
   return {
     formRef,
@@ -241,7 +244,7 @@ export const useWriteBlogs = ({
     hasChanges,
     setSubmitType,
     handleTitleChange,
-    handleExcerptChange,
+    handleDescriptionChange,
     handleContentChange,
     handleStatusChange,
     handleFeaturedChange,

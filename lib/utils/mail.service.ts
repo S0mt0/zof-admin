@@ -159,7 +159,7 @@ export class MailService {
       </div>
   
       <p>
-        If you did not request or expect this delete action, you may want to <a href="mailto:onyekazita@gmail.com">contact admin</a> or <a href="mailto:onyekazita@gmail.com">support team</a>.
+        If you did not request or expect this delete action, you may want to <a href="mailto:onyekazita@gmail.com">contact admin</a> or <a href="mailto:sewkito@gmail.com">support team</a>.
       </p>
   
       <p>Best regards,<br/>The Editorial Team</p>
@@ -194,7 +194,7 @@ export class MailService {
     Update Summary:
     - Blog Title: ${updatedBlog.title}
     - Author: ${updatedBlog?.author?.name || "Unknown"}
-    - Edited By: ${capitalize(updatedBy.name!)} (${updatedBy.role})
+    - Updated By: ${capitalize(updatedBy.name!)} (${updatedBy.role})
     - Updated On: ${format(
       updatedBlog.updatedAt,
       "EEEE, MMMM d, yyyy 'at' h:mmaaa"
@@ -252,6 +252,201 @@ export class MailService {
       });
     } catch (error) {
       console.error("[error_sending_blog_update_email]: ", error);
+    }
+  }
+
+  async sendEventBulkDeleteEmail(
+    deletedBy: { name: string; role: string },
+    to: string | string[],
+    deleteCount?: number
+  ) {
+    const now = new Date();
+
+    const text = `Hello there,
+
+    Be informed that ${deleteCount} events have just been deleted by ${
+      deletedBy.role === "admin" ? "an administrator" : "an editor"
+    }, ${capitalize(deletedBy.name!)}.
+    
+    Delete Summary:
+    - No. Of Events Deleted: ${deleteCount || 0}
+    - Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})
+    - Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
+    
+    Best regards,
+    The Editorial Team
+    `;
+
+    const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <p>Hello there,</p>
+      <p>
+        Be informed that ${deleteCount} events have just been deleted by ${
+      deletedBy.role === "admin" ? "an administrator" : "an editor"
+    }, ${capitalize(deletedBy.name!)}.
+      </p>
+      
+      <div style="margin: 24px 0;">
+        <strong>Delete Summary:</strong><br/>
+        No. Of Events Deleted: ${deleteCount || 0}<br/>
+        Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})<br/>
+        Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
+      </div>
+  
+      <p>Best regards,<br/>The Editorial Team</p>
+    </div>
+  `;
+
+    try {
+      await this.send({
+        subject: "Multiple events deleted",
+        to,
+        text,
+        html,
+      });
+    } catch (error) {
+      console.error("[error_sending_event_bulk_delete_email]: ", error);
+    }
+  }
+
+  async sendEventDeleteEmail(
+    deletedBy: { name: string; role: string },
+    deletedEvent: IEvent
+  ) {
+    const now = new Date();
+
+    const text = `Hello ${deletedEvent?.createdByUser?.name || "there"},
+
+    Your event titled "${deletedEvent.title}" was deleted by ${
+      deletedBy.role === "admin" ? "an administrator" : "an editor"
+    }, ${capitalize(deletedBy.name!)} on ${format(
+      now,
+      "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+    )}.
+    
+    Delete Summary:
+    - Event Title: ${deletedEvent.title}
+    - Author: ${deletedEvent?.createdByUser?.name || "Unknown"}
+    - Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})
+    - Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
+    
+    Best regards,
+    The Editorial Team
+    `;
+
+    const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <p>Hello ${deletedEvent?.createdByUser?.name || "there"},</p>
+      <p>
+        Your event titled 
+        <strong>"${deletedEvent.title}"</strong> was deleted by 
+        ${deletedBy.role === "admin" ? "an administrator" : "an editor"}, 
+        <strong>${capitalize(deletedBy.name!)}</strong> on 
+        ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}.
+      </p>
+      
+      <div style="margin: 24px 0;">
+        <strong>Delete Summary:</strong><br/>
+        Event Title: ${deletedEvent.title}<br/>
+        Author: ${deletedEvent?.createdByUser?.name || "Unknown"}<br/>
+        Deleted By: ${capitalize(deletedBy.name!)} (${deletedBy.role})<br/>
+        Deleted On: ${format(now, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}
+      </div>
+  
+      <p>
+        If you did not request or expect this delete action, you may want to <a href="mailto:onyekazita@gmail.com">contact admin</a> or <a href="mailto:sewkito@gmail.com">support team</a>.
+      </p>
+  
+      <p>Best regards,<br/>The Editorial Team</p>
+    </div>
+  `;
+
+    try {
+      await this.send({
+        subject: "Notice on your deleted event",
+        to: deletedEvent?.createdByUser?.email!,
+        text,
+        html,
+      });
+    } catch (error) {
+      console.error("[error_sending_event_update_email]: ", error);
+    }
+  }
+
+  async sendEventUpdateEmail(
+    updatedBy: { name: string; role: string },
+    updatedEvent: IEvent
+  ) {
+    const text = `Hello ${updatedEvent?.createdByUser?.name || "there"},
+
+    Your event titled "${updatedEvent.title}" was updated by ${
+      updatedBy.role === "admin" ? "an administrator" : "an editor"
+    }, ${capitalize(updatedBy.name!)} on ${format(
+      updatedEvent.updatedAt,
+      "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+    )}.
+    
+    Update Summary:
+    - Event Title: ${updatedEvent.title}
+    - Author: ${updatedEvent?.createdByUser?.name || "Unknown"}
+    - Updated By: ${capitalize(updatedBy.name!)} (${updatedBy.role})
+    - Updated On: ${format(
+      updatedEvent.updatedAt,
+      "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+    )}
+    
+    View the changes here: ${APP_URL}/events/${updatedEvent.id}
+    
+    Best regards,
+    The Editorial Team
+    `;
+
+    const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <p>Hello ${updatedEvent?.createdByUser?.name || "there"},</p>
+      <p>
+        Your event titled 
+        <strong>"${updatedEvent.title}"</strong> was updated by 
+        ${updatedBy.role === "admin" ? "an administrator" : "an editor"}, 
+        <strong>${capitalize(updatedBy.name!)}</strong> on 
+        ${format(updatedEvent.updatedAt, "EEEE, MMMM d, yyyy 'at' h:mmaaa")}.
+      </p>
+      
+      <div style="margin: 24px 0;">
+        <strong>Update Summary:</strong><br/>
+        Event Title: ${updatedEvent.title}<br/>
+        Author: ${updatedEvent?.createdByUser?.name || "Unknown"}<br/>
+        Updated By: ${capitalize(updatedBy.name!)} (${updatedBy.role})<br/>
+        Updated On: ${format(
+          updatedEvent.updatedAt,
+          "EEEE, MMMM d, yyyy 'at' h:mmaaa"
+        )}
+      </div>
+  
+      <p>
+        If you did not request or expect this update, you may want to review the changes.
+      </p>
+  
+      <p style="margin: 20px 0;">
+        <a href="${APP_URL}/events/${updatedEvent.id}" 
+           style="background: #16A249; color: white; text-decoration: none; padding: 10px 16px; border-radius: 4px; display: inline-block;">
+           View Changes
+        </a>
+      </p>
+  
+      <p>Best regards,<br/>The Editorial Team</p>
+    </div>
+  `;
+
+    try {
+      await this.send({
+        subject: "Review changes to your event",
+        to: updatedEvent?.createdByUser?.email!,
+        text,
+        html,
+      });
+    } catch (error) {
+      console.error("[error_sending_event_update_email]: ", error);
     }
   }
 }
