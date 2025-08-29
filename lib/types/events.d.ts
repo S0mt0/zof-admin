@@ -61,7 +61,6 @@ interface EventTableProps {
   onSelectAll: () => void;
   onViewEvent: (event: IEvent) => void;
   onEditEvent: (event: IEvent) => void;
-  onManageAttendees: (event: IEvent) => void;
   onDeleteEvent: (eventId: string) => void;
   allCurrentSelected: boolean;
   someCurrentSelected: boolean;
@@ -86,7 +85,6 @@ interface EventTableContentProps {
   onSelectEvent: (eventId: string) => void;
   onViewEvent: (event: IEvent) => void;
   onEditEvent: (event: IEvent) => void;
-  onManageAttendees: (event: IEvent) => void;
   onDeleteEvent: (eventId: string) => void;
 }
 

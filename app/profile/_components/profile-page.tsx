@@ -1,5 +1,3 @@
-"use client";
-
 import { User, Calendar, Edit3 } from "lucide-react";
 
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -47,7 +45,7 @@ export function ProfilePage({
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader title="Profile" breadcrumbs={[{ label: "Profile" }]} />
+      <DashboardHeader breadcrumbs={[{ label: "Profile" }]} />
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Profile Overview */}

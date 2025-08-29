@@ -19,7 +19,6 @@ export function EventTable({
   onSelectAll,
   onViewEvent,
   onEditEvent,
-  onManageAttendees,
   onDeleteEvent,
   allCurrentSelected,
   someCurrentSelected,
@@ -64,7 +63,6 @@ export function EventTable({
             onSelectEvent={onSelectEvent}
             onViewEvent={onViewEvent}
             onEditEvent={onEditEvent}
-            onManageAttendees={onManageAttendees}
             onDeleteEvent={onDeleteEvent}
           />
         </Table>

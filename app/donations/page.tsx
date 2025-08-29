@@ -480,10 +480,7 @@ export default function DonationsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader
-        title="Donations"
-        breadcrumbs={[{ label: "Donations" }]}
-      />
+      <DashboardHeader breadcrumbs={[{ label: "Donations" }]} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (

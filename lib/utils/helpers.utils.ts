@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
+import { format, parse } from "date-fns";
 
 import { getVerificationTokenByEmail } from "../db/repository";
 import { db } from "../db";
@@ -96,9 +97,7 @@ export const handleFileUpload = async (
   if (!file) return;
 
   try {
-    console.log("Getting upload URL for:", file.name, file.type, folder);
     const { url } = await getUploadUrl(file.name, file.type, folder);
-    console.log("Got signed URL:", url);
 
     const response = await fetch(url, {
       method: "PUT",
@@ -113,7 +112,6 @@ export const handleFileUpload = async (
     }
 
     const objectUrl = url.split("?")[0];
-    console.log("Upload successful, object URL:", objectUrl);
     return objectUrl;
   } catch (error) {
     console.error("Error Uploading to S3: ", error);
@@ -152,3 +150,10 @@ export const getStatusColor = (status: BlogStatus | EventStatus) => {
       return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
   }
 };
+
+export function formatTime(time: string, zone: string = "WAT") {
+  const parsed = parse(time, "HH:mm", new Date());
+  const formatted = format(parsed, "hh:mm a");
+
+  return `${formatted} ${zone}`;
+}

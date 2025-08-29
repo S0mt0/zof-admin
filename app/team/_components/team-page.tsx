@@ -116,10 +116,7 @@ export default function TeamPageClient({ members }: TeamPageProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader
-        title="Team Members"
-        breadcrumbs={[{ label: "Team Members" }]}
-      />
+      <DashboardHeader breadcrumbs={[{ label: "Team Members" }]} />
 
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="relative flex-1 max-w-sm">

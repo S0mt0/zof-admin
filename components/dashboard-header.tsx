@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/breadcrumb";
 
 interface DashboardHeaderProps {
-  title: string;
+  title?: string;
   breadcrumbs?: Array<{
     label: string;
     href?: string;
