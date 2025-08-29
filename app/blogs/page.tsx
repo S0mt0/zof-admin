@@ -53,10 +53,7 @@ export default async function Page({
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader
-        title="Blog Posts"
-        breadcrumbs={[{ label: "Blog Posts" }]}
-      />
+      <DashboardHeader breadcrumbs={[{ label: "Blog Posts" }]} />
 
       <BlogStats {...blogsStats} />
 

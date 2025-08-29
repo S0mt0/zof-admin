@@ -26,7 +26,7 @@ import {
   getStatusColor,
 } from "@/lib/utils";
 import { BlogNotFound } from "../_components/not-found";
-import { ShareButton } from "./_components/share-button";
+import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
 

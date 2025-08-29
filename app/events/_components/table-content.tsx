@@ -4,7 +4,6 @@ import {
   Eye,
   MoreHorizontal,
   Trash2,
-  Users,
   Calendar,
   MapPin,
 } from "lucide-react";
@@ -19,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { capitalize, formatTime, getStatusColor } from "@/lib/utils";
 
 export const TableContent = ({
   events,
@@ -26,24 +26,8 @@ export const TableContent = ({
   onSelectEvent,
   onViewEvent,
   onEditEvent,
-  onManageAttendees,
   onDeleteEvent,
 }: EventTableContentProps) => {
-  const getStatusColor = (status: IEvent["status"]) => {
-    switch (status) {
-      case "upcoming":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "completed":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200";
-      case "draft":
-        return "bg-amber-100 text-amber-800 border-amber-200";
-      case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
   return (
     <TableBody>
       {events.map((event) => (
@@ -56,19 +40,19 @@ export const TableContent = ({
           </TableCell>
           <TableCell>
             <div>
-              <div className="font-medium">{event.title}</div>
-              <div className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                {event.description}
+              <div className="font-medium">
+                {capitalize(event.name.slice(0, 30))}...
               </div>
               <div className="flex items-center gap-4 mt-2 md:hidden">
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Calendar className="h-3 w-3 mr-1" />
-                  {format(event.date, "yyyy-MM-dd")} at {event.startTime}
+                  {format(event.date, "yyyy-MM-dd")} at{" "}
+                  {formatTime(event.startTime)}
                 </div>
               </div>
               <div className="flex items-center text-sm text-muted-foreground mt-1 lg:hidden">
                 <MapPin className="h-3 w-3 mr-1" />
-                {event.location}
+                {capitalize(event.location.slice(0, 30))}...
               </div>
             </div>
           </TableCell>
@@ -80,7 +64,7 @@ export const TableContent = ({
                   {format(event.date, "yyyy-MM-dd")}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {event.startTime}
+                  {formatTime(event.startTime)}
                 </div>
               </div>
             </div>
@@ -88,7 +72,7 @@ export const TableContent = ({
           <TableCell className="hidden lg:table-cell">
             <div className="flex items-center">
               <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-              {event.location}
+              {capitalize(event.location.slice(0, 30))}...
             </div>
           </TableCell>
           <TableCell>
@@ -133,13 +117,6 @@ export const TableContent = ({
                 >
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Event
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => onManageAttendees(event)}
-                  className="cursor-pointer"
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  Manage Attendees
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDeleteEvent(event.id)}

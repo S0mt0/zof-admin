@@ -1,21 +1,18 @@
-import { notFound } from "next/navigation";
-
 import { DashboardHeader } from "@/components/dashboard-header";
-import { getEventById } from "@/lib/db/repository";
+import { getEventBySlug } from "@/lib/db/repository";
 import { EventForm } from "../../_components/event-form/form";
+import { EventNotFound } from "../../_components/not-found";
 
 interface EditEventPageProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 
 export default async function EditEventPage({ params }: EditEventPageProps) {
-  const event = await getEventById(params.id);
+  const event = await getEventBySlug(params.slug);
 
-  if (!event) {
-    notFound();
-  }
+  if (!event) return <EventNotFound />;
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

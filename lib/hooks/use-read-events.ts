@@ -83,11 +83,11 @@ export const useReadEvents = (events: IEvent[]) => {
   );
 
   const handleViewEvent = (event: IEvent) => {
-    router.push(`/events/${event.id}`);
+    router.push(`/events/${event.slug}`);
   };
 
   const handleEditEvent = (event: IEvent) => {
-    router.push(`/events/${event.id}/edit`);
+    router.push(`/events/${event.slug}/edit`);
   };
 
   return {
