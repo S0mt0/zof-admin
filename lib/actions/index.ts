@@ -9,3 +9,4 @@ export * from "./delete-account";
 export * from "./s3";
 export * from "./settings";
 export * from "./team";
+export * from "./messages";

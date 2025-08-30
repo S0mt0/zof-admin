@@ -19,6 +19,9 @@ import { currentUser } from "../utils";
 import { allowedAdminEmailsList } from "../constants";
 
 export const listTeamAction = async () => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
   const members = await listTeamMembers();
   return members;
 };

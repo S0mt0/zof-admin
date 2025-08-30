@@ -7,3 +7,4 @@ export * from "./stats.service";
 export * from "./user-activity.service";
 export * from "./blog.service";
 export * from "./event.service";
+export * from "./message.service";
