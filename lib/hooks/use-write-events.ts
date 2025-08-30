@@ -217,6 +217,9 @@ export const useWriteEvents = ({
         date: new Date(payload.date),
         status: submitType,
         slug: generateSlug(payload.name),
+        ticketPrice: !isNaN(Number(payload.ticketPrice))
+          ? `₦${payload.ticketPrice}`
+          : undefined,
       };
 
       const loading = toast.loading("Please wait...");
