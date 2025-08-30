@@ -11,15 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PackageOpen } from "lucide-react";
+import { currentUser } from "@/lib/utils";
 
 export async function UsersRecentActivities({
   page = 1,
   limit = 5,
-  userId,
 }: {
   page?: number;
   limit?: number;
-  userId: string;
 }) {
   const usersRecentActivities = unstable_cache(
     getUsersRecentActivities,
@@ -29,8 +28,13 @@ export async function UsersRecentActivities({
       revalidate: 300, // revalidate every 5 mimnutes
     }
   );
+  const user = await currentUser();
 
-  const { data, pagination } = await usersRecentActivities(page, limit, userId);
+  const { data, pagination } = await usersRecentActivities(
+    page,
+    limit,
+    user?.id!
+  );
 
   return (
     <Card className="col-span-4">

@@ -5,7 +5,6 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { ActivityStats } from "@/components/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
 import { UsersRecentActivities } from "./_components/recent-activities";
-import { currentUser } from "@/lib/utils";
 import { getAppStats } from "@/lib/db/repository";
 
 export default async function Dashboard({
@@ -13,8 +12,6 @@ export default async function Dashboard({
 }: {
   searchParams: { page?: string; limit?: string };
 }) {
-  const user = await currentUser();
-
   const activityStats = unstable_cache(getAppStats, ["app-stats"], {
     tags: ["app-stats"],
     revalidate: 300, // revalidate every 5 minutes
@@ -62,7 +59,7 @@ export default async function Dashboard({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <UsersRecentActivities page={page} limit={limit} userId={user?.id!} />
+        <UsersRecentActivities page={page} limit={limit} />
         <QuickActions />
       </div>
     </div>

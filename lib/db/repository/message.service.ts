@@ -1,4 +1,4 @@
-import { prismaPaginate } from "@/lib/utils";
+import { prismaPaginate } from "@/lib/utils/db.utils";
 import { db } from "../config";
 import { emptyPaginatedData } from "@/lib/constants";
 
