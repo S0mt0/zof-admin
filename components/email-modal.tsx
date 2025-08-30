@@ -30,35 +30,54 @@ export default function EmailModal({
   pending,
 }: EmailModalProps) {
   if (!open) return null;
+  if (!message) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 space-y-4">
-        <h3 className="text-lg font-semibold">Send Email</h3>
-        <div className="space-y-2">
-          <Label>To</Label>
-          <Input value={to} disabled />
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
+        <h3 className="text-xl font-semibold text-gray-800">Send Email</h3>
+
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-600">To</Label>
+            <Input value={to} disabled className="bg-gray-100 text-gray-700" />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-600">Subject</Label>
+            <Input
+              value={subject}
+              onChange={(e) => onSubjectChange(e.target.value)}
+              placeholder="Enter email subject"
+              className="focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-600">Message</Label>
+            <textarea
+              className="w-full border rounded-xl p-3 min-h-[140px] resize-y focus:outline-none focus:ring-2 focus:ring-primary/40"
+              value={message}
+              onChange={(e) => onMessageChange(e.target.value)}
+              placeholder="Write your message here..."
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label>Subject</Label>
-          <Input
-            value={subject}
-            onChange={(e) => onSubjectChange(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Message</Label>
-          <textarea
-            className="w-full border rounded-md p-2 min-h-[140px]"
-            value={message}
-            onChange={(e) => onMessageChange(e.target.value)}
-          />
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose} disabled={disabled}>
+
+        <div className="flex justify-end gap-3 pt-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={disabled}
+            className="px-4"
+          >
             Cancel
           </Button>
-          <Button onClick={onSend} disabled={disabled || pending}>
+          <Button
+            onClick={onSend}
+            disabled={disabled || pending}
+            className="px-5"
+          >
             {pending ? "Sending..." : "Send"}
           </Button>
         </div>

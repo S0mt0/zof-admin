@@ -34,16 +34,6 @@ export const getAllMessages = async ({
       model: db.message,
       args: {
         where,
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-              email: true,
-              emailNotifications: true,
-            },
-          },
-        },
         orderBy: { createdAt: "desc" },
       },
     });

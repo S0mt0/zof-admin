@@ -8,7 +8,7 @@ export async function getAppStats(userId?: string) {
       db.teamMember.count({
         where: userId ? { addedBy: userId } : {},
       }),
-      db.message.count(), // Receipient or sender does not matter, so just count all
+      db.message.count({ where: {} }), // Receipient or sender does not matter, so just count all
     ]);
 
     return { blogs, events, team, messages };
