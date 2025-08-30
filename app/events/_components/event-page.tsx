@@ -3,6 +3,7 @@
 import { useReadEvents } from "@/lib/hooks";
 import { EventFilters } from "./event-filters";
 import { EventTable } from "./event-table";
+import EventEmptyState from "./event-empty-state";
 
 export function EventPage({
   events,
@@ -20,6 +21,19 @@ export function EventPage({
     handleSelectEvent,
     handleViewEvent,
   } = useReadEvents(events);
+
+  if (events.length === 0) {
+    return (
+      <div>
+        <EventFilters
+          searchParams={searchParams}
+          selectedCount={selectedEvents.length}
+          onBulkDelete={handleBulkDelete}
+        />
+        <EventEmptyState />
+      </div>
+    );
+  }
 
   return (
     <div>
