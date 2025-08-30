@@ -12,8 +12,8 @@ export const getAllBlogs = async ({
   page: number;
   limit: number;
   search?: string;
-  status?: string;
-  featured?: string;
+  status?: string | null;
+  featured?: string | null;
 }) => {
   const where: any = {};
 

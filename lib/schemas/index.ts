@@ -7,3 +7,4 @@ export * from "./settings";
 export * from "./team";
 export * from "./blogs";
 export * from "./events";
+export * from "./messages";
