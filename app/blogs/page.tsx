@@ -32,7 +32,7 @@ export default async function Page({
     ],
     {
       tags: ["blogs"],
-      revalidate: 300, // revalidate every 5 mimnutes
+      revalidate: 300, // revalidate every 5 minutes
     }
   );
 
