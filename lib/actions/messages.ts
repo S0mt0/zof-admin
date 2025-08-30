@@ -10,7 +10,7 @@ import {
 import { MailService } from "../utils/mail.service";
 import { capitalize, currentUser } from "../utils";
 import { allowedAdminEmailsList } from "../constants";
-import { db } from "../db";
+import { db } from "../db/config";
 
 export const markMessageAsRead = async (id: string) => {
   const user = await currentUser();

@@ -2,16 +2,17 @@
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { markMessageAsRead } from "@/lib/actions";
 
 export default function ViewMessageModal({
   message,
   messageOpen,
   toggleMessageModal,
+  markAsRead,
 }: {
   message?: IMessage | null;
   toggleMessageModal: () => void;
   messageOpen: boolean;
+  markAsRead: (id: string) => Promise<void>;
 }) {
   if (!messageOpen) return null;
   if (!message) return null;
@@ -19,7 +20,7 @@ export default function ViewMessageModal({
   useEffect(() => {
     if (message.status !== "read") {
       (async () => {
-        await markMessageAsRead(message.id);
+        await markAsRead(message.id);
       })();
     }
   }, []);

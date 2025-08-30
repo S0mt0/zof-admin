@@ -3,7 +3,7 @@ import { unstable_cache } from "next/cache";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Messages } from "./_components/messages";
 import { countUnreadMessages, getAllMessages } from "@/lib/db/repository";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db/config";
 
 const allMessages = [
   {
@@ -175,9 +175,9 @@ export default async function MessagesPage({
 
   const unreadCount = await getUnreadMessagesCountCached();
 
-  // await db.message.createMany({
-  //   data: allMessages,
-  // });
+  await db.message.createMany({
+    data: allMessages,
+  });
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

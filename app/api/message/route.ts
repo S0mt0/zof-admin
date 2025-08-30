@@ -1,6 +1,6 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { db } from "@/lib/db";
-import { MessageSchema } from "@/lib/schemas";
+import { db } from "@/lib/db/config";
+import { MessageSchema } from "@/lib/schemas/messages";
 import { MailService } from "@/lib/utils/mail.service";
 
 export async function OPTIONS() {

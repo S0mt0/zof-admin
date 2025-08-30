@@ -25,7 +25,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { WebsiteSettingsSchema } from "@/lib/schemas";
-import { updateWebsiteSettingsAction } from "@/lib/actions";
+import { updateWebsiteSettingsAction } from "@/lib/actions/settings";
 
 interface WebsiteSettingsProps {
   websiteSettings: IWebsiteSettings | null;

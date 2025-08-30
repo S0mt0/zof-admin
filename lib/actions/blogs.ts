@@ -13,7 +13,7 @@ import {
 } from "../db/repository";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
-import { db } from "../db";
+import { db } from "../db/config";
 import { BlogFormSchema } from "../schemas";
 
 export const createBlogAction = async (

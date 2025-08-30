@@ -2,9 +2,9 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
-import { db } from "./lib/db";
 import { allowedAdminEmailsList } from "./lib/constants";
 import { getUserById, updateUser } from "./lib/db/repository";
+import { db } from "./lib/db/config";
 
 export const {
   handlers: { GET, POST },
@@ -69,7 +69,7 @@ export const {
   adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
-    maxAge: 604800, // 1 Week
+    // maxAge: 604800, // 1 Week
   },
   ...authConfig,
 });

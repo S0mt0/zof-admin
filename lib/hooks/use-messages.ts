@@ -1,11 +1,12 @@
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+
 import {
   bulkDeleteMessagesAction,
   deleteMessageAction,
   markMessageAsRead,
   replyMessageAction,
-} from "../actions";
-import { toast } from "sonner";
+} from "../actions/messages";
 
 export const useMessages = (messages: IMessage[]) => {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -135,7 +136,7 @@ export const useMessages = (messages: IMessage[]) => {
     });
   };
 
-  const readMessage = (id: string) => {
+  const readMessage = async (id: string) => {
     startTransition(() => {
       markMessageAsRead(id)
         .then((res) => {

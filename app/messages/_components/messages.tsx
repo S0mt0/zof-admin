@@ -38,7 +38,6 @@ export const Messages = ({
     sendReply,
     handleSelectMessage,
     readMessage,
-    openReplyModal,
     toggleMessageModal,
     setReplySubject,
     setReplyModalOpen,
@@ -111,6 +110,7 @@ export const Messages = ({
         messageOpen={messageOpen}
         toggleMessageModal={toggleMessageModal}
         message={activeMessage}
+        markAsRead={readMessage}
       />
 
       <Pagination

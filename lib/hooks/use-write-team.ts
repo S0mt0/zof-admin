@@ -12,7 +12,10 @@ import { toast } from "sonner";
 
 import { TeamMemberSchema } from "../schemas";
 import { handleFileUpload } from "../utils";
-import { createTeamMemberAction, updateTeamMemberAction } from "../actions";
+import {
+  createTeamMemberAction,
+  updateTeamMemberAction,
+} from "../actions/team";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
