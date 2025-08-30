@@ -1,9 +1,7 @@
-import { currentUser } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard-header";
 import TeamForm from "../_components/team-form";
 
 export default async function NewTeamMemberPage() {
-  const user = await currentUser();
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
@@ -13,7 +11,7 @@ export default async function NewTeamMemberPage() {
           { label: "New Member" },
         ]}
       />
-      <TeamForm mode="create" addedBy={user?.id || ""} />
+      <TeamForm mode="create" />
     </div>
   );
 }

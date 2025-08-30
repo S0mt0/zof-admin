@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { FoundationInfoSchema } from "@/lib/schemas";
-import { updateFoundationInfoAction } from "@/lib/actions";
+import { updateFoundationInfoAction } from "@/lib/actions/settings";
 import {
   foundationAddress,
   foundationDescription,

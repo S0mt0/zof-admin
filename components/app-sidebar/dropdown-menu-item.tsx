@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/components/ui/sidebar";
-import { LucideIconType } from "../activity-stats";
 
 interface DropdownMenuItemProps {
   href: string;

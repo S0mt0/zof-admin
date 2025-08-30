@@ -6,3 +6,4 @@ export * from "./use-read-events";
 export * from "./use-write-events";
 export * from "./use-write-team";
 export * from "./use-read-team";
+export * from "./use-messages";

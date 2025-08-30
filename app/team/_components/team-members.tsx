@@ -3,7 +3,7 @@ import { Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import EmailModal from "./email-modal";
+import EmailModal from "@/components/email-modal";
 import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
 
@@ -30,7 +30,7 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
   } = useReadTeam(members);
 
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />

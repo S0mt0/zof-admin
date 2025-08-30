@@ -1,3 +1,5 @@
+import { GlobalLoading } from "@/components/global-loading";
+
 export default function Loading() {
-  return null
+  return <GlobalLoading />;
 }

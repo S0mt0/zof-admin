@@ -7,7 +7,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 export default async function Page() {
   const teamMembers = unstable_cache(listTeamMembers, ["teams"], {
     tags: ["teams"],
-    revalidate: 300, // revalidate every 5 mimnutes
+    revalidate: 300, // revalidate every 5 minutes
   });
   const members = await teamMembers();
 

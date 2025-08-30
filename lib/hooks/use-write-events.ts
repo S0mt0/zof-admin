@@ -12,7 +12,6 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 
 import { EventFormSchema } from "@/lib/schemas";
-
 import { createEventAction, updateEventAction } from "@/lib/actions/events";
 import { generateSlug, handleFileUpload } from "@/lib/utils";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";

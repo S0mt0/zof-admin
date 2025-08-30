@@ -46,7 +46,7 @@ export default async function Page({
 
   const getBlogsStatsCached = unstable_cache(getBlogsStats, ["blogs-stats"], {
     tags: ["blogs-stats"],
-    revalidate: 300, // revalidate every 5 mimnutes
+    revalidate: 300, // revalidate every 5 minutes
   });
 
   const blogsStats = await getBlogsStatsCached();

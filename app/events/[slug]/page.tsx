@@ -20,12 +20,7 @@ import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
 import { getEventBySlug } from "@/lib/db/repository";
-import {
-  capitalize,
-  formatTime,
-  getInitials,
-  getStatusColor,
-} from "@/lib/utils";
+import { capitalize, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";
 
 export default async function ViewEventPage({
