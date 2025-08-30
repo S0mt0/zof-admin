@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 import { revalidatePath, revalidateTag } from "next/cache";
+
 import { TeamMemberSchema } from "../schemas";
 import {
   listTeamMembers,
@@ -15,6 +16,7 @@ import {
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
 import { currentUser } from "../utils";
+import { allowedAdminEmailsList } from "../constants";
 
 export const listTeamAction = async () => {
   const members = await listTeamMembers();
@@ -22,9 +24,17 @@ export const listTeamAction = async () => {
 };
 
 export const createTeamMemberAction = async (
-  values: z.infer<typeof TeamMemberSchema>,
-  addedBy: string
+  values: z.infer<typeof TeamMemberSchema>
 ) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   const validated = TeamMemberSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
@@ -32,29 +42,16 @@ export const createTeamMemberAction = async (
   if (existingMember) return { error: "Team member already exists" };
 
   try {
-    const data = validated.data as any;
-    const toCreate = {
-      name: data.name,
-      role: data.role,
-      email: data.email,
-      phone: data.phone || null,
-      bio: data.bio || null,
-      status: data.status,
-      avatar: data.avatar || null,
-      joinDate: new Date(data.joinDate),
-      department: data.department || null,
-      location: data.location || null,
-      skills: data.skills || [],
-      addedBy,
-      linkedin: data.socialLinks?.linkedin || null,
-      twitter: data.socialLinks?.twitter || null,
-      github: data.socialLinks?.github || null,
-    } as Omit<TeamMember, "id" | "createdAt" | "updatedAt">;
+    const data = validated.data;
+    const payload = {
+      ...data,
+      addedBy: user.id,
+    };
 
-    const created = await createTeamMember(toCreate);
+    const created = await createTeamMember(payload);
     if (created) {
       await createUserActivity(
-        addedBy,
+        user.id,
         "New team member added",
         `You added ${created.name} to the team as ${created.role}`
       );
@@ -63,7 +60,7 @@ export const createTeamMemberAction = async (
     revalidateTag("teams");
     revalidateTag("profile-stats");
     revalidatePath("/");
-    return { success: "Team member created" };
+    return { success: "Team member added" };
   } catch (e) {
     return { error: "Could not create team member" };
   }
@@ -71,35 +68,27 @@ export const createTeamMemberAction = async (
 
 export const updateTeamMemberAction = async (
   id: string,
-  values: z.infer<typeof TeamMemberSchema>,
-  updatedBy?: string
+  values: z.infer<typeof TeamMemberSchema>
 ) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   const validated = TeamMemberSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
   try {
-    const data = validated.data as any;
-    const toUpdate: Partial<TeamMember> = {
-      name: data.name,
-      role: data.role,
-      email: data.email,
-      phone: data.phone || null,
-      bio: data.bio || null,
-      status: data.status,
-      avatar: data.avatar || null,
-      joinDate: new Date(data.joinDate),
-      department: data.department || null,
-      location: data.location || null,
-      skills: data.skills || [],
-      linkedin: data.socialLinks?.linkedin || null,
-      twitter: data.socialLinks?.twitter || null,
-      github: data.socialLinks?.github || null,
-    };
+    const data = validated.data;
 
-    const updated = await updateTeamMember(id, toUpdate);
-    if (updated && updatedBy) {
+    const updated = await updateTeamMember(id, data);
+    if (updated) {
       await createUserActivity(
-        updatedBy,
+        user.id,
         "Team member details updated",
         `You successfully updated ${updated.name}'s profile.`
       );
@@ -115,18 +104,24 @@ export const updateTeamMemberAction = async (
   }
 };
 
-export const deleteTeamMemberAction = async (
-  id: string,
-  deletedBy?: string
-) => {
+export const deleteTeamMemberAction = async (id: string) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   try {
     const existing = await getTeamMemberById(id);
 
     await deleteTeamMember(id);
 
-    if (existing && deletedBy) {
+    if (existing) {
       await createUserActivity(
-        deletedBy,
+        user.id,
         "Team member removed",
         `${existing.name} was removed from the team`
       );
@@ -146,6 +141,15 @@ export const emailTeamMemberAction = async (
   subject: string,
   message: string
 ) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   if (!to || !subject || !message) return { error: "All fields are required" };
 
   try {

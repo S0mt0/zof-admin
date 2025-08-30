@@ -1,7 +1,8 @@
 import { unstable_cache } from "next/cache";
 
 import { listTeamMembers } from "@/lib/db/repository";
-import TeamPageClient from "./_components/team-page";
+import { TeamMembers } from "./_components/team-members";
+import { DashboardHeader } from "@/components/dashboard-header";
 
 export default async function Page() {
   const teamMembers = unstable_cache(listTeamMembers, ["teams"], {
@@ -10,5 +11,10 @@ export default async function Page() {
   });
   const members = await teamMembers();
 
-  return <TeamPageClient members={members} />;
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <DashboardHeader breadcrumbs={[{ label: "Team Members" }]} />
+      <TeamMembers members={members} />
+    </div>
+  );
 }

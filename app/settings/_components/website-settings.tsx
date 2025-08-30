@@ -46,13 +46,6 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
 
   const onSubmit = (values: z.infer<typeof WebsiteSettingsSchema>) => {
     startTransition(() => {
-      const hasChanges =
-        values.maintenanceMode !== websiteSettings?.maintenanceMode ||
-        values.blogComments !== websiteSettings?.blogComments ||
-        values.eventRegistration !== websiteSettings?.eventRegistration;
-
-      if (!hasChanges) return;
-
       updateWebsiteSettingsAction(values).then((data) => {
         if (data?.error) toast.error(data.error);
 
@@ -63,6 +56,13 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
       });
     });
   };
+
+  const hasChanges =
+    form.watch("maintenanceMode") !== websiteSettings?.maintenanceMode ||
+    form.watch("blogComments") !== websiteSettings?.blogComments ||
+    form.watch("eventRegistration") !== websiteSettings?.eventRegistration;
+
+  const disabled = isPending || !hasChanges;
 
   return (
     <Card>
@@ -79,7 +79,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
               <Button
                 variant="default"
                 onClick={() => form.handleSubmit(onSubmit)()}
-                disabled={isPending}
+                disabled={disabled}
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save Changes
@@ -90,7 +90,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
                   setIsEditing(false);
                   form.reset();
                 }}
-                disabled={isPending}
+                disabled={disabled}
               >
                 Cancel
               </Button>

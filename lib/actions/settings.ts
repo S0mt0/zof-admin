@@ -1,7 +1,7 @@
 "use server";
 
 import * as z from "zod";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 import { FoundationInfoSchema, WebsiteSettingsSchema } from "../schemas";
 import {
@@ -11,13 +11,22 @@ import {
   getWebsiteSettings,
   updateWebsiteSettings,
   createWebsiteSettings,
-  createUserActivity,
 } from "../db/repository";
 import { currentUser } from "../utils";
+import { allowedAdminEmailsList } from "../constants";
 
 export const updateFoundationInfoAction = async (
   values: z.infer<typeof FoundationInfoSchema>
 ) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   const validatedFields = FoundationInfoSchema.safeParse(values);
 
   if (!validatedFields.success) return { error: "Invalid fields!" };
@@ -30,18 +39,7 @@ export const updateFoundationInfoAction = async (
     } else {
       await createFoundationInfo(validatedFields.data);
     }
-
-    const user = await currentUser();
-
-    await createUserActivity(
-      user?.id!,
-      "ZOF webiste updated",
-      "Zita-Onyeka Foundation website info was just updated by you."
-    );
-
-    revalidateTag("users-recent-activities");
-
-    revalidatePath("/settings");
+    revalidateTag("info");
     return { success: "Foundation information updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -51,6 +49,15 @@ export const updateFoundationInfoAction = async (
 export const updateWebsiteSettingsAction = async (
   values: z.infer<typeof WebsiteSettingsSchema>
 ) => {
+  const user = await currentUser();
+  if (!user) return { error: "Invalid session, please login again." };
+
+  if (
+    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
+    user.role !== "admin"
+  )
+    return { error: "Permission denied!" };
+
   const validatedFields = WebsiteSettingsSchema.safeParse(values);
 
   if (!validatedFields.success) return { error: "Invalid fields!" };
@@ -64,7 +71,7 @@ export const updateWebsiteSettingsAction = async (
       await createWebsiteSettings(validatedFields.data);
     }
 
-    revalidatePath("/settings");
+    revalidateTag("settings");
     return { success: "Website settings updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };

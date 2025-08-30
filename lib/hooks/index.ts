@@ -4,3 +4,5 @@ export * from "./use-read-blogs";
 export * from "./use-write-blogs";
 export * from "./use-read-events";
 export * from "./use-write-events";
+export * from "./use-write-team";
+export * from "./use-read-team";

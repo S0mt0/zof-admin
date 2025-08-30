@@ -12,17 +12,12 @@ export default async function EditTeamMemberPage({ params }: EditPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
-        title="Edit Team Member"
         breadcrumbs={[
           { label: "Team Members", href: "/team" },
-          { label: member?.name || "Edit Member" },
+          { label: member?.name || "Edit Member Info" },
         ]}
       />
-      <TeamForm
-        mode="edit"
-        initialData={member as unknown as TeamMember}
-        addedBy={(member as any)?.addedBy || ""}
-      />
+      <TeamForm mode="edit" initialData={member} />
     </div>
   );
 }

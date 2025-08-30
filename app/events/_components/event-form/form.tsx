@@ -9,6 +9,7 @@ import {
   Users,
   Clock,
 } from "lucide-react";
+import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useWriteEvents } from "@/lib/hooks";
 import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
+import { formatTime } from "@/lib/utils";
 
 export function EventForm({
   mode,
@@ -352,15 +354,17 @@ export function EventForm({
                 <Calendar className="h-4 w-4 mr-2 text-blue-500" />
                 <span>
                   {formData.date instanceof Date
-                    ? formData.date.toISOString().slice(0, 10)
+                    ? format(formData.date, "yyyy-MM-dd")
                     : "Date not set"}
                 </span>
               </div>
               <div className="flex items-center text-sm">
                 <Clock className="h-4 w-4 mr-2 text-green-500" />
                 <span>
-                  {formData.startTime || "Time not set"}
-                  {formData.endTime && ` - ${formData.endTime}`}
+                  {formatTime(formData.startTime) || "Time not set"}
+                  {formData.endTime &&
+                    formatTime(formData.endTime) &&
+                    ` - ${formData.endTime}`}
                 </span>
               </div>
               <div className="flex items-center text-sm">

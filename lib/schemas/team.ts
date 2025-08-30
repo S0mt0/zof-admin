@@ -12,11 +12,7 @@ export const TeamMemberSchema = z.object({
   department: z.string().optional(),
   location: z.string().optional(),
   skills: z.array(z.string()).default([]),
-  socialLinks: z
-    .object({
-      linkedin: z.string().optional(),
-      twitter: z.string().optional(),
-      github: z.string().optional(),
-    })
-    .optional(),
+  linkedin: z.string().optional(),
+  twitter: z.string().optional(),
+  github: z.string().optional(),
 });

@@ -1,13 +1,11 @@
 import {
   Tag,
-  Calendar,
-  Eye,
-  Clock,
   Edit,
-  MessageCircle,
-  Mail,
   CalendarCheck,
   MapPin,
+  Library,
+  Banknote,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +15,6 @@ import { format } from "date-fns";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
@@ -121,7 +118,7 @@ export default async function ViewEventPage({
           <div className="space-y-2">
             <h3 className="font-extrabold leading-loose">Date and time</h3>
             <div className="flex gap-2 items-center">
-              <CalendarCheck className="w-6 h-6" />
+              <CalendarCheck className="w-4 h-4 text-orange-500" />
               <p>
                 {format(event.date, "EEEE, MMMM d")}{" "}
                 {event.endTime && ` - ${formatTime(event.endTime)}`}
@@ -131,19 +128,46 @@ export default async function ViewEventPage({
           <div className="space-y-2">
             <h3 className="font-extrabold leading-loose">Location</h3>
             <div className="flex gap-2 items-center">
-              <MapPin className="w-6 h-6" />
+              <MapPin className="w-4 h-4 text-orange-500" />
               <p>{event.location}</p>
             </div>
           </div>
+
+          {event.ticketPrice && (
+            <div className="text-base flex mb-2 items-center gap-2">
+              <Banknote className="w-4 h-4 text-orange-500" />
+              <span className="font-semibold">Ticket Price:</span>{" "}
+              {event.ticketPrice}
+            </div>
+          )}
+          {event.registrationRequired && (
+            <div className="text-base mb-2 flex items-center gap-2">
+              <Library className="w-4 h-4 text-orange-500" />
+              <span className="font-semibold">Registration Required</span>
+            </div>
+          )}
+          {event.maxAttendees && event.maxAttendees > 0 && (
+            <div className="text-base mb-2 flex items-center gap-2">
+              <Users className="w-4 h-4 text-orange-500" />
+              <span className="font-semibold">Max Attendees:</span>{" "}
+              {event.maxAttendees}
+            </div>
+          )}
         </div>
         {/* <Separator /> */}
 
         {/* Event Content/Detail */}
         {event.detail && (
-          <LexicalContentRenderer
-            content={event.detail}
-            className="prose prose-lg dark:prose-invert w-full my-12"
-          />
+          <div>
+            <Separator className="mb-6" />
+            <h3 className="text-lg font-extrabold leading-loose">
+              About this event
+            </h3>
+            <LexicalContentRenderer
+              content={event.detail}
+              className="prose prose-lg dark:prose-invert w-full mb-12 mt-2"
+            />
+          </div>
         )}
         {/* Tags */}
         {event.tags && event.tags.length > 0 && (
@@ -164,20 +188,6 @@ export default async function ViewEventPage({
             </div>
           </div>
         )}
-        {/* Ticket Price & Registration */}
-        <div className="mb-8">
-          {event.ticketPrice && (
-            <div className="text-base mb-2">
-              <span className="font-semibold">Ticket Price:</span>{" "}
-              {event.ticketPrice}
-            </div>
-          )}
-          {event.registrationRequired && (
-            <div className="text-base mb-2">
-              <span className="font-semibold">Registration Required</span>
-            </div>
-          )}
-        </div>
       </article>
     </div>
   );

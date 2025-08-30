@@ -56,18 +56,6 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
 
   const onSubmit = (values: z.infer<typeof FoundationInfoSchema>) => {
     startTransition(() => {
-      // Check if any values have actually changed
-      const hasChanges =
-        values.name !== foundationInfo?.name ||
-        values.email !== foundationInfo?.email ||
-        values.address !== foundationInfo?.address ||
-        values.phone !== foundationInfo?.phone ||
-        values.description !== foundationInfo?.description;
-
-      if (!hasChanges) {
-        return; // Do nothing if values didn't change
-      }
-
       updateFoundationInfoAction(values).then((data) => {
         if (data?.error) toast.error(data.error);
 
@@ -78,6 +66,15 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
       });
     });
   };
+
+  const hasChanges =
+    form.watch("address") !== foundationInfo?.address ||
+    form.watch("description") !== foundationInfo?.description ||
+    form.watch("email") !== foundationInfo?.email ||
+    form.watch("name") !== foundationInfo?.name ||
+    form.watch("phone") !== foundationInfo?.phone;
+
+  const disabled = isPending || !hasChanges;
 
   return (
     <Card>
@@ -94,7 +91,7 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
               <Button
                 variant="default"
                 onClick={() => form.handleSubmit(onSubmit)()}
-                disabled={isPending}
+                disabled={disabled}
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save Changes
@@ -105,7 +102,7 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
                   setIsEditing(false);
                   form.reset();
                 }}
-                disabled={isPending}
+                disabled={disabled}
               >
                 Cancel
               </Button>

@@ -217,15 +217,25 @@ export const useWriteEvents = ({
         date: new Date(payload.date),
         status: submitType,
         slug: generateSlug(payload.name),
-        ticketPrice: !isNaN(Number(payload.ticketPrice))
-          ? `₦${payload.ticketPrice}`
-          : undefined,
+        ticketPrice: (() => {
+          let price = payload.ticketPrice?.trim();
+
+          if (!price) return null;
+
+          if (price.startsWith("₦")) return price;
+
+          if (!isNaN(Number(price))) {
+            return `₦${price}`;
+          }
+
+          return null;
+        })(),
       };
 
       const loading = toast.loading("Please wait...");
       startTransition(() => {
         if (mode === "create") {
-          createEventAction(submissionData)
+          createEventAction(submissionData as any)
             .then((res) => {
               if (res?.error) {
                 toast.error(res.error);
@@ -241,7 +251,7 @@ export const useWriteEvents = ({
               toast.dismiss(loading);
             });
         } else if (mode === "edit" && initialData?.id) {
-          updateEventAction(initialData.id, submissionData)
+          updateEventAction(initialData.id, submissionData as any)
             .then((res) => {
               if (res?.error) {
                 toast.error(res.error);

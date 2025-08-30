@@ -74,9 +74,7 @@ export const getUniqueTeamMember = async (name: string, email: string) => {
   }
 };
 
-export const createTeamMember = async (
-  data: Omit<TeamMember, "id" | "createdAt" | "updatedAt" | "addedByUser">
-) => {
+export const createTeamMember = async (data: any) => {
   try {
     return (await db.teamMember.create({ data })) as TeamMember;
   } catch (e) {
