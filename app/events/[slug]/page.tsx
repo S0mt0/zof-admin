@@ -6,6 +6,8 @@ import {
   Edit,
   MessageCircle,
   Mail,
+  CalendarCheck,
+  MapPin,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,48 +55,12 @@ export default async function ViewEventPage({
         ]}
       />
       <article className="container max-w-4xl mx-auto px-4 py-8">
-        {/* Status and Tags */}
-        <div className="flex items-center gap-2 flex-wrap mb-4">
-          <Badge className={getStatusColor(event.status)}>
-            {capitalize(event.status)}
-          </Badge>
-          {event.featured && <Badge variant="secondary">Featured</Badge>}
-        </div>
-        {/* Title */}
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-          {capitalize(event.name)}
-        </h1>
-        {/* Excerpt */}
-        {event.excerpt && (
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            {event.excerpt}
-          </p>
-        )}
-        {/* Organizer and Meta */}
         <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={event.bannerImage || undefined} />
-              <AvatarFallback>{getInitials(event.name)}</AvatarFallback>
-            </Avatar>
-            <div className="space-y-1">
-              <p className="font-medium">
-                {event.organizer
-                  ? capitalize(event.organizer)
-                  : "Zita-Onyeka Foundation"}
-              </p>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {event.date && format(new Date(event.date), "MMMM d, yyyy")}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {formatTime(event.startTime)}
-                  {event.endTime && ` - ${formatTime(event.endTime)}`}
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge className={getStatusColor(event.status)}>
+              {capitalize(event.status)}
+            </Badge>
+            {event.featured && <Badge variant="secondary">Featured</Badge>}
           </div>
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
@@ -112,22 +78,66 @@ export default async function ViewEventPage({
             />
           </div>
         </div>
-        <Separator />
-        {/* Banner Image */}
-        {event.bannerImage && (
-          <div className="mb-8">
-            <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-              <Image
-                src={event.bannerImage}
-                alt={event.name}
-                className="w-full h-full object-cover object-center"
-                width={1200}
-                height={675}
-                priority={true}
-              />
+
+        {/* Banner */}
+        <div className="mb-8">
+          <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+            <Image
+              src={event.bannerImage}
+              alt={event.name}
+              className="w-full h-full object-cover object-center"
+              width={1200}
+              height={675}
+              priority={true}
+            />
+          </div>
+        </div>
+
+        {/* Time */}
+        <strong>{format(event.createdAt, "EEEE, MMMM d")}</strong>
+        {/* Title */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-3 mt-1">
+          {capitalize(event.name)}
+        </h1>
+
+        {/* Organizer and Meta */}
+        <p className="font-medium mb-2">
+          <span className="text-muted-foreground mr-2">By</span>
+          {event.organizer
+            ? capitalize(event.organizer)
+            : event.createdByUser
+            ? capitalize(event.createdByUser.name)
+            : "Zita-Onyeka Foundation"}
+        </p>
+
+        {/* Excerpt */}
+        {event.excerpt && (
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {event.excerpt}
+          </p>
+        )}
+
+        <div className="my-8 space-y-8">
+          <div className="space-y-2">
+            <h3 className="font-extrabold leading-loose">Date and time</h3>
+            <div className="flex gap-2 items-center">
+              <CalendarCheck className="w-6 h-6" />
+              <p>
+                {format(event.date, "EEEE, MMMM d")}{" "}
+                {event.endTime && ` - ${formatTime(event.endTime)}`}
+              </p>
             </div>
           </div>
-        )}
+          <div className="space-y-2">
+            <h3 className="font-extrabold leading-loose">Location</h3>
+            <div className="flex gap-2 items-center">
+              <MapPin className="w-6 h-6" />
+              <p>{event.location}</p>
+            </div>
+          </div>
+        </div>
+        {/* <Separator /> */}
+
         {/* Event Content/Detail */}
         {event.detail && (
           <LexicalContentRenderer
