@@ -24,7 +24,7 @@ export const listTeamMembers = async (
         },
       },
     },
-    orderBy = { createdAt: "desc" },
+    orderBy = { createdAt: "asc" },
   } = options;
 
   try {
