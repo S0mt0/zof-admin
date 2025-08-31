@@ -77,8 +77,17 @@ export function EventFilters({
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
+      <div className="flex lg:hidden relative flex-1 shrink-0 w-full">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Search events..."
+          defaultValue={searchParams.search || ""}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="pl-10 w-full"
+        />
+      </div>
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
+        <div className="hidden lg:flex relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search events..."

@@ -43,7 +43,7 @@ const quickActions = [
 
 export function QuickActions() {
   return (
-    <Card className="col-span-3">
+    <Card className="col-span-4 lg:col-span-3">
       <CardHeader>
         <CardTitle>Quick Actions</CardTitle>
         <CardDescription>Common tasks and shortcuts</CardDescription>

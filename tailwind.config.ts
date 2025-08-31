@@ -89,6 +89,11 @@ const config: Config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+
+      screens: {
+        xs: "520px",
+        ls: { raw: "(max-width: 767px) and (orientation: landscape)" },
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

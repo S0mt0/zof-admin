@@ -132,12 +132,9 @@ export function EventForm({
                   <Input
                     id="date"
                     type="date"
-                    value={
-                      formData.date instanceof Date
-                        ? formData.date.toISOString().slice(0, 10)
-                        : ""
-                    }
-                    onChange={(e) => handleDateChange(new Date(e.target.value))}
+                    value={formData.date}
+                    min={new Date().toISOString().slice(0, 10)}
+                    onChange={(e) => handleDateChange(e.target.value)}
                     disabled={isPending}
                   />
                 </div>
@@ -353,8 +350,8 @@ export function EventForm({
               <div className="flex items-center text-sm">
                 <Calendar className="h-4 w-4 mr-2 text-blue-500" />
                 <span>
-                  {formData.date instanceof Date
-                    ? format(formData.date, "yyyy-MM-dd")
+                  {formData.date.trim().length
+                    ? format(new Date(formData.date), "yyyy-MM-dd")
                     : "Date not set"}
                 </span>
               </div>
@@ -362,9 +359,7 @@ export function EventForm({
                 <Clock className="h-4 w-4 mr-2 text-green-500" />
                 <span>
                   {formatTime(formData.startTime) || "Time not set"}
-                  {formData.endTime &&
-                    formatTime(formData.endTime) &&
-                    ` - ${formData.endTime}`}
+                  {formData.endTime && ` - ${formatTime(formData.endTime)}`}
                 </span>
               </div>
               <div className="flex items-center text-sm">

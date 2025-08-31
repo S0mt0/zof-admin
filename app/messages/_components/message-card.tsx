@@ -75,7 +75,7 @@ export const MessageCard = ({
         </div>
         <div className="flex items-center space-x-2 ml-4">
           <div className="flex items-center text-sm text-muted-foreground">
-            <Clock className="h-3 w-3 mr-1" />
+            <Clock className="hidden xs:inline-block h-3 w-3 mr-1" />
             {formatDistanceToNow(message.createdAt, {
               addSuffix: true,
             })}

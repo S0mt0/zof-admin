@@ -37,7 +37,7 @@ export async function UsersRecentActivities({
   );
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-4 max-w-full">
       <CardHeader>
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>

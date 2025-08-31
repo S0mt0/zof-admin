@@ -43,6 +43,7 @@ export const createEventAction = async (
     const newEvent = await createEvent({
       ...data,
       createdBy: user.id,
+      date: new Date(data.date),
     });
     if (newEvent) {
       await createUserActivity(
@@ -96,7 +97,10 @@ export const updateEventAction = async (
         error: "Permission denied.",
       };
 
-    const updated = await updateEvent(eventId, data);
+    const updated = await updateEvent(eventId, {
+      ...data,
+      date: new Date(data.date),
+    });
     if (updated) {
       await createUserActivity(
         user.id,

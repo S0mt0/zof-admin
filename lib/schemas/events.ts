@@ -8,7 +8,10 @@ export const EventFormSchema = z.object({
   organizer: z.string().optional(),
   excerpt: z.string().optional(),
   slug: z.string(),
-  date: z.date({ message: "Date is required" }),
+  date: z
+    .string({ message: "Date is required" })
+    .trim()
+    .min(2, { message: "Date is required" }),
   startTime: z.string({ message: "Start time is required" }),
   endTime: z.string().optional(),
   location: z.string().min(1, { message: "Location is required" }),

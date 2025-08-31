@@ -44,13 +44,15 @@ export const useWriteEvents = ({
       currentAttendees: initialData?.currentAttendees || 0,
       registrationRequired: initialData?.registrationRequired || false,
       bannerImage: initialData?.bannerImage || "",
-      startTime: initialData?.startTime || "",
-      endTime: initialData?.endTime || "",
+      startTime: initialData?.startTime || "12:00",
+      endTime: initialData?.endTime || "18:00",
       excerpt: initialData?.excerpt || "",
       location: initialData?.location || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
-      date: initialData?.date || new Date(),
+      date: initialData?.date
+        ? new Date(initialData?.date).toISOString().slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
       newTag: "",
     }),
     [initialData]
@@ -74,7 +76,7 @@ export const useWriteEvents = ({
     setFormData((prev) => ({ ...prev, maxAttendees: value }));
   }, []);
 
-  const handleDateChange = useCallback((value: Date) => {
+  const handleDateChange = useCallback((value: string) => {
     setFormData((prev) => ({ ...prev, date: value }));
   }, []);
 
@@ -213,7 +215,6 @@ export const useWriteEvents = ({
 
       const submissionData = {
         ...payload,
-        date: new Date(payload.date),
         status: submitType,
         slug: generateSlug(payload.name),
         ticketPrice: (() => {
@@ -221,7 +222,7 @@ export const useWriteEvents = ({
 
           if (!price) return null;
 
-          if (price.startsWith("₦")) return price;
+          if (price.startsWith("₦") || price.startsWith("N")) return price;
 
           if (!isNaN(Number(price))) {
             return `₦${price}`;

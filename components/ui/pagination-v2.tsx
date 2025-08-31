@@ -71,12 +71,12 @@ export function Pagination({
   const hasNext = currentPage < totalPages;
 
   return (
-    <div className="flex items-center justify-between mt-6 pt-4 border-t flex-wrap gap-4">
+    <div className="flex items-center justify-between mt-6 pt-4 border-t gap-4">
       <div className="hidden sm:block text-sm text-muted-foreground">
         Showing {showingStart} to {showingEnd} of {totalItems} {itemName}
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {/* Previous */}
         <Button
           variant="outline"
