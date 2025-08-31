@@ -75,13 +75,13 @@ export const deleteManyMessages = async (ids: string[]) => {
   }
 };
 
-export const markAsRead = async (id: string) => {
+export const toggleStatus = async (id: string, status: MessageStatus) => {
   try {
     return await db.message.update({
       where: {
         id,
       },
-      data: { status: "read" },
+      data: { status },
     });
   } catch (error) {
     console.log("error deleting many messages", error);

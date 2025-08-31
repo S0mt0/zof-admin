@@ -37,7 +37,7 @@ export const Messages = ({
     handleDelete,
     sendReply,
     handleSelectMessage,
-    readMessage,
+    toggleMessageStatus,
     toggleMessageModal,
     setReplySubject,
     setReplyModalOpen,
@@ -99,7 +99,7 @@ export const Messages = ({
                   handleDeleteMessage={handleDelete}
                   openReplyModal={openReplyModal}
                   handleSelectMessage={handleSelectMessage}
-                  handleToggleReadStatus={readMessage}
+                  handleToggleReadStatus={toggleMessageStatus}
                   selectedMessages={selectedMessages}
                   toggleMessageModal={toggleMessageModal}
                 />
@@ -126,7 +126,7 @@ export const Messages = ({
         messageOpen={messageOpen}
         toggleMessageModal={toggleMessageModal}
         message={activeMessage}
-        markAsRead={readMessage}
+        handleToggleReadStatus={toggleMessageStatus}
       />
 
       <Pagination

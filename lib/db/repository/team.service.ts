@@ -1,21 +1,40 @@
+import { Prisma } from "@prisma/client";
+
 import { db } from "../config";
 
-export const listTeamMembers = async () => {
-  try {
-    return await db.teamMember.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        addedByUser: {
-          select: {
-            name: true,
-            email: true,
-            role: true,
-            image: true,
-          },
+interface ListTeamMembersOptions {
+  where?: Prisma.TeamMemberWhereInput;
+  select?: Prisma.TeamMemberSelect;
+  include?: Prisma.TeamMemberInclude;
+  orderBy?: Prisma.TeamMemberOrderByWithRelationInput;
+}
+export const listTeamMembers = async (
+  options: ListTeamMembersOptions = {}
+): Promise<TeamMember[]> => {
+  const {
+    where,
+    select,
+    include = {
+      addedByUser: {
+        select: {
+          name: true,
+          email: true,
+          role: true,
+          image: true,
         },
       },
-    });
+    },
+    orderBy = { createdAt: "desc" },
+  } = options;
+
+  try {
+    return await db.teamMember.findMany({
+      where,
+      orderBy,
+      ...(select ? { select } : { include }),
+    } as any);
   } catch (e) {
+    console.error(e);
     return [] as TeamMember[];
   }
 };

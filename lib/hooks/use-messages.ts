@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   bulkDeleteMessagesAction,
   deleteMessageAction,
-  markMessageAsRead,
+  toggleMessageStatusAction,
   replyMessageAction,
 } from "../actions/messages";
 
@@ -136,9 +136,9 @@ export const useMessages = (messages: IMessage[]) => {
     });
   };
 
-  const readMessage = async (id: string) => {
+  const toggleMessageStatus = async (id: string, status: MessageStatus) => {
     startTransition(() => {
-      markMessageAsRead(id)
+      toggleMessageStatusAction(id, status)
         .then((res) => {
           if (res?.error) {
             toast.error(res.error);
@@ -177,7 +177,7 @@ export const useMessages = (messages: IMessage[]) => {
     setReplyMessage,
     setReplyModalOpen,
     toggleMessageModal,
-    readMessage,
+    toggleMessageStatus,
     handleSelectMessage,
     handleSelectAll,
   };

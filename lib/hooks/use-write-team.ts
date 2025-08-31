@@ -106,7 +106,6 @@ export const useWriteTeam = ({
             return;
           }
           form.setValue("avatar", objectUrl || initialValues.avatar);
-          console.log({ objectUrl });
         })
         .catch((err) => {
           toast.error("Something went wrong");
@@ -120,13 +119,8 @@ export const useWriteTeam = ({
 
   const onSubmit = (values: z.infer<typeof TeamMemberSchema>) => {
     startTransition(() => {
-      const payload = {
-        ...values,
-        joinDate: new Date(values.joinDate),
-      } as any;
-
       if (mode === "create") {
-        createTeamMemberAction(payload).then((res) => {
+        createTeamMemberAction(values).then((res) => {
           if (res?.error) toast.error(res.error);
           if (res?.success) {
             toast.success(res.success);
@@ -134,7 +128,7 @@ export const useWriteTeam = ({
           }
         });
       } else if (mode === "edit" && initialData?.id) {
-        updateTeamMemberAction(initialData.id, payload).then((res) => {
+        updateTeamMemberAction(initialData.id, values).then((res) => {
           if (res?.error) toast.error(res.error);
           if (res?.success) toast.success(res.success);
         });

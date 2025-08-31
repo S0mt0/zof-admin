@@ -49,6 +49,7 @@ export const createTeamMemberAction = async (
     const payload = {
       ...data,
       addedBy: user.id,
+      joinDate: new Date(data.joinDate),
     };
 
     const created = await createTeamMember(payload);
@@ -88,7 +89,10 @@ export const updateTeamMemberAction = async (
   try {
     const data = validated.data;
 
-    const updated = await updateTeamMember(id, data);
+    const updated = await updateTeamMember(id, {
+      ...data,
+      joinDate: new Date(data.joinDate),
+    });
     if (updated) {
       await createUserActivity(
         user.id,

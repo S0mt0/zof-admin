@@ -39,9 +39,7 @@ export async function POST(request: Request) {
     await mailer.send({
       subject: data.subject,
       to: "zitaonyekafoundation@gmail.com",
-      text: `You have a new message from ${data.sender} (${data.email}):
-    
-    ${data.content}`,
+      text: `You have a new message from ${data.sender} (${data.email}): ${data.content}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
           <h2 style="color: #444;">New Message Received</h2>
@@ -65,6 +63,8 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
+    console.log({ error });
+
     return Response.json(
       { message: "Something went wrong, try again." },
       {

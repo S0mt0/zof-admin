@@ -5,14 +5,17 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import {
   deleteManyMessages,
   deleteMessage,
-  markAsRead,
+  toggleStatus,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
 import { capitalize, currentUser } from "../utils";
 import { allowedAdminEmailsList } from "../constants";
 import { db } from "../db/config";
 
-export const markMessageAsRead = async (id: string) => {
+export const toggleMessageStatusAction = async (
+  id: string,
+  status: MessageStatus
+) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
 
@@ -24,7 +27,7 @@ export const markMessageAsRead = async (id: string) => {
   }
 
   try {
-    await markAsRead(id);
+    await toggleStatus(id, status);
     revalidatePath("/messages");
     return { success: "Message marked as read" };
   } catch (error) {

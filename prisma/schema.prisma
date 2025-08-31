@@ -43,7 +43,6 @@ enum TeamMemberStatus {
 enum MessageStatus {
   unread
   read
-  replied
 }
 
 model User {

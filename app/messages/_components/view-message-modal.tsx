@@ -7,22 +7,22 @@ export default function ViewMessageModal({
   message,
   messageOpen,
   toggleMessageModal,
-  markAsRead,
+  handleToggleReadStatus,
 }: {
   message?: IMessage | null;
   toggleMessageModal: () => void;
   messageOpen: boolean;
-  markAsRead: (id: string) => Promise<void>;
+  handleToggleReadStatus: (id: string, status: MessageStatus) => Promise<void>;
 }) {
   if (!messageOpen || !message) return null;
 
   useEffect(() => {
-    if (message.status !== "read") {
+    if (message.status === "unread") {
       (async () => {
-        await markAsRead(message.id);
+        await handleToggleReadStatus(message.id, "read");
       })();
     }
-  }, [message.id, message.status, markAsRead]);
+  }, [message.id, message.status, handleToggleReadStatus]);
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">

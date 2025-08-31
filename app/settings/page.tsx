@@ -1,5 +1,6 @@
-import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 import { unstable_cache } from "next/cache";
+
+import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { FoundationInfo } from "./_components/foundation-info";
 import { WebsiteSettings } from "./_components/website-settings";

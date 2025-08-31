@@ -17,7 +17,7 @@ interface MessageCardProps {
   selectedMessages: string[];
   handleSelectMessage: (id: string) => void;
   openReplyModal: (message: IMessage) => void;
-  handleToggleReadStatus: (id: string) => void;
+  handleToggleReadStatus: (id: string, status: MessageStatus) => void;
   handleDeleteMessage: (id: string) => void;
   toggleMessageModal: (id: string) => void;
 }
@@ -101,12 +101,15 @@ export const MessageCard = ({
               <DropdownMenuItem
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleToggleReadStatus(message.id);
+                  handleToggleReadStatus(
+                    message.id,
+                    message.status === "read" ? "unread" : "read"
+                  );
                 }}
                 className="cursor-pointer"
               >
                 <Mail className="mr-2 h-4 w-4" />
-                Mark as read
+                Mark as {message.status === "unread" ? "read" : "unread"}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e) => {

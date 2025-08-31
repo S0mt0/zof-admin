@@ -1,4 +1,4 @@
-type MessageStatus = "read" | "unread" | "replied";
+type MessageStatus = "read" | "unread";
 
 interface IMessage {
   id: string;
