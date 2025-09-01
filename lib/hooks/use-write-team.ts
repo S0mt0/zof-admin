@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { TeamMemberSchema } from "../schemas";
 import { handleFileUpload } from "../utils";
@@ -16,9 +17,7 @@ import {
   createTeamMemberAction,
   updateTeamMemberAction,
 } from "../actions/team";
-
-const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
-const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 
 export const useWriteTeam = ({
   initialData,
@@ -30,6 +29,7 @@ export const useWriteTeam = ({
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [skillsInput, setSkillsInput] = useState("");
+  const router = useRouter();
 
   const initialValues = useMemo(
     () => ({
@@ -86,12 +86,12 @@ export const useWriteTeam = ({
       return;
     }
     const file = files[0];
-    if (!ACCEPTED_TYPES.includes(file.type)) {
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       toast.error("Unsupported file type. Use jpg, jpeg, png, or gif.");
       e.target.value = "";
       return;
     }
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > MAX_IMAGE_SIZE) {
       toast.error("File size must not be more than 8MB");
       e.target.value = "";
       return;
@@ -125,12 +125,16 @@ export const useWriteTeam = ({
           if (res?.success) {
             toast.success(res.success);
             form.reset();
+            router.push("/team");
           }
         });
       } else if (mode === "edit" && initialData?.id) {
         updateTeamMemberAction(initialData.id, values).then((res) => {
           if (res?.error) toast.error(res.error);
-          if (res?.success) toast.success(res.success);
+          if (res?.success) {
+            toast.success(res.success);
+            router.push("/team");
+          }
         });
       }
     });

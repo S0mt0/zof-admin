@@ -289,7 +289,7 @@ export default function TeamForm({ mode, initialData }: TeamFormProps) {
                     <Save className="h-4 w-4 mr-2" />
                     {isPending
                       ? mode === "create"
-                        ? "Creating member..."
+                        ? "Adding member..."
                         : "Updating member..."
                       : mode === "create"
                       ? "Add Team Member"

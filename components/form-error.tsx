@@ -9,8 +9,8 @@ export const FormError = ({
 }) => {
   if (!message) return null;
   return (
-    <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive">
-      {showIcon && <TriangleAlert className="h-4 w-4" />}
+    <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive @container">
+      {showIcon && <TriangleAlert className="h-4 w-4 @max-[520px]:hidden" />}
       <p> {message}</p>
     </div>
   );
