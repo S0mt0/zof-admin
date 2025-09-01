@@ -32,3 +32,5 @@ export const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const MAX_IMAGE_SIZE = 8 * 1000 * 1024; // 8MB
+
+export const EDITORIAL_ROLES = ["admin", "editor"];

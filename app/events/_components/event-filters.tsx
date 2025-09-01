@@ -11,6 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCurrentUser } from "@/lib/hooks";
+import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export function EventFilters({
   searchParams,
@@ -74,6 +76,9 @@ export function EventFilters({
         return "All Featured";
     }
   };
+
+  const user = useCurrentUser();
+  const isDisabled = !user || !EDITORIAL_ROLES.includes(user.role);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
@@ -148,7 +153,11 @@ export function EventFilters({
 
       <div className="flex items-center gap-2">
         {selectedCount > 0 && (
-          <Button variant="destructive" onClick={onBulkDelete}>
+          <Button
+            variant="destructive"
+            onClick={onBulkDelete}
+            disabled={isDisabled}
+          >
             <Trash2 className="h-4 w-4 mr-2" />
             Delete ({selectedCount})
           </Button>

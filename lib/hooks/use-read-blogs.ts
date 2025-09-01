@@ -3,10 +3,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { bulkDeleteBlogsAction, deleteBlogAction } from "../actions/blogs";
+import { EDITORIAL_ROLES } from "../constants";
+import { useCurrentUser } from "./use-current-user";
 
 export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const router = useRouter();
+  const user = useCurrentUser();
 
   const handleSelectBlog = (blogId: string) => {
     setSelectedBlogs((prev) =>
@@ -32,6 +35,11 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   };
 
   const handleBulkDelete = async () => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (selectedBlogs.length === 0) return;
 
     if (
@@ -57,6 +65,11 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   };
 
   const handleDeleteBlog = async (blogId: string) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this blog post?")) {
       const loading = toast.loading("Please wait...");
       try {

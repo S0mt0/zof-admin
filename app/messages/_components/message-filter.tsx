@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useCurrentUser } from "@/lib/hooks";
+import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export function MessageFilters({
   searchParams,
@@ -49,8 +51,6 @@ export function MessageFilters({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "all":
-        return "All Messages";
       case "read":
         return "Read";
       case "unread":
@@ -60,6 +60,9 @@ export function MessageFilters({
         return "All Status";
     }
   };
+
+  const user = useCurrentUser();
+  const isDisabled = !user || !EDITORIAL_ROLES.includes(user.role);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -112,7 +115,11 @@ export function MessageFilters({
 
       <div className="flex items-center gap-2">
         {selectedCount > 0 && (
-          <Button variant="destructive" onClick={onBulkDelete}>
+          <Button
+            variant="destructive"
+            onClick={onBulkDelete}
+            disabled={isDisabled}
+          >
             <Trash2 className="h-4 w-4 mr-2" />
             Delete ({selectedCount})
           </Button>

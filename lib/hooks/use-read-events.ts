@@ -3,10 +3,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { bulkDeleteEventsAction, deleteEventAction } from "../actions/events";
+import { EDITORIAL_ROLES } from "../constants";
+import { useCurrentUser } from "./use-current-user";
 
 export const useReadEvents = (events: IEvent[]) => {
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const router = useRouter();
+  const user = useCurrentUser();
 
   const handleSelectEvent = (eventId: string) => {
     setSelectedEvents((prev) =>
@@ -32,6 +35,11 @@ export const useReadEvents = (events: IEvent[]) => {
   };
 
   const handleBulkDelete = async () => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (selectedEvents.length === 0) return;
 
     if (
@@ -57,6 +65,11 @@ export const useReadEvents = (events: IEvent[]) => {
   };
 
   const handleDeleteEvent = async (eventId: string) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this event?")) {
       const loading = toast.loading("Please wait...");
       try {

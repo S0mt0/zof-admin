@@ -2,6 +2,9 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import BlogForm from "../../_components/blog-form/form";
 import { getBlogBySlug } from "@/lib/db/repository";
 import { BlogNotFound } from "../../_components/not-found";
+import { Unauthorized } from "@/components/unauthorized";
+import { currentUser } from "@/lib/utils";
+import { EDITORIAL_ROLES } from "@/lib/constants";
 
 interface EditBlogPostPageProps {
   params: {
@@ -12,6 +15,9 @@ interface EditBlogPostPageProps {
 export default async function EditBlogPostPage({
   params,
 }: EditBlogPostPageProps) {
+  const user = await currentUser();
+  if (!user || !EDITORIAL_ROLES.includes(user.role)) return <Unauthorized />;
+
   const blog = await getBlogBySlug(params.slug);
 
   if (!blog) return <BlogNotFound />;

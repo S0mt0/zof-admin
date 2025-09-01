@@ -3,8 +3,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { deleteTeamMemberAction, emailTeamMemberAction } from "../actions/team";
+import { useCurrentUser } from "./use-current-user";
+import { EDITORIAL_ROLES } from "../constants";
 
 export const useReadTeam = (members: TeamMember[]) => {
+  const user = useCurrentUser();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -37,6 +40,11 @@ export const useReadTeam = (members: TeamMember[]) => {
   };
 
   const handleDelete = (member: TeamMember) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (!confirm(`Remove ${member.name}?`)) return;
     startTransition(() => {
       deleteTeamMemberAction(member.id).then((res) => {
@@ -47,6 +55,11 @@ export const useReadTeam = (members: TeamMember[]) => {
   };
 
   const openEmailModal = (member: TeamMember) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     setEmailTo(member.email);
     setEmailSubject("");
     setEmailMessage("");
@@ -54,6 +67,11 @@ export const useReadTeam = (members: TeamMember[]) => {
   };
 
   const sendEmail = () => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (!emailTo || !emailSubject || !emailMessage) {
       toast.error("All fields are required");
       return;

@@ -7,6 +7,8 @@ import {
   toggleMessageStatusAction,
   replyMessageAction,
 } from "../actions/messages";
+import { EDITORIAL_ROLES } from "../constants";
+import { useCurrentUser } from "./use-current-user";
 
 export const useMessages = (messages: IMessage[]) => {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -20,6 +22,8 @@ export const useMessages = (messages: IMessage[]) => {
   const [messageOpen, setMessageOpen] = useState(false);
 
   const [activeMessage, setActiveMessage] = useState<IMessage | null>();
+
+  const user = useCurrentUser();
 
   const handleSelectMessage = (messageId: string) => {
     setSelectedMessages((prev) =>
@@ -47,6 +51,11 @@ export const useMessages = (messages: IMessage[]) => {
   };
 
   const handleDelete = (id: string) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (!confirm("Delete message?")) return;
 
     const loading = toast.loading("Deleting...");
@@ -69,6 +78,11 @@ export const useMessages = (messages: IMessage[]) => {
   };
 
   const handleBulkDelete = async () => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     if (selectedMessages.length === 0) return;
 
     if (
@@ -94,6 +108,11 @@ export const useMessages = (messages: IMessage[]) => {
   };
 
   const openReplyModal = (message: IMessage) => {
+    if (!user || !EDITORIAL_ROLES.includes(user.role)) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     setReplyTo(message.email);
     setReplySubject(`Re: ${message.subject}`);
     setReplyMessage("");

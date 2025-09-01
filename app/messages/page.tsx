@@ -3,6 +3,9 @@ import { unstable_cache } from "next/cache";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Messages } from "./_components/messages";
 import { countUnreadMessages, getAllMessages } from "@/lib/db/repository";
+import { currentUser } from "@/lib/utils";
+import { Unauthorized } from "@/components/unauthorized";
+import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export const revalidate = 300;
 
@@ -16,6 +19,9 @@ export default async function MessagesPage({
     limit?: string;
   };
 }) {
+  const user = await currentUser();
+  if (!user || !EDITORIAL_ROLES.includes(user.role)) return <Unauthorized />;
+
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams?.limit) || 10;
 

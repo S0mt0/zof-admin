@@ -4,8 +4,15 @@ import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { FoundationInfo } from "./_components/foundation-info";
 import { WebsiteSettings } from "./_components/website-settings";
+import { Unauthorized } from "@/components/unauthorized";
+
+import { currentUser } from "@/lib/utils";
+import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export default async function Page() {
+  const user = await currentUser();
+  if (!user || !EDITORIAL_ROLES.includes(user.role)) return <Unauthorized />;
+
   const getSettingsCached = unstable_cache(getWebsiteSettings, ["settings"], {
     tags: ["settings"],
     revalidate: 300,

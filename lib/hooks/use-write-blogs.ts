@@ -24,7 +24,7 @@ export const useWriteBlogs = ({
   initialData,
   mode,
 }: {
-  initialData?: Blog | null;
+  initialData?: Omit<Blog, "comments"> | null;
   mode: "create" | "edit";
 }) => {
   const router = useRouter();

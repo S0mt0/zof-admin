@@ -23,7 +23,7 @@ import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
 import { useWriteBlogs } from "@/lib/hooks";
 
 export default function BlogForm(props: {
-  initialData?: Blog | null;
+  initialData?: Omit<Blog, "comments"> | null;
   mode: "create" | "edit";
 }) {
   const {
