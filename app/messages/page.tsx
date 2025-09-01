@@ -4,6 +4,8 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { Messages } from "./_components/messages";
 import { countUnreadMessages, getAllMessages } from "@/lib/db/repository";
 
+export const revalidate = 300;
+
 export default async function MessagesPage({
   searchParams,
 }: {

@@ -7,6 +7,8 @@ import { QuickActions } from "./_components/quick-actions";
 import { UsersRecentActivities } from "./_components/recent-activities";
 import { getAppStats } from "@/lib/db/repository";
 
+export const revalidate = 300;
+
 export default async function Dashboard({
   searchParams,
 }: {
