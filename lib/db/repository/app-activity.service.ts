@@ -2,18 +2,18 @@ import { prismaPaginate } from "@/lib/utils/db.utils";
 import { db } from "../config";
 import { emptyPaginatedData } from "@/lib/constants";
 
-export const getUsersRecentActivities = async (
+export const getAppActivities = async (
   page: number,
   limit: number,
-  userId: string
+  userId?: string
 ) => {
   try {
     return await prismaPaginate({
       page,
       limit,
-      model: db.userActivity,
+      model: db.appActivity,
       args: {
-        where: { userId },
+        where: userId ? { userId } : {},
         orderBy: { createdAt: "desc" },
       },
     });
@@ -24,15 +24,10 @@ export const getUsersRecentActivities = async (
   }
 };
 
-export const createUserActivity = async (
-  userId: string,
-  title: string,
-  description: string
-) => {
+export const addAppActivity = async (title: string, description: string) => {
   try {
-    return await db.userActivity.create({
+    return await db.appActivity.create({
       data: {
-        userId,
         title,
         description,
       },

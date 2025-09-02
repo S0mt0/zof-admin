@@ -8,6 +8,7 @@ import { Unauthorized } from "@/components/unauthorized";
 
 import { currentUser } from "@/lib/utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
+import DashboardSettings from "./_components/dashboard-settings";
 
 export default async function Page() {
   const user = await currentUser();
@@ -33,6 +34,7 @@ export default async function Page() {
       <div className="grid gap-6">
         <FoundationInfo foundationInfo={foundationInfo} />
         <WebsiteSettings websiteSettings={websiteSettings} />
+        <DashboardSettings />
       </div>
     </div>
   );

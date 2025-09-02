@@ -13,7 +13,7 @@ import { Pagination } from "@/components/ui/pagination-v2";
 import { TableContent } from "./table-content";
 
 export function BlogTable({
-  blogs,
+  data: blogs,
   selectedBlogs,
   onSelectBlog,
   onSelectAll,

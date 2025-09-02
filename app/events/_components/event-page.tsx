@@ -5,11 +5,7 @@ import { EventFilters } from "./event-filters";
 import { EventTable } from "./event-table";
 import EventEmptyState from "./event-empty-state";
 
-export function EventPage({
-  events,
-  pagination,
-  searchParams,
-}: EventPageProps) {
+export function EventPage({ data, pagination, searchParams }: EventPageProps) {
   const {
     selectedEvents,
     allCurrentSelected,
@@ -20,9 +16,9 @@ export function EventPage({
     handleSelectAll,
     handleSelectEvent,
     handleViewEvent,
-  } = useReadEvents(events);
+  } = useReadEvents(data);
 
-  if (events.length === 0) {
+  if (data.length === 0) {
     return (
       <div>
         <EventFilters
@@ -44,7 +40,7 @@ export function EventPage({
       />
 
       <EventTable
-        events={events}
+        data={data}
         selectedEvents={selectedEvents}
         onSelectEvent={handleSelectEvent}
         onSelectAll={handleSelectAll}

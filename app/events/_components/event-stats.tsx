@@ -1,14 +1,15 @@
 "use client";
 import { Calendar, Users, Star, Clock } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getEventsStats } from "@/lib/db/repository";
+import { ActivityStats } from "@/components/activity-stats";
 
 export function EventStats({
   completed,
   featured,
   total,
   upcoming,
-}: EventsStats) {
+}: Awaited<ReturnType<typeof getEventsStats>>) {
   const stats = [
     {
       title: "Total Events",
@@ -38,20 +39,8 @@ export function EventStats({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat) => (
-        <Card key={stat.title}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-            <div
-              className={`h-8 w-8 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-md`}
-            >
-              <stat.icon className="h-4 w-4 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stat.value}</div>
-          </CardContent>
-        </Card>
+      {stats.map((stat, idx) => (
+        <ActivityStats {...stat} key={idx} />
       ))}
     </div>
   );

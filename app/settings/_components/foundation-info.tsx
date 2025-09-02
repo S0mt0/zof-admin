@@ -28,12 +28,12 @@ import {
 import { FoundationInfoSchema } from "@/lib/schemas";
 import { updateFoundationInfoAction } from "@/lib/actions/settings";
 import {
-  foundationAddress,
-  foundationDescription,
-  foundationEmail,
-  foundationName,
+  FOUNDATION_ADDRESS,
+  FOUNDATION_DESCRIPTION,
+  FOUNDATION_EMAIL,
+  FOUNDATION_NAME,
 } from "@/lib/constants";
-import { foundationPhone } from "@/lib/constants";
+import { FOUNDATION_PHONE } from "@/lib/constants";
 
 interface FoundationInfoProps {
   foundationInfo: IFoundationInfo | null;
@@ -46,11 +46,11 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
   const form = useForm<z.infer<typeof FoundationInfoSchema>>({
     resolver: zodResolver(FoundationInfoSchema),
     defaultValues: {
-      name: foundationInfo?.name || foundationName,
-      email: foundationInfo?.email || foundationEmail,
-      address: foundationInfo?.address || foundationAddress,
-      phone: foundationInfo?.phone || foundationPhone,
-      description: foundationInfo?.description || foundationDescription,
+      name: foundationInfo?.name || FOUNDATION_NAME,
+      email: foundationInfo?.email || FOUNDATION_EMAIL,
+      address: foundationInfo?.address || FOUNDATION_ADDRESS,
+      phone: foundationInfo?.phone || FOUNDATION_PHONE,
+      description: foundationInfo?.description || FOUNDATION_DESCRIPTION,
     },
   });
 

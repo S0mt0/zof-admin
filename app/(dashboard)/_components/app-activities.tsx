@@ -1,8 +1,8 @@
-import { unstable_cache } from "next/cache";
 import { formatDistanceToNow } from "date-fns";
+import { AppActivity } from "@prisma/client";
+import { PackageOpen } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination-v2";
-import { getUsersRecentActivities } from "@/lib/db/repository/user-activity.service";
 import {
   Card,
   CardContent,
@@ -10,32 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PackageOpen } from "lucide-react";
-import { currentUser } from "@/lib/utils";
 
-export async function UsersRecentActivities({
-  page = 1,
-  limit = 5,
-}: {
-  page?: number;
-  limit?: number;
-}) {
-  const usersRecentActivities = unstable_cache(
-    getUsersRecentActivities,
-    ["users-recent-activities"],
-    {
-      tags: ["users-recent-activities"],
-      revalidate: 300, // revalidate every 5 mimnutes
-    }
-  );
-  const user = await currentUser();
-
-  const { data, pagination } = await usersRecentActivities(
-    page,
-    limit,
-    user?.id!
-  );
-
+export async function AppActivities({
+  data,
+  pagination,
+}: Paginated<AppActivity>) {
   return (
     <Card className="col-span-4 max-w-full">
       <CardHeader>
@@ -43,7 +22,7 @@ export async function UsersRecentActivities({
         <CardDescription>
           {data?.length
             ? "Latest updates across your dashboard"
-            : "Your recent activities will appear here"}
+            : "There are no recent activites or updates yet"}
         </CardDescription>
       </CardHeader>
 

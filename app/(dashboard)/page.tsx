@@ -4,21 +4,34 @@ import { unstable_cache } from "next/cache";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { ActivityStats } from "@/components/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
-import { UsersRecentActivities } from "./_components/recent-activities";
-import { getAppStats } from "@/lib/db/repository";
+import { AppActivities } from "./_components/app-activities";
+import { getAppStats, getAppActivities } from "@/lib/db/repository";
 
-export const revalidate = 300;
+export const revalidate = 300; // revalidate segment every 5 minutes
 
 export default async function Dashboard({
   searchParams,
 }: {
   searchParams: { page?: string; limit?: string };
 }) {
-  const activityStats = unstable_cache(getAppStats, ["app-stats"], {
-    tags: ["app-stats"],
-    revalidate: 300, // revalidate every 5 minutes
+  const page = Number(searchParams.page) || 1;
+  const limit = Number(searchParams.limit) || 5;
+
+  const getAppStatsCached = unstable_cache(getAppStats, ["app-stats"], {
+    revalidate: 300, // 5 minutes
   });
-  const { blogs, events, team, messages } = await activityStats();
+
+  const getAppActivitiesCached = unstable_cache(
+    getAppActivities,
+    ["app-activities"],
+    {
+      revalidate: 300, // 5 minutes
+    }
+  );
+
+  const [{ blogs, events, messages, team }, activitiesData] = await Promise.all(
+    [getAppStatsCached(), getAppActivitiesCached(page, limit)]
+  );
 
   const cards = [
     {
@@ -47,9 +60,6 @@ export default async function Dashboard({
     },
   ];
 
-  const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 5;
-
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader />
@@ -61,7 +71,7 @@ export default async function Dashboard({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <UsersRecentActivities page={page} limit={limit} />
+        <AppActivities {...activitiesData} />
         <QuickActions />
       </div>
     </div>

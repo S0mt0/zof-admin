@@ -16,7 +16,7 @@ import EmailModal from "@/components/email-modal";
 import ViewMessageModal from "./view-message-modal";
 
 export const Messages = ({
-  messages,
+  data: messages,
   pagination,
   searchParams,
   unreadCount,

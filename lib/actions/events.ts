@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import * as z from "zod";
 
 import {
-  createUserActivity,
+  addAppActivity,
   createEvent,
   updateEvent,
   deleteEvent,
@@ -15,12 +15,14 @@ import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { db } from "../db/config";
 import { EventFormSchema } from "../schemas";
+import { EDITORIAL_ROLES } from "../constants";
 
 export const createEventAction = async (
   data: z.infer<typeof EventFormSchema>
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
     const existingEvent = await (async () => {
@@ -35,26 +37,29 @@ export const createEventAction = async (
       }
     })();
 
-    if (existingEvent)
+    if (existingEvent) {
       return {
         error: "An event with the same name already exists, try again.",
       };
+    }
 
     const newEvent = await createEvent({
       ...data,
       createdBy: user.id,
       date: new Date(data.date),
     });
+
     if (newEvent) {
-      await createUserActivity(
-        user.id,
-        "New event created",
-        capitalize(newEvent.name)
+      await addAppActivity(
+        "New event added",
+        `${capitalize(user.name!)} just added a new event, "${capitalize(
+          newEvent.name
+        )}"`
       );
 
+      revalidatePath("/");
       revalidateTag("profile-stats");
       revalidatePath("/events");
-      revalidatePath("/");
       revalidateTag("event");
     }
     return { success: "Event created", data: { event: newEvent } };
@@ -69,6 +74,7 @@ export const updateEventAction = async (
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
     const event = await (async () => {
@@ -83,53 +89,25 @@ export const updateEventAction = async (
       }
     })();
 
-    if (!event)
-      return {
-        error: "Event not found",
-      };
-
-    if (
-      event.createdBy !== user.id &&
-      user.role !== "admin" &&
-      user.role !== "editor"
-    )
-      return {
-        error: "Permission denied.",
-      };
+    if (!event) return { error: "Event not found" };
 
     const updated = await updateEvent(eventId, {
       ...data,
       date: new Date(data.date),
     });
+
     if (updated) {
-      await createUserActivity(
-        user.id,
-        "Event details updated",
-        `Name: "${capitalize(updated.name)}"`
+      await addAppActivity(
+        "Event updated",
+        `${capitalize(user.name!)} (${
+          user.role
+        }) made some changes to the event, "${capitalize(event.name)}"`
       );
 
-      if (updated.createdBy !== user.id && updated?.createdByUser?.email) {
-        if (updated?.createdByUser?.emailNotifications) {
-          const mailer = new MailService();
-          await mailer.sendEventUpdateEmail(user as any, updated);
-        }
-
-        await createUserActivity(
-          updated?.createdBy!,
-          "Event updated",
-          `Your event named "${updated.name}" was updated by ${
-            user.role === "admin" ? "an administrator" : "an editor"
-          }, ${capitalize(user.name!)} on ${format(
-            updated.updatedAt,
-            "EEEE, MMMM d, yyyy 'at' h:mmaaa"
-          )}.`
-        );
-      }
-
-      revalidateTag("profile-stats");
-      revalidateTag("event");
-      revalidatePath("/events");
       revalidatePath("/");
+      revalidateTag("profile-stats");
+      revalidatePath("/events");
+      revalidateTag("event");
     }
     return { success: "Event updated", data: { event: updated } };
   } catch (e) {
@@ -140,6 +118,7 @@ export const updateEventAction = async (
 export const deleteEventAction = async (eventId: string) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
     const event = await (async () => {
@@ -156,47 +135,29 @@ export const deleteEventAction = async (eventId: string) => {
 
     if (!event) return { error: "Event does not exist" };
 
-    if (
-      event.createdBy !== user.id &&
-      user.role !== "admin" &&
-      user.role !== "editor"
-    )
-      return {
-        error: "Permission denied.",
-      };
-
     const deleted = await deleteEvent(event.id);
 
     if (deleted) {
-      await createUserActivity(
-        user.id,
+      await addAppActivity(
         "Event deleted",
-        `Name: "${capitalize(deleted.name)}"`
+        `${capitalize(user.name!)} (${
+          user.role
+        }) deleted the event, "${capitalize(deleted.name)}"`
       );
 
-      if (deleted.createdBy !== user.id && deleted.createdByUser?.email) {
-        if (deleted?.createdByUser?.emailNotifications) {
-          const mailer = new MailService();
-          await mailer.sendEventDeleteEmail(user as any, deleted);
-        }
-
-        await createUserActivity(
-          deleted?.createdBy!,
-          "Event deleted",
-          `Your event named 
-      "${capitalize(deleted.name)}" was deleted by ${
-            user.role === "admin" ? "an administrator" : "an editor"
-          }, ${capitalize(user.name!)} on ${format(
-            deleted.updatedAt,
-            "EEEE, MMMM d, yyyy 'at' h:mmaaa"
-          )}.`
-        );
+      if (
+        deleted.createdBy !== user.id &&
+        deleted.createdByUser?.email &&
+        deleted?.createdByUser?.emailNotifications
+      ) {
+        const mailer = new MailService();
+        await mailer.sendEventDeleteEmail(user as any, deleted);
       }
 
-      revalidateTag("profile-stats");
-      revalidateTag("event");
-      revalidatePath("/events");
       revalidatePath("/");
+      revalidateTag("profile-stats");
+      revalidatePath("/events");
+      revalidateTag("event");
     }
 
     return { success: "Event deleted successfully" };
@@ -208,52 +169,22 @@ export const deleteEventAction = async (eventId: string) => {
 export const bulkDeleteEventsAction = async (ids: string[]) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session. Please log in again." };
-
-  if (user.role !== "admin" && user.role !== "editor")
-    return {
-      error: "Permission denied.",
-    };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
     const result = await deleteManyEvents(ids);
     if (!result) return { error: "No events were deleted." };
 
-    if (result.count >= 5) {
-      const users = await (async () => {
-        return await (
-          await import("../db/repository/user.service")
-        ).getAllUsers();
-      })();
+    await addAppActivity(
+      "Event(s) deleted",
+      `${capitalize(user.name!)} (${user.role}) deleted ${
+        result.count
+      } event(s)"`
+    );
 
-      const bulkActivities = users
-        .filter((u) => u.id !== user.id)
-        .map((u) => ({
-          userId: u.id,
-          title: "Multiple event deleted",
-          description: `${result.count} event were removed by ${capitalize(
-            user.name!
-          )}`,
-        }));
-
-      await db.userActivity.createMany({ data: bulkActivities });
-
-      const usersToNotifyEmails = users
-        .filter((u) => u.email !== user.email && u.emailNotifications)
-        .map((u) => u.email);
-
-      if (usersToNotifyEmails.length > 0) {
-        const mailer = new MailService();
-        await mailer.sendEventBulkDeleteEmail(
-          user as any,
-          usersToNotifyEmails,
-          result.count
-        );
-      }
-    }
-
+    revalidatePath("/");
     revalidateTag("profile-stats");
     revalidatePath("/events");
-    revalidatePath("/");
     revalidateTag("event");
 
     return { success: `${result.count} event(s) deleted successfully` };

@@ -91,14 +91,14 @@ export function EventFilters({
           className="pl-10 w-full"
         />
       </div>
-      <div className="flex items-center gap-4">
-        <div className="hidden lg:flex relative flex-1 max-w-sm">
+      <div className="flex items-center gap-4 w-full max-w-4xl">
+        <div className="hidden lg:flex relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search events..."
             defaultValue={searchParams.search || ""}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-full"
           />
         </div>
 

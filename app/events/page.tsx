@@ -5,6 +5,8 @@ import { EventPage } from "./_components/event-page";
 import { EventStats } from "./_components/event-stats";
 import { DashboardHeader } from "@/components/dashboard-header";
 
+export const revalidate = 300; // revalidate segment every 5 minutes
+
 export default async function Page({
   searchParams,
 }: {
@@ -19,53 +21,37 @@ export default async function Page({
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams?.limit) || 10;
 
-  const getEventsCached = unstable_cache(
-    getAllEvents,
-    [
-      "events",
-      page.toString(),
-      limit.toString(),
-      searchParams.search || "",
-      searchParams.status || "",
-      searchParams.featured || "",
-      searchParams.limit || "",
-    ],
-    {
-      tags: ["events"],
-      revalidate: false,
-    }
-  );
+  const getEventsCached = unstable_cache(getAllEvents, ["events"], {
+    tags: ["events"],
+    revalidate: 300,
+  });
 
   const getEventsStatsCached = unstable_cache(
     getEventsStats,
     ["events-stats"],
     {
       tags: ["events-stats"],
-      revalidate: false,
+      revalidate: 300,
     }
   );
 
-  const { data: events, pagination } = await getEventsCached({
-    page,
-    limit,
-    search: searchParams.search,
-    status: searchParams.status,
-    featured: searchParams.featured,
-  });
-
-  const eventsStats = await getEventsStatsCached();
+  const [stats, eventsData] = await Promise.all([
+    getEventsStatsCached(),
+    getEventsCached({
+      page,
+      limit,
+      search: searchParams.search,
+      status: searchParams.status,
+      featured: searchParams.featured,
+    }),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader breadcrumbs={[{ label: "Events" }]} />
 
-      <EventStats {...eventsStats} />
-
-      <EventPage
-        events={events}
-        pagination={pagination}
-        searchParams={searchParams}
-      />
+      <EventStats {...stats} />
+      <EventPage {...eventsData} searchParams={searchParams} />
     </div>
   );
 }

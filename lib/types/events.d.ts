@@ -37,14 +37,7 @@ interface EventFiltersProps {
   onBulkDelete: () => void;
 }
 
-interface EventPageProps {
-  events: IEvent[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
+interface EventPageProps extends Paginated<IEvent> {
   searchParams: {
     page?: string;
     search?: string;
@@ -54,8 +47,7 @@ interface EventPageProps {
   };
 }
 
-interface EventTableProps {
-  events: IEvent[];
+interface EventTableProps extends Paginated<IEvent> {
   selectedEvents: string[];
   onSelectEvent: (eventId: string) => void;
   onSelectAll: () => void;
@@ -64,12 +56,6 @@ interface EventTableProps {
   onDeleteEvent: (eventId: string) => void;
   allCurrentSelected: boolean;
   someCurrentSelected: boolean;
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
   searchParams: {
     page?: string;
     search?: string;
@@ -87,11 +73,3 @@ interface EventTableContentProps {
   onEditEvent: (event: IEvent) => void;
   onDeleteEvent: (eventId: string) => void;
 }
-
-type EventsStats = {
-  total: number;
-  upcoming: number;
-  completed: number;
-  draft: number;
-  featured: number;
-};

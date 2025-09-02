@@ -113,6 +113,7 @@ export const useMessages = (messages: IMessage[]) => {
       return;
     }
 
+    setActiveMessage(message);
     setReplyTo(message.email);
     setReplySubject(`Re: ${message.subject}`);
     setReplyMessage("");
@@ -137,13 +138,19 @@ export const useMessages = (messages: IMessage[]) => {
 
     const loading = toast.loading("Sending reply...");
     startTransition(() => {
-      replyMessageAction(replyTo, replySubject, replyMessage)
+      replyMessageAction(
+        replyTo,
+        replySubject,
+        replyMessage,
+        activeMessage?.sender
+      )
         .then((res) => {
           if (res?.error) {
             toast.error(res.error);
           } else if (res?.success) {
             toast.success(res.success);
             setReplyModalOpen((curr) => !curr);
+            setActiveMessage(null);
           }
         })
         .catch(() => {

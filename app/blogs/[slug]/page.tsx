@@ -45,8 +45,6 @@ export default async function ViewBlogPage({
 
   if (!blog) return <BlogNotFound />;
 
-  console.log("type of publishedAt: ", blog.publishedAt);
-
   const displayDate = blog.publishedAt || blog.createdAt;
   const readTime = getReadTime(blog.content);
 
@@ -184,7 +182,7 @@ export default async function ViewBlogPage({
         )}
 
         {/* Comments */}
-        {blog.comments.length > 0 && (
+        {blog?.comments.length > 0 && (
           <div className="mb-8">
             <Separator className="mb-6" />
             <div className="space-y-3">

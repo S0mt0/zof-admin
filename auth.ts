@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
-import { allowedAdminEmailsList } from "./lib/constants";
+import { DEFAULT_ADMIN_EMAILS } from "./lib/constants";
 import { getUserById, updateUser } from "./lib/db/repository";
 import { db } from "./lib/db/config";
 
@@ -21,7 +21,7 @@ export const {
     async linkAccount({ user }) {
       await updateUser(user.id!, {
         emailVerified: new Date(),
-        role: allowedAdminEmailsList.includes(user.email!) ? "admin" : "user",
+        role: DEFAULT_ADMIN_EMAILS.includes(user.email!) ? "admin" : "user",
       });
     },
   },

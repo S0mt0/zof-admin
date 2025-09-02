@@ -73,7 +73,6 @@ model User {
   createdEvents Event[]
   donations Donation[]
   messages Message[]
-  activities UserActivity[]
   accounts      Account[]
   addedTeamMembers TeamMember[]
 }
@@ -248,13 +247,11 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
-model UserActivity {
+model AppActivity {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   title         String      // e.g., "New blog post published"
   description   String      // e.g., "Community Outreach Program Success"
   time          DateTime    @default(now())
-  userId        String?     @db.ObjectId
-  user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Timestamps
   createdAt DateTime @default(now())

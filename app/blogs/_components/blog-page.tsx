@@ -5,7 +5,7 @@ import BlogEmptyState from "./blog-empty-state";
 import { BlogTable } from "./blog-table";
 import { useReadBlogs } from "@/lib/hooks";
 
-export function Blogs({ blogs, pagination, searchParams }: BlogsTableProps) {
+export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
   const {
     handleBulkDelete,
     handleDeleteBlog,
@@ -16,9 +16,9 @@ export function Blogs({ blogs, pagination, searchParams }: BlogsTableProps) {
     allCurrentSelected,
     selectedBlogs,
     someCurrentSelected,
-  } = useReadBlogs(blogs);
+  } = useReadBlogs(data);
 
-  if (blogs.length === 0) {
+  if (data.length === 0) {
     return (
       <div>
         <BlogFilters
@@ -40,7 +40,7 @@ export function Blogs({ blogs, pagination, searchParams }: BlogsTableProps) {
       />
 
       <BlogTable
-        blogs={blogs}
+        data={data}
         selectedBlogs={selectedBlogs}
         onSelectBlog={handleSelectBlog}
         onSelectAll={handleSelectAll}

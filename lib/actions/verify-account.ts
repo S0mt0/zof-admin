@@ -2,7 +2,7 @@
 
 import { db } from "../db/config";
 import {
-  createUserActivity,
+  addAppActivity,
   getUserByEmail,
   getVerificationTokenByToken,
 } from "../db/repository";
@@ -31,7 +31,7 @@ export async function verifyToken(token: string) {
     },
   });
 
-  await createUserActivity(
+  await addAppActivity(
     user.id,
     "Email verified",
     "You successfully verified your account email address"

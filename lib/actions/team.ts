@@ -5,38 +5,23 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 import { TeamMemberSchema } from "../schemas";
 import {
-  listTeamMembers,
-  getTeamMemberById,
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
   getUniqueTeamMember,
-  createUserActivity,
+  addAppActivity,
   getTeamMemberByEmail,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
-import { currentUser } from "../utils";
-import { allowedAdminEmailsList } from "../constants";
-
-export const listTeamAction = async () => {
-  const user = await currentUser();
-  if (!user) return { error: "Invalid session, please login again." };
-
-  const members = await listTeamMembers();
-  return members;
-};
+import { capitalize, currentUser } from "../utils";
+import { EDITORIAL_ROLES } from "../constants";
 
 export const createTeamMemberAction = async (
   values: z.infer<typeof TeamMemberSchema>
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   const validated = TeamMemberSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
@@ -54,19 +39,20 @@ export const createTeamMemberAction = async (
 
     const created = await createTeamMember(payload);
     if (created) {
-      await createUserActivity(
-        user.id,
+      await addAppActivity(
         "New team member added",
-        `You added ${created.name} to the team as ${created.role}`
+        `${capitalize(user.name!)} (${user.role}) added ${capitalize(
+          created.name
+        )} to the team as "${created.role}"`
       );
     }
 
-    revalidateTag("teams");
-    revalidateTag("profile-stats");
     revalidatePath("/");
+    revalidatePath("/team");
+    revalidateTag("profile-stats");
     return { success: "Team member added" };
   } catch (e) {
-    return { error: "Could not create team member" };
+    return { error: "Could not add team member" };
   }
 };
 
@@ -76,12 +62,7 @@ export const updateTeamMemberAction = async (
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   const validated = TeamMemberSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
@@ -93,17 +74,18 @@ export const updateTeamMemberAction = async (
       ...data,
       joinDate: new Date(data.joinDate),
     });
+
     if (updated) {
-      await createUserActivity(
-        user.id,
-        "Team member details updated",
-        `You successfully updated ${updated.name}'s profile.`
+      await addAppActivity(
+        "Team member info updated",
+        `${capitalize(user.name!)} (${
+          user.role
+        }) made some changes to ${capitalize(updated.name)}'s details.`
       );
     }
 
-    revalidateTag("teams");
     revalidatePath("/");
-    revalidateTag("profile-stats");
+    revalidatePath("/team");
 
     return { success: "Team member updated" };
   } catch (e) {
@@ -114,29 +96,23 @@ export const updateTeamMemberAction = async (
 export const deleteTeamMemberAction = async (id: string) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
-    const existing = await getTeamMemberById(id);
+    const deleted = await deleteTeamMember(id);
 
-    await deleteTeamMember(id);
-
-    if (existing) {
-      await createUserActivity(
-        user.id,
+    if (deleted) {
+      await addAppActivity(
         "Team member removed",
-        `${existing.name} was removed from the team`
+        `${capitalize(user.name!)} (${user.role}) removed ${
+          deleted.name
+        } from the team`
       );
     }
 
-    revalidateTag("teams");
-    revalidateTag("profile-stats");
     revalidatePath("/");
+    revalidatePath("/team");
+    revalidateTag("profile-stats");
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };
@@ -150,12 +126,7 @@ export const emailTeamMemberAction = async (
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   if (!to || !subject || !message) return { error: "All fields are required" };
 
@@ -171,13 +142,6 @@ export const emailTeamMemberAction = async (
     const user = await currentUser();
     const teamMember = await getTeamMemberByEmail(to);
 
-    await createUserActivity(
-      user?.id!,
-      "Email Sent",
-      `You successfully sent an email to a member of the team ${teamMember?.name}.`
-    );
-
-    revalidateTag("users-recent-activities");
     return { success: "Email sent" };
   } catch (e) {
     return { error: "Failed to send email" };

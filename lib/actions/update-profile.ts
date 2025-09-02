@@ -13,7 +13,7 @@ import { getUserByEmail, getUserById, updateUser } from "../db/repository";
 import { update } from "@/auth";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
-import { createUserActivity } from "../db/repository";
+import { addAppActivity } from "../db/repository";
 
 export const updateProfile = async (
   values: z.infer<typeof ProfileSchema>,
@@ -26,7 +26,7 @@ export const updateProfile = async (
   try {
     await updateUser(userId, validatedFields.data);
 
-    await createUserActivity(
+    await addAppActivity(
       userId,
       "Profile updated",
       "You updated your profile information"
@@ -48,7 +48,7 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
   try {
     await updateUser(userId, { image: imageUrl });
 
-    await createUserActivity(
+    await addAppActivity(
       userId,
       "Profile photo updated",
       "You changed your profile image"
@@ -96,7 +96,7 @@ export const updateEmail = async (
 
     await update({ user: { email: user?.email } });
 
-    await createUserActivity(
+    await addAppActivity(
       userId,
       "Email address updated",
       "You changed your account email address"
@@ -139,7 +139,7 @@ export const updatePassword = async (
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     await updateUser(userId, { password: hashedPassword });
 
-    await createUserActivity(
+    await addAppActivity(
       userId,
       "Password changed",
       "You changed your account password"
@@ -166,7 +166,7 @@ export const updateNotificationPreferences = async (
   try {
     await updateUser(userId, validatedFields.data);
 
-    await createUserActivity(
+    await addAppActivity(
       userId,
       "Notification preferences updated",
       "You changed your notification settings"

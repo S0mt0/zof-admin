@@ -10,7 +10,7 @@ interface Blog {
   status: BlogStatus;
   featured: boolean;
   tags: string[];
-  comments: IComment[];
+  comments?: IComment[];
   views: number;
   createdBy: string;
   authorId?: string | null;
@@ -32,14 +32,7 @@ interface BlogFiltersProps {
   onBulkDelete: () => void;
 }
 
-interface BlogsTableProps {
-  blogs: Blog[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
+interface BlogsTableProps extends Paginated<Blog> {
   searchParams: {
     page?: string;
     search?: string;
@@ -57,8 +50,7 @@ interface BlogTableProps {
   onDeleteBlog: (blogId: string) => void;
 }
 
-interface BlogTableWrapperProps {
-  blogs: Blog[];
+interface BlogTableWrapperProps extends Paginated<Blog> {
   selectedBlogs: string[];
   onSelectBlog: (blogId: string) => void;
   onSelectAll: () => void;
@@ -67,12 +59,6 @@ interface BlogTableWrapperProps {
   onDeleteBlog: (blogId: string) => void;
   allCurrentSelected: boolean;
   someCurrentSelected: boolean;
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
   searchParams: {
     page?: string;
     search?: string;
@@ -81,11 +67,3 @@ interface BlogTableWrapperProps {
     limit?: string;
   };
 }
-
-type BlogsStats = {
-  total: number;
-  published: number;
-  draft: number;
-  scheduled: number;
-  featured: number;
-};

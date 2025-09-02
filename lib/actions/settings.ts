@@ -13,19 +13,13 @@ import {
   createWebsiteSettings,
 } from "../db/repository";
 import { currentUser } from "../utils";
-import { allowedAdminEmailsList } from "../constants";
 
 export const updateFoundationInfoAction = async (
   values: z.infer<typeof FoundationInfoSchema>
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (user.role !== "admin") return { error: "Unauthorized" };
 
   const validatedFields = FoundationInfoSchema.safeParse(values);
 
@@ -51,12 +45,7 @@ export const updateWebsiteSettingsAction = async (
 ) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
-
-  if (
-    (!allowedAdminEmailsList.includes(user.email!) && user.role !== "editor") ||
-    user.role !== "admin"
-  )
-    return { error: "Permission denied!" };
+  if (user.role !== "admin") return { error: "Unauthorized" };
 
   const validatedFields = WebsiteSettingsSchema.safeParse(values);
 

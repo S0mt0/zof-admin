@@ -3,8 +3,14 @@
 import { FileText, Eye, Star, Clock } from "lucide-react";
 
 import { ActivityStats } from "@/components/activity-stats";
+import { getBlogsStats } from "@/lib/db/repository";
 
-export function BlogStats({ draft, featured, published, total }: BlogsStats) {
+export function BlogStats({
+  draft,
+  featured,
+  published,
+  total,
+}: Awaited<ReturnType<typeof getBlogsStats>>) {
   const stats = [
     {
       title: "Total Posts",

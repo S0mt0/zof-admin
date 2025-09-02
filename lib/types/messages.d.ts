@@ -16,15 +16,8 @@ interface IMessage {
   updatedAt: Date;
 }
 
-interface MessagesProps {
+interface MessagesProps extends Paginated<IMessage> {
   unreadCount: number;
-  messages: IMessage[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
   searchParams: {
     page?: string;
     search?: string;
