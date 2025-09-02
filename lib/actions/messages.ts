@@ -43,7 +43,7 @@ export const deleteMessageAction = async (id: string) => {
           user.role
         }) deleted a message from ${capitalize(
           deleted.sender
-        )}. The subject of the message was ${capitalize(deleted.subject)}.`
+        )}. The subject of the message was "${capitalize(deleted.subject)}".`
       );
 
       revalidatePath("/");
@@ -80,7 +80,7 @@ export const replyMessageAction = async (
       `Reply to ${capitalize(recipient) || to}`,
       `${capitalize(user.name!)} (${user.role}) responded to a message from ${
         capitalize(recipient) || to
-      }. The subject of the message was ${capitalize(subject)}.`
+      }. The subject of the message was "${capitalize(subject)}".`
     );
 
     return { success: "Reply sent" };
@@ -102,7 +102,7 @@ export const bulkDeleteMessagesAction = async (ids: string[]) => {
       "Message(s) deleted",
       `${capitalize(user.name!)} (${user.role}) deleted ${
         result.count
-      } message(s)"`
+      } message(s)`
     );
 
     revalidatePath("/");

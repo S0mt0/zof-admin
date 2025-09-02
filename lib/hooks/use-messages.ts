@@ -92,11 +92,14 @@ export const useMessages = (messages: IMessage[]) => {
     ) {
       const loading = toast.loading("Deleting...");
       try {
-        const result = await bulkDeleteMessagesAction(selectedMessages);
-        if (result.success) {
+        const result = await (selectedMessages.length === 1
+          ? handleDelete(selectedMessages[0])
+          : bulkDeleteMessagesAction(selectedMessages));
+
+        if (result && "success" in result && result.success) {
           toast.success(result.success);
           setSelectedMessages([]);
-        } else {
+        } else if (result && "error" in result && result.error) {
           toast.error(result.error);
         }
       } catch (error) {

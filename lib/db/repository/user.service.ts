@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "../config";
 
 export const getUserByEmail = async (email: string) => {
@@ -24,9 +25,31 @@ export const getUserById = async (id: string) => {
   }
 };
 
-export const getAllUsers = async (where: Record<string, any> = {}) => {
+interface GetAllUsersOptions {
+  where?: Prisma.UserWhereInput;
+  select?: Prisma.UserSelect;
+  include?: Prisma.UserInclude;
+  orderBy?: Prisma.UserOrderByWithRelationInput;
+}
+export const getAllUsers = async (options: GetAllUsersOptions = {}) => {
+  const {
+    where,
+    select = {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+    include,
+    orderBy = { createdAt: "asc" },
+  } = options;
+
   try {
-    return await db.user.findMany({ where });
+    return await db.user.findMany({
+      where,
+      orderBy,
+      ...(select ? { select } : { include }),
+    } as any);
   } catch (e) {
     console.error({ e });
     return [];
