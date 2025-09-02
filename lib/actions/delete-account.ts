@@ -2,24 +2,16 @@
 
 import { getUserById, deleteUser } from "../db/repository";
 import { signOut } from "@/auth";
+import { currentUser } from "../utils";
 
-export const deleteAccount = async (userId: string) => {
-  try {
-    const user = await getUserById(userId);
-    if (!user) {
-      return { error: "User not found" };
-    }
+export const deleteAccount = async () => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
 
-    const deleted = await deleteUser(userId);
+  const deleted = await deleteUser(user.id);
 
-    if (!deleted) {
-      return { error: "Failed to delete account. Please try again." };
-    }
+  if (!deleted) return { error: "Failed to delete account. Please try again." };
 
-    await signOut();
-  } catch (error) {
-    console.log("error deleting account: ", error);
-
-    return { error: "Error deleting account, try again." };
-  }
+  await signOut();
 };

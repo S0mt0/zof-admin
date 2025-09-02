@@ -18,8 +18,8 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "Zita Onyeka Foundation - Admin Dashboard",
-  description: "Admin dashboard for managing foundation's website content",
+  title: "ZOF - Admin Dashboard",
+  description: "CMS for the Zita-Onyeka Foundation's website",
 };
 
 export const viewport: Viewport = {

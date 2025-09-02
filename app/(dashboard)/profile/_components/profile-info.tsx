@@ -68,7 +68,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         return; // Do nothing if values didn't change
       }
 
-      updateProfile(values, profile?.id).then((data) => {
+      updateProfile(values).then((data) => {
         if (data?.error) toast.error(data.error);
 
         if (data?.success) {
@@ -87,7 +87,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
         return; // Do nothing if value didn't change
       }
 
-      updateEmail(values, profile?.id).then((data) => {
+      updateEmail(values).then((data) => {
         if (data?.error) {
           toast.error(data.error);
         }

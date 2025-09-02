@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { addAppActivity, deleteUser, updateUser } from "../db/repository";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
@@ -43,8 +43,7 @@ export const changeUserRoleAction = async (userId: string, role: Role) => {
         )}"`
       );
 
-      revalidateTag("users");
-      revalidatePath("/");
+      revalidatePath("/settings");
     }
 
     return { success: "User role updated" };
@@ -82,7 +81,7 @@ export const deleteUserAccountAction = async (userId: string) => {
         "User Account Deleted",
         `${capitalize(user.name!)} (${user.role}) has removed ${capitalize(
           deleted.name
-        )}from the board`
+        )} from the board`
       );
 
       const mailer = new MailService();
@@ -92,8 +91,7 @@ export const deleteUserAccountAction = async (userId: string) => {
         text: `Your account has been deleted by the admin. If you believe this was a mstake, please contact admin or support.`,
       });
 
-      revalidateTag("users");
-      revalidatePath("/");
+      revalidatePath("/settings");
     }
 
     return { success: "User account removed" };

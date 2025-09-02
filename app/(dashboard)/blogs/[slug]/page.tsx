@@ -39,8 +39,8 @@ export default async function ViewBlogPage({
 }) {
   const getBlogCached = unstable_cache(getBlogBySlug, [params?.slug], {
     tags: ["blog"],
-    revalidate: 300,
   });
+
   const blog = await getBlogCached(params.slug);
 
   if (!blog) return <BlogNotFound />;

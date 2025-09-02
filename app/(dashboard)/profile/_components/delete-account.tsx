@@ -14,14 +14,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { deleteAccount } from "@/lib/actions/delete-account";
+import { useCurrentUser } from "@/lib/hooks";
 
-export function DeleteAccount({ userId }: { userId: string }) {
+export function DeleteAccount() {
   const [showWarning, setShowWarning] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const userId = useCurrentUser()?.id;
 
   const handleDeleteAccount = () => {
     startTransition(() => {
-      deleteAccount(userId).then((data) => {
+      deleteAccount().then((data) => {
         if (data?.error) toast.error(data.error);
       });
     });

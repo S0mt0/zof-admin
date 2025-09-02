@@ -1,7 +1,6 @@
 "use server";
 
 import * as z from "zod";
-import { revalidatePath, revalidateTag } from "next/cache";
 
 import { TeamMemberSchema } from "../schemas";
 import {
@@ -10,7 +9,7 @@ import {
   deleteTeamMember,
   getUniqueTeamMember,
   addAppActivity,
-  getTeamMemberByEmail,
+  getUserById,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
 import { capitalize, currentUser } from "../utils";
@@ -19,7 +18,8 @@ import { EDITORIAL_ROLES } from "../constants";
 export const createTeamMemberAction = async (
   values: z.infer<typeof TeamMemberSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -47,9 +47,6 @@ export const createTeamMemberAction = async (
       );
     }
 
-    revalidatePath("/");
-    revalidatePath("/team");
-    revalidateTag("profile-stats");
     return { success: "Team member added" };
   } catch (e) {
     return { error: "Could not add team member" };
@@ -60,7 +57,8 @@ export const updateTeamMemberAction = async (
   id: string,
   values: z.infer<typeof TeamMemberSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -84,9 +82,6 @@ export const updateTeamMemberAction = async (
       );
     }
 
-    revalidatePath("/");
-    revalidatePath("/team");
-
     return { success: "Team member updated" };
   } catch (e) {
     return { error: "Could not update team member" };
@@ -94,7 +89,8 @@ export const updateTeamMemberAction = async (
 };
 
 export const deleteTeamMemberAction = async (id: string) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -110,9 +106,6 @@ export const deleteTeamMemberAction = async (id: string) => {
       );
     }
 
-    revalidatePath("/");
-    revalidatePath("/team");
-    revalidateTag("profile-stats");
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };
@@ -124,7 +117,8 @@ export const emailTeamMemberAction = async (
   subject: string,
   message: string
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -138,9 +132,6 @@ export const emailTeamMemberAction = async (
       text: message,
       html: `<p>${message}</p>`,
     });
-
-    const user = await currentUser();
-    const teamMember = await getTeamMemberByEmail(to);
 
     return { success: "Email sent" };
   } catch (e) {

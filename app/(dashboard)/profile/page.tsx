@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { User, Calendar, Edit3 } from "lucide-react";
 
 import { DashboardHeader } from "@/components/dashboard-header";
@@ -14,17 +13,10 @@ import { DeleteAccount } from "./_components/delete-account";
 export default async function Page() {
   const user = await currentUser();
 
-  const activityStats = unstable_cache(getAppStats, [user?.id!], {
-    tags: ["profile-stats"],
-    revalidate: false,
-  });
-  const { blogs, events, team } = await activityStats(user?.id);
-
-  const getUser = unstable_cache(getUserById, [user?.id!], {
-    tags: ["profile"],
-    revalidate: false,
-  });
-  const profile = await getUser(user?.id!);
+  const [{ blogs, events, team }, profile] = await Promise.all([
+    getAppStats(user?.id),
+    getUserById(user?.id!),
+  ]);
 
   const stats = [
     {
@@ -52,29 +44,22 @@ export default async function Page() {
       <DashboardHeader breadcrumbs={[{ label: "Profile" }]} />
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Profile Overview */}
         <ProfileOverview profile={profile!} />
 
-        {/* Main Content */}
         <div className="md:col-span-2 space-y-6">
-          {/* Activity Stats */}
           <div className="grid gap-4 md:grid-cols-3">
             {stats.map((stat, index) => (
               <ActivityStats key={index} {...stat} />
             ))}
           </div>
 
-          {/* Profile Information */}
           <ProfileInfo profile={profile!} />
 
-          {/* Security Settings */}
           <SecuritySettings profile={profile!} />
 
-          {/* Notification Preferences */}
           <NotificationPreferences profile={profile!} />
 
-          {/* Delete Account */}
-          <DeleteAccount userId={profile?.id!} />
+          <DeleteAccount />
         </div>
       </div>
     </div>

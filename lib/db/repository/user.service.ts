@@ -3,9 +3,9 @@ import { db } from "../config";
 
 export const getUserByEmail = async (email: string) => {
   try {
-    return (await db.user.findUnique({
+    return (await db.user.findFirst({
       where: {
-        email,
+        email: { equals: email, mode: "insensitive" },
       },
     })) as IUser;
   } catch (e) {

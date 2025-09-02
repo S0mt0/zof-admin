@@ -1,11 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import {
   addAppActivity,
   deleteManyMessages,
   deleteMessage,
+  getUserById,
   toggleStatus,
 } from "../db/repository";
 import { MailService } from "../utils/mail.service";
@@ -16,13 +15,14 @@ export const toggleMessageStatusAction = async (
   id: string,
   status: MessageStatus
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   try {
     await toggleStatus(id, status);
-    revalidatePath("/messages");
+
     return { success: "Message marked as read" };
   } catch (error) {
     return { error: "Error marking message as read" };
@@ -30,7 +30,8 @@ export const toggleMessageStatusAction = async (
 };
 
 export const deleteMessageAction = async (id: string) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -45,9 +46,6 @@ export const deleteMessageAction = async (id: string) => {
           deleted.sender
         )}. The subject of the message was "${capitalize(deleted.subject)}".`
       );
-
-      revalidatePath("/");
-      revalidatePath("/messages");
     }
 
     return { success: "Message deleted" };
@@ -62,7 +60,8 @@ export const replyMessageAction = async (
   message: string,
   recipient?: string
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session, please login again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -90,7 +89,8 @@ export const replyMessageAction = async (
 };
 
 export const bulkDeleteMessagesAction = async (ids: string[]) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -104,9 +104,6 @@ export const bulkDeleteMessagesAction = async (ids: string[]) => {
         result.count
       } message(s)`
     );
-
-    revalidatePath("/");
-    revalidatePath("/messages");
 
     return { success: `${result.count} message(s) deleted successfully` };
   } catch (e) {

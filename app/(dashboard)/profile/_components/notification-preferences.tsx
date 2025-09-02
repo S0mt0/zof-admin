@@ -37,7 +37,7 @@ export function NotificationPreferences({ profile }: { profile: IUser }) {
     const updatedValues = { ...form.getValues(), [field]: value };
 
     startTransition(() => {
-      updateNotificationPreferences(updatedValues, profile?.id).then((data) => {
+      updateNotificationPreferences(updatedValues).then((data) => {
         if (data?.error) toast.error(data.error);
       });
     });

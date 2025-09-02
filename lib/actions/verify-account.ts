@@ -1,11 +1,7 @@
 "use server";
 
 import { db } from "../db/config";
-import {
-  addAppActivity,
-  getUserByEmail,
-  getVerificationTokenByToken,
-} from "../db/repository";
+import { getUserByEmail, getVerificationTokenByToken } from "../db/repository";
 
 export async function verifyToken(token: string) {
   const existingToken = await getVerificationTokenByToken(token);
@@ -30,12 +26,6 @@ export async function verifyToken(token: string) {
       id: existingToken.id,
     },
   });
-
-  await addAppActivity(
-    user.id,
-    "Email verified",
-    "You successfully verified your account email address"
-  );
 
   return { success: "Email verified 🎉" };
 }

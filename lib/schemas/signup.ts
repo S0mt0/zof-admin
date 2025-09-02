@@ -7,7 +7,9 @@ export const SignUpSchema = z
       .min(4, { message: "Name is too short" }),
     email: z
       .string({ message: "Email is required" })
-      .email({ message: "Email is required" }),
+      .email({ message: "Email is required" })
+      .trim()
+      .toLowerCase(),
     password: z
       .string({ message: "Password is required" })
       .min(8, { message: "Password must be at least 8 characters" })

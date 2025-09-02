@@ -1,1 +1,1 @@
-notify all admin users when team members and website settings change
+create cron job vercel serverless function to send email reminders

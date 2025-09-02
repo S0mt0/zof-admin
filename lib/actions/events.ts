@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { format } from "date-fns";
 import * as z from "zod";
 
 import {
@@ -10,17 +9,18 @@ import {
   updateEvent,
   deleteEvent,
   deleteManyEvents,
+  getUserById,
 } from "../db/repository";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
-import { db } from "../db/config";
 import { EventFormSchema } from "../schemas";
 import { EDITORIAL_ROLES } from "../constants";
 
 export const createEventAction = async (
   data: z.infer<typeof EventFormSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -57,9 +57,6 @@ export const createEventAction = async (
         )}"`
       );
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/events");
       revalidateTag("event");
     }
     return { success: "Event created", data: { event: newEvent } };
@@ -72,7 +69,8 @@ export const updateEventAction = async (
   eventId: string,
   data: z.infer<typeof EventFormSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -104,9 +102,6 @@ export const updateEventAction = async (
         }) made some changes to the event, "${capitalize(event.name)}"`
       );
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/events");
       revalidateTag("event");
     }
     return { success: "Event updated", data: { event: updated } };
@@ -116,7 +111,8 @@ export const updateEventAction = async (
 };
 
 export const deleteEventAction = async (eventId: string) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -154,9 +150,6 @@ export const deleteEventAction = async (eventId: string) => {
         await mailer.sendEventDeleteEmail(user as any, deleted);
       }
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/events");
       revalidateTag("event");
     }
 
@@ -167,7 +160,8 @@ export const deleteEventAction = async (eventId: string) => {
 };
 
 export const bulkDeleteEventsAction = async (ids: string[]) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -182,9 +176,6 @@ export const bulkDeleteEventsAction = async (ids: string[]) => {
       } event(s)"`
     );
 
-    revalidatePath("/");
-    revalidateTag("profile-stats");
-    revalidatePath("/events");
     revalidateTag("event");
 
     return { success: `${result.count} event(s) deleted successfully` };

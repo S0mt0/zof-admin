@@ -1,13 +1,9 @@
-import { unstable_cache } from "next/cache";
-
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Messages } from "./_components/messages";
 import { countUnreadMessages, getAllMessages } from "@/lib/db/repository";
 import { currentUser } from "@/lib/utils";
 import { Unauthorized } from "@/components/unauthorized";
 import { EDITORIAL_ROLES } from "@/lib/constants";
-
-export const revalidate = 300; // revalidate segment every 5 minutes
 
 export default async function MessagesPage({
   searchParams,
@@ -25,28 +21,14 @@ export default async function MessagesPage({
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams?.limit) || 10;
 
-  const getMessagesCached = unstable_cache(getAllMessages, ["messages"], {
-    tags: ["messages"],
-    revalidate: 300,
-  });
-
-  const countUnreadMessagesCached = unstable_cache(
-    countUnreadMessages,
-    ["unread-count"],
-    {
-      tags: ["unread-count"],
-      revalidate: 300,
-    }
-  );
-
   const [messagesData, unreadCount] = await Promise.all([
-    getMessagesCached({
+    getAllMessages({
       page,
       limit,
       search: searchParams.search,
       status: searchParams.status as MessageStatus,
     }),
-    countUnreadMessagesCached(),
+    countUnreadMessages(),
   ]);
 
   return (

@@ -48,7 +48,9 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
           )}
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>Joined {format(profile?.joinDate, "MMMM d, yyyy")}</span>
+            <span>
+              Joined {format(profile?.joinDate || new Date(), "MMMM d, yyyy")}
+            </span>
           </div>
         </div>
         <Separator />

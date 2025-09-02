@@ -32,10 +32,9 @@ export default async function ViewEventPage({
 }) {
   const getEventCached = unstable_cache(getEventBySlug, [params?.slug], {
     tags: ["event"],
-    revalidate: 300,
   });
-  const event = await getEventCached(params.slug);
 
+  const event = await getEventCached(params.slug);
   if (!event) return <EventNotFound />;
 
   return (

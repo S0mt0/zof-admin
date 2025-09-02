@@ -8,6 +8,7 @@ import {
   createBlog,
   deleteBlog,
   deleteManyBlogs,
+  getUserById,
   updateBlogBySlug,
 } from "../db/repository";
 import { capitalize, currentUser } from "../utils";
@@ -18,7 +19,8 @@ import { EDITORIAL_ROLES } from "../constants";
 export const createBlogAction = async (
   data: z.infer<typeof BlogFormSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -55,9 +57,6 @@ export const createBlogAction = async (
         )} just added a new blog post, titled "${capitalize(newBlog.title)}"`
       );
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/blogs");
       revalidateTag("blog");
       return { success: "Blog post created", data: { blog: newBlog } };
     }
@@ -71,7 +70,8 @@ export const updateBlogAction = async (
   slug: string,
   data: z.infer<typeof BlogFormSchema>
 ) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -102,9 +102,6 @@ export const updateBlogAction = async (
         )}"`
       );
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/blogs");
       revalidateTag("blog");
     }
     return { success: "Blog post updated", data: { blog: updated } };
@@ -114,7 +111,8 @@ export const updateBlogAction = async (
 };
 
 export const deleteBlogAction = async (id: string) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -152,9 +150,6 @@ export const deleteBlogAction = async (id: string) => {
         await mailer.sendBlogDeleteEmail(user as any, deleted as any);
       }
 
-      revalidatePath("/");
-      revalidateTag("profile-stats");
-      revalidatePath("/blogs");
       revalidateTag("blog");
     }
 
@@ -165,7 +160,8 @@ export const deleteBlogAction = async (id: string) => {
 };
 
 export const bulkDeleteBlogsAction = async (ids: string[]) => {
-  const user = await currentUser();
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
   if (!user) return { error: "Invalid session. Please log in again." };
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
@@ -180,9 +176,6 @@ export const bulkDeleteBlogsAction = async (ids: string[]) => {
       } blog post(s)"`
     );
 
-    revalidatePath("/");
-    revalidateTag("profile-stats");
-    revalidatePath("/blogs");
     revalidateTag("blog");
 
     return { success: `${result.count} blog(s) deleted successfully` };

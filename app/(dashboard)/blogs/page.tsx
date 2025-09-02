@@ -1,11 +1,7 @@
-import { unstable_cache } from "next/cache";
-
 import { getAllBlogs, getBlogsStats } from "@/lib/db/repository";
 import { Blogs } from "./_components/blog-page";
 import { BlogStats } from "./_components/blog-stats";
 import { DashboardHeader } from "@/components/dashboard-header";
-
-export const revalidate = 300; // revalidate segment every 5 minutes
 
 export default async function Page({
   searchParams,
@@ -21,19 +17,9 @@ export default async function Page({
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams?.limit) || 10;
 
-  const getBlogsCached = unstable_cache(getAllBlogs, ["blogs"], {
-    tags: ["blogs"],
-    revalidate: 300,
-  });
-
-  const getBlogsStatsCached = unstable_cache(getBlogsStats, ["blogs-stats"], {
-    tags: ["blogs-stats"],
-    revalidate: 300,
-  });
-
   const [stats, blogsData] = await Promise.all([
-    getBlogsStatsCached(),
-    getBlogsCached({
+    getBlogsStats(),
+    getAllBlogs({
       page,
       limit,
       search: searchParams.search,

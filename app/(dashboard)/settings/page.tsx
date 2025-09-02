@@ -14,31 +14,14 @@ import { currentUser } from "@/lib/utils";
 import { RolesSettings } from "./_components/roles-settings";
 import { DeleteUsersAccount } from "./_components/delete-user-account";
 
-export const revalidate = 300; // revalidate segment every 5 minutes
-
 export default async function Page() {
   const user = await currentUser();
   if (!user || user.role !== "admin") return <Unauthorized />;
 
-  const getSettingsCached = unstable_cache(getWebsiteSettings, ["settings"], {
-    tags: ["settings"],
-    revalidate: 300,
-  });
-
-  const getInfoCached = unstable_cache(getFoundationInfo, ["info"], {
-    tags: ["info"],
-    revalidate: 300,
-  });
-
-  const getAllUsersCached = unstable_cache(getAllUsers, ["users"], {
-    tags: ["users"],
-    revalidate: 300,
-  });
-
   const [info, settings, users] = await Promise.all([
-    getInfoCached(),
-    getSettingsCached(),
-    getAllUsersCached({ where: { id: { not: user.id } } }),
+    getFoundationInfo(),
+    getWebsiteSettings(),
+    getAllUsers({ where: { id: { not: user.id } } }),
   ]);
 
   return (

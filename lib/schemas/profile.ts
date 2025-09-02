@@ -8,7 +8,11 @@ export const ProfileSchema = z.object({
 });
 
 export const EmailUpdateSchema = z.object({
-  email: z.string().email({ message: "Valid email is required" }),
+  email: z
+    .string()
+    .email({ message: "Valid email is required" })
+    .trim()
+    .toLowerCase(),
 });
 
 export const PasswordUpdateSchema = z

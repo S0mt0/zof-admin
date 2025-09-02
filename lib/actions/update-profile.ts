@@ -1,6 +1,5 @@
 "use server";
 import * as z from "zod";
-import { revalidateTag } from "next/cache";
 import bcrypt from "bcryptjs";
 
 import {
@@ -11,29 +10,21 @@ import {
 } from "../schemas";
 import { getUserByEmail, getUserById, updateUser } from "../db/repository";
 import { update } from "@/auth";
-import { generateVerificationToken } from "../utils";
+import { currentUser, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
-import { addAppActivity } from "../db/repository";
 
-export const updateProfile = async (
-  values: z.infer<typeof ProfileSchema>,
-  userId: string
-) => {
+export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
+
   const validatedFields = ProfileSchema.safeParse(values);
 
   if (!validatedFields.success) return { error: "Invalid fields!" };
 
   try {
-    await updateUser(userId, validatedFields.data);
+    await updateUser(user.id, validatedFields.data);
 
-    await addAppActivity(
-      userId,
-      "Profile updated",
-      "You updated your profile information"
-    );
-
-    revalidateTag("profile");
-    revalidateTag("users-recent-activities");
     return { success: "Profile updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -48,14 +39,6 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
   try {
     await updateUser(userId, { image: imageUrl });
 
-    await addAppActivity(
-      userId,
-      "Profile photo updated",
-      "You changed your profile image"
-    );
-
-    revalidateTag("users-recent-activities");
-    revalidateTag("profile");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -63,9 +46,13 @@ export const updateProfileImage = async (imageUrl: string, userId: string) => {
 };
 
 export const updateEmail = async (
-  values: z.infer<typeof EmailUpdateSchema>,
-  userId: string
+  values: z.infer<typeof EmailUpdateSchema>
 ) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
+  if (!user.password) return { error: "Invalid request" };
+
   const validatedFields = EmailUpdateSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -76,47 +63,48 @@ export const updateEmail = async (
 
   try {
     // Check if email is already taken by another user
-    const emailExists = await getUserByEmail(email.trim());
+    const emailExists = await getUserByEmail(email);
     if (emailExists) return { error: "Email taken, try another one." };
 
-    const existingUser = await getUserById(userId);
-    if (existingUser?.email === email.trim()) {
-      return { error: "Email is already set to this value!" };
+    if (user?.email === email) {
+      return { error: "Email is already set to this value" };
     }
 
-    const user = await updateUser(userId, {
-      email: email.trim(),
+    const updated = await updateUser(user.id, {
+      email: email,
       emailVerified: null,
     }); // Reset email verification since email changed
 
-    const token = (await generateVerificationToken(email)).token;
-    const mailer = new MailService();
+    if (updated) {
+      const token = (await generateVerificationToken(email)).token;
+      const mailer = new MailService();
 
-    await mailer.sendVerificationEmail(email, token);
+      await mailer.sendVerificationEmail(email, token);
 
-    await update({ user: { email: user?.email } });
+      await update({ user: { email: user?.email } });
 
-    await addAppActivity(
-      userId,
-      "Email address updated",
-      "You changed your account email address"
-    );
-
-    revalidateTag("profile");
-    revalidateTag("users-recent-activities");
-    return {
-      success:
-        "Email updated successfully! A confirmation mail has been sent to your new email.",
-    };
+      return {
+        success:
+          "Email updated successfully! A confirmation mail has been sent to your new email.",
+      };
+    } else {
+      return {
+        error: "Something went wrong, try again",
+      };
+    }
   } catch (error) {
     return { error: "Something went wrong!" };
   }
 };
 
 export const updatePassword = async (
-  values: z.infer<typeof PasswordUpdateSchema>,
-  userId: string
+  values: z.infer<typeof PasswordUpdateSchema>
 ) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
+  if (!user.password) return { error: "Invalid request" };
+
   const validatedFields = PasswordUpdateSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -126,27 +114,14 @@ export const updatePassword = async (
   const { currentPassword, newPassword } = validatedFields.data;
 
   try {
-    const user = await getUserById(userId);
-    if (!user || !user.password) {
-      return { error: "User not found or no password set!" };
-    }
-
     const passwordsMatch = await bcrypt.compare(currentPassword, user.password);
     if (!passwordsMatch) {
       return { error: "Current password is incorrect!" };
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await updateUser(userId, { password: hashedPassword });
+    await updateUser(user.id, { password: hashedPassword });
 
-    await addAppActivity(
-      userId,
-      "Password changed",
-      "You changed your account password"
-    );
-
-    revalidateTag("profile");
-    revalidateTag("users-recent-activities");
     return { success: "Password updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -154,9 +129,12 @@ export const updatePassword = async (
 };
 
 export const updateNotificationPreferences = async (
-  values: z.infer<typeof NotificationPreferencesSchema>,
-  userId: string
+  values: z.infer<typeof NotificationPreferencesSchema>
 ) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
+
   const validatedFields = NotificationPreferencesSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -164,16 +142,8 @@ export const updateNotificationPreferences = async (
   }
 
   try {
-    await updateUser(userId, validatedFields.data);
+    await updateUser(user.id, validatedFields.data);
 
-    await addAppActivity(
-      userId,
-      "Notification preferences updated",
-      "You changed your notification settings"
-    );
-
-    revalidateTag("profile");
-    revalidateTag("users-recent-activities");
     return { success: "Notification preferences updated!" };
   } catch (error) {
     return { error: "Something went wrong!" };
