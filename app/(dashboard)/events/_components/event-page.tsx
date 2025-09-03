@@ -16,6 +16,7 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
     handleSelectAll,
     handleSelectEvent,
     handleViewEvent,
+    isPending,
   } = useReadEvents(data);
 
   if (data.length === 0) {
@@ -25,6 +26,7 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
           searchParams={searchParams}
           selectedCount={selectedEvents.length}
           onBulkDelete={handleBulkDelete}
+          isPending={isPending}
         />
         <EventEmptyState />
       </div>
@@ -37,6 +39,7 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
         searchParams={searchParams}
         selectedCount={selectedEvents.length}
         onBulkDelete={handleBulkDelete}
+        isPending={isPending}
       />
 
       <EventTable
@@ -51,6 +54,7 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
         someCurrentSelected={someCurrentSelected}
         pagination={pagination}
         searchParams={searchParams}
+        isPending={isPending}
       />
     </div>
   );

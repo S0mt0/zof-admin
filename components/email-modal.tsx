@@ -1,8 +1,12 @@
 "use client";
+import { useRef } from "react";
+import { useOnClickOutside } from "usehooks-ts";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import { Textarea } from "./ui/textarea";
 
 interface EmailModalProps {
   open: boolean;
@@ -31,19 +35,35 @@ export default function EmailModal({
 }: EmailModalProps) {
   if (!open) return null;
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(cardRef as React.RefObject<HTMLElement>, () => onClose());
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onMessageChange(e.target.value);
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
-        <h3 className="text-xl font-semibold text-gray-800">Send Email</h3>
+      <Card
+        className="w-full max-w-xl space-y-2 animate-in fade-in zoom-in duration-200"
+        ref={cardRef}
+      >
+        <CardHeader>Send Email</CardHeader>
 
-        <div className="space-y-4">
+        <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-600">To</Label>
-            <Input value={to} disabled className="bg-gray-100 text-gray-700" />
+            <Label className="text-sm font-medium">To</Label>
+            <Input value={to} disabled />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-600">Subject</Label>
+            <Label className="text-sm font-medium">Subject</Label>
             <Input
               value={subject}
               onChange={(e) => onSubjectChange(e.target.value)}
@@ -53,17 +73,19 @@ export default function EmailModal({
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-600">Message</Label>
-            <textarea
-              className="w-full border rounded-xl p-3 min-h-[140px] resize-y focus:outline-none focus:ring-2 focus:ring-primary/40"
+            <Label className="text-sm font-medium">Message</Label>
+            <Textarea
               value={message}
-              onChange={(e) => onMessageChange(e.target.value)}
+              onChange={handleChange}
               placeholder="Write your message here..."
+              className="max-h-[10rem]"
+              ref={textareaRef}
+              rows={3}
             />
           </div>
-        </div>
+        </CardContent>
 
-        <div className="flex justify-end gap-3 pt-2">
+        <CardFooter className="flex justify-end gap-3 pt-2">
           <Button
             variant="outline"
             onClick={onClose}
@@ -79,8 +101,8 @@ export default function EmailModal({
           >
             {pending ? "Sending..." : "Send"}
           </Button>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

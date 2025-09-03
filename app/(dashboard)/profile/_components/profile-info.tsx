@@ -120,7 +120,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                   disabled={isPending}
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Save Changes
+                  {isPending ? "Saving..." : "Save Changes"}
                 </Button>
                 <Button
                   variant="outline"
@@ -248,7 +248,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                     disabled={isPending}
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    Update Email
+                    {isPending ? "Updating..." : "Update Email"}
                   </Button>
                   <Button
                     variant="outline"

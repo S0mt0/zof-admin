@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -7,6 +7,7 @@ import { EDITORIAL_ROLES } from "../constants";
 import { useCurrentUser } from "./use-current-user";
 
 export const useReadEvents = (events: IEvent[]) => {
+  const [isPending, startTransition] = useTransition();
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const router = useRouter();
   const user = useCurrentUser();
@@ -42,29 +43,36 @@ export const useReadEvents = (events: IEvent[]) => {
 
     if (selectedEvents.length === 0) return;
 
+    if (selectedEvents.length === 1)
+      return handleDeleteEvent(selectedEvents[0]);
+
     if (
       confirm(
         `Are you sure you want to delete ${selectedEvents.length} events?`
       )
     ) {
       const loading = toast.loading("Please wait...");
-      try {
-        const result = await bulkDeleteEventsAction(selectedEvents);
-        if (result.success) {
-          toast.success(result.success);
-          setSelectedEvents([]);
-        } else {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        toast.error("Failed to delete events");
-      } finally {
-        toast.dismiss(loading);
-      }
+      startTransition(() => {
+        bulkDeleteEventsAction(selectedEvents)
+          .then((result) => {
+            if (result.success) {
+              toast.success(result.success);
+              setSelectedEvents([]);
+            } else {
+              toast.error(result.error);
+            }
+          })
+          .catch((e) => {
+            toast.error("Failed to delete events");
+          })
+          .finally(() => {
+            toast.dismiss(loading);
+          });
+      });
     }
   };
 
-  const handleDeleteEvent = async (eventId: string) => {
+  const handleDeleteEvent = (eventId: string) => {
     if (!user || !EDITORIAL_ROLES.includes(user.role)) {
       toast.error("Unauthorized");
       return;
@@ -72,18 +80,23 @@ export const useReadEvents = (events: IEvent[]) => {
 
     if (confirm("Are you sure you want to delete this event?")) {
       const loading = toast.loading("Please wait...");
-      try {
-        const result = await deleteEventAction(eventId);
-        if (result.success) {
-          toast.success(result.success);
-        } else {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        toast.error("Failed to delete event");
-      } finally {
-        toast.dismiss(loading);
-      }
+      startTransition(() => {
+        deleteEventAction(eventId)
+          .then((result) => {
+            if (result.success) {
+              toast.success(result.success);
+              setSelectedEvents([]);
+            } else {
+              toast.error(result.error);
+            }
+          })
+          .catch((e) => {
+            toast.error("Failed to delete event");
+          })
+          .finally(() => {
+            toast.dismiss(loading);
+          });
+      });
     }
   };
 
@@ -107,6 +120,7 @@ export const useReadEvents = (events: IEvent[]) => {
     selectedEvents,
     allCurrentSelected,
     someCurrentSelected,
+    isPending,
     handleSelectEvent,
     handleSelectAll,
     handleBulkDelete,

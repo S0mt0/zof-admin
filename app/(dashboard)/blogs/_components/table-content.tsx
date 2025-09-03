@@ -20,6 +20,7 @@ export const TableContent = ({
   onViewBlog,
   onEditBlog,
   onDeleteBlog,
+  isPending,
 }: BlogTableProps) => {
   const getStatusColor = (status: Blog["status"]) => {
     switch (status) {
@@ -88,10 +89,7 @@ export const TableContent = ({
           <TableCell className="text-right">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 p-0 hover:bg-gray-100"
-                >
+                <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
@@ -113,6 +111,7 @@ export const TableContent = ({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDeleteBlog(blog.id)}
+                  disabled={isPending}
                   className="cursor-pointer text-red-600 focus:text-red-600"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />

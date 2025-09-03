@@ -42,7 +42,7 @@ export default async function ViewEventPage({
       <DashboardHeader
         breadcrumbs={[
           { label: "Events", href: "/events" },
-          { label: capitalize(event.name) },
+          { label: `${capitalize(event.name.slice(0, 20))}...` },
         ]}
       />
       <article className="container max-w-4xl mx-auto px-4 py-8">

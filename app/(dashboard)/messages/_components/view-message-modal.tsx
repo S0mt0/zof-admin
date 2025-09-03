@@ -1,6 +1,14 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { useOnClickOutside } from "usehooks-ts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
 export default function ViewMessageModal({
   message,
@@ -23,47 +31,59 @@ export default function ViewMessageModal({
     }
   }, [message.id, message.status, handleToggleReadStatus]);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(cardRef as React.RefObject<HTMLElement>, () =>
+    toggleMessageModal()
+  );
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8 space-y-8 animate-in fade-in zoom-in duration-200">
-        <h3 className="text-2xl font-bold text-gray-900">Message Details</h3>
-
-        <div className="space-y-6 text-gray-700">
-          <div className="border-b border-gray-100 pb-4">
-            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+      <Card
+        className="overflow-y-auto max-h-screen w-full max-w-xl space-y-2 animate-in fade-in zoom-in duration-200"
+        ref={cardRef}
+      >
+        <CardHeader>Message Details</CardHeader>
+        <CardContent className="space-y-4">
+          <div className="border-b border-border pb-4">
+            <CardDescription className="uppercase tracking-wide">
               Sender
-            </h4>
-            <p className="mt-2 text-lg font-medium text-gray-900">
+            </CardDescription>
+            <p className="mt-2 text-lg font-medium text-gray-900 dark:text-neutral-300">
               {message.sender}
             </p>
             {message.email && (
-              <p className="text-sm text-gray-500">{message.email}</p>
+              <p className="text-sm text-gray-500">({message.email})</p>
             )}
           </div>
 
-          <div className="border-b border-gray-100 pb-4">
-            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+          <div className="border-b border-border pb-4">
+            <CardDescription className="uppercase tracking-wide">
               Subject
-            </h4>
-            <p className="mt-2 text-lg text-gray-800">{message.subject}</p>
+            </CardDescription>
+            <p className="mt-2 text-lg text-gray-800 dark:text-neutral-300">
+              {message.subject}
+            </p>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <CardDescription className="uppercase tracking-wide">
               Message
-            </h4>
-            <div className="mt-3 p-5 bg-gray-50 rounded-xl text-gray-800 text-base leading-relaxed shadow-sm">
+            </CardDescription>
+            <div className="mt-3 p-5 bg-pink-50 dark:bg-green-100/20 dark:text-white rounded-xl text-gray-800 text-base leading-relaxed shadow-sm">
               {message.content}
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-          <Button variant="outline" onClick={toggleMessageModal}>
+        </CardContent>
+        <CardFooter className="flex justify-end gap-3 pt-4 border-t border-border">
+          <Button
+            variant="outline"
+            onClick={toggleMessageModal}
+            className="hover:bg-primary hover:text-white"
+          >
             Close
           </Button>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

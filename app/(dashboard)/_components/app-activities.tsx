@@ -32,7 +32,7 @@ export async function AppActivities({
         </div>
       )}
 
-      <CardContent>
+      <CardContent className="px-3.5 xs:px-6">
         <div className="space-y-4">
           {data.map((activity) => (
             <div

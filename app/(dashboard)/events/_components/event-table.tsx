@@ -23,6 +23,7 @@ export function EventTable({
   allCurrentSelected,
   someCurrentSelected,
   pagination,
+  isPending,
 }: EventTableProps) {
   return (
     <Card>
@@ -64,6 +65,7 @@ export function EventTable({
             onViewEvent={onViewEvent}
             onEditEvent={onEditEvent}
             onDeleteEvent={onDeleteEvent}
+            isPending={isPending}
           />
         </Table>
 

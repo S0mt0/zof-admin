@@ -30,6 +30,7 @@ interface BlogFiltersProps {
   };
   selectedCount: number;
   onBulkDelete: () => void;
+  isPending: boolean;
 }
 
 interface BlogsTableProps extends Paginated<Blog> {
@@ -44,6 +45,7 @@ interface BlogsTableProps extends Paginated<Blog> {
 interface BlogTableProps {
   blogs: Blog[];
   selectedBlogs: string[];
+  isPending: boolean;
   onSelectBlog: (blogId: string) => void;
   onViewBlog: (blog: Blog) => void;
   onEditBlog: (blog: Blog) => void;
@@ -57,6 +59,7 @@ interface BlogTableWrapperProps extends Paginated<Blog> {
   onViewBlog: (blog: Blog) => void;
   onEditBlog: (blog: Blog) => void;
   onDeleteBlog: (blogId: string) => void;
+  isPending: boolean;
   allCurrentSelected: boolean;
   someCurrentSelected: boolean;
   searchParams: {

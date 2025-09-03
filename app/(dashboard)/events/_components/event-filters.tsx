@@ -20,6 +20,7 @@ export function EventFilters({
   searchParams,
   selectedCount,
   onBulkDelete,
+  isPending,
 }: EventFiltersProps) {
   const router = useRouter();
   const searchParamsObj = useSearchParams();
@@ -87,7 +88,7 @@ export function EventFilters({
   };
 
   const user = useCurrentUser();
-  const isDisabled = !user || !EDITORIAL_ROLES.includes(user.role);
+  const isDisabled = !user || !EDITORIAL_ROLES.includes(user.role) || isPending;
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">

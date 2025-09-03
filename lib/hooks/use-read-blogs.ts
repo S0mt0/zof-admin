@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -7,6 +7,7 @@ import { EDITORIAL_ROLES } from "../constants";
 import { useCurrentUser } from "./use-current-user";
 
 export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
+  const [isPending, startTransition] = useTransition();
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const router = useRouter();
   const user = useCurrentUser();
@@ -34,7 +35,7 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
     }
   };
 
-  const handleBulkDelete = async () => {
+  const handleBulkDelete = () => {
     if (!user || !EDITORIAL_ROLES.includes(user.role)) {
       toast.error("Unauthorized");
       return;
@@ -42,29 +43,36 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
 
     if (selectedBlogs.length === 0) return;
 
+    if (selectedBlogs.length === 1) return handleDeleteBlog(selectedBlogs[0]);
+
     if (
       confirm(
         `Are you sure you want to delete ${selectedBlogs.length} blog post(s)?`
       )
     ) {
       const loading = toast.loading("Please wait...");
-      try {
-        const result = await bulkDeleteBlogsAction(selectedBlogs);
-        if (result.success) {
-          toast.success(result.success);
-          setSelectedBlogs([]);
-        } else {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        toast.error("Failed to delete blogs");
-      } finally {
-        toast.dismiss(loading);
-      }
+
+      startTransition(() => {
+        bulkDeleteBlogsAction(selectedBlogs)
+          .then((result) => {
+            if (result.success) {
+              toast.success(result.success);
+              setSelectedBlogs([]);
+            } else {
+              toast.error(result.error);
+            }
+          })
+          .catch((e) => {
+            toast.error("Failed to delete blogs");
+          })
+          .finally(() => {
+            toast.dismiss(loading);
+          });
+      });
     }
   };
 
-  const handleDeleteBlog = async (blogId: string) => {
+  const handleDeleteBlog = (blogId: string) => {
     if (!user || !EDITORIAL_ROLES.includes(user.role)) {
       toast.error("Unauthorized");
       return;
@@ -72,18 +80,24 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
 
     if (confirm("Are you sure you want to delete this blog post?")) {
       const loading = toast.loading("Please wait...");
-      try {
-        const result = await deleteBlogAction(blogId);
-        if (result.success) {
-          toast.success(result.success);
-        } else {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        toast.error("Failed to delete blog");
-      } finally {
-        toast.dismiss(loading);
-      }
+
+      startTransition(() => {
+        deleteBlogAction(blogId)
+          .then((result) => {
+            if (result.success) {
+              toast.success(result.success);
+              setSelectedBlogs([]);
+            } else {
+              toast.error(result.error);
+            }
+          })
+          .catch((e) => {
+            toast.error("Failed to delete blog");
+          })
+          .finally(() => {
+            toast.dismiss(loading);
+          });
+      });
     }
   };
 
@@ -106,6 +120,7 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
     selectedBlogs,
     allCurrentSelected,
     someCurrentSelected,
+    isPending,
     handleSelectBlog,
     handleSelectAll,
     handleBulkDelete,

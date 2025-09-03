@@ -16,6 +16,7 @@ export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
     allCurrentSelected,
     selectedBlogs,
     someCurrentSelected,
+    isPending,
   } = useReadBlogs(data);
 
   if (data.length === 0) {
@@ -25,6 +26,7 @@ export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
           searchParams={searchParams}
           selectedCount={selectedBlogs.length}
           onBulkDelete={handleBulkDelete}
+          isPending={isPending}
         />
         <BlogEmptyState />
       </div>
@@ -37,6 +39,7 @@ export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
         searchParams={searchParams}
         selectedCount={selectedBlogs.length}
         onBulkDelete={handleBulkDelete}
+        isPending={isPending}
       />
 
       <BlogTable
@@ -51,6 +54,7 @@ export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
         someCurrentSelected={someCurrentSelected}
         pagination={pagination}
         searchParams={searchParams}
+        isPending={isPending}
       />
     </div>
   );

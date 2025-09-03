@@ -33,8 +33,10 @@ export const MessageCard = ({
 }: MessageCardProps) => {
   return (
     <div
-      className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md hover:bg-gray-50 cursor-pointer ${
-        message.status === "unread" ? "bg-pink-50 border-pink-200" : "bg-white"
+      className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-50/10 cursor-pointer ${
+        message.status === "unread"
+          ? "bg-pink-50 border-pink-200 dark:bg-pink-50/10 dark:border-border"
+          : "bg-background"
       }`}
       onClick={() => toggleMessageModal(message.id)}
     >
@@ -82,7 +84,7 @@ export const MessageCard = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+              <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>

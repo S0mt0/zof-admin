@@ -54,7 +54,7 @@ export default async function ViewBlogPage({
         title="View Blog Post"
         breadcrumbs={[
           { label: "Blog Posts", href: "/blogs" },
-          { label: capitalize(blog.title) },
+          { label: `${capitalize(blog.title.slice(0, 20))}...` },
         ]}
       />
 
@@ -98,7 +98,7 @@ export default async function ViewBlogPage({
                 <p className="font-medium">
                   {capitalize(blog.author?.name) || "Zita-Onyeka Foundation"}
                 </p>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
                     {format(displayDate, "MMMM d, yyyy")}

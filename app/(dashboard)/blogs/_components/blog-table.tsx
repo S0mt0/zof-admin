@@ -23,6 +23,7 @@ export function BlogTable({
   allCurrentSelected,
   someCurrentSelected,
   pagination,
+  isPending,
 }: BlogTableWrapperProps) {
   return (
     <Card>
@@ -62,6 +63,7 @@ export function BlogTable({
             onViewBlog={onViewBlog}
             onEditBlog={onEditBlog}
             onDeleteBlog={onDeleteBlog}
+            isPending={isPending}
           />
         </Table>
 
