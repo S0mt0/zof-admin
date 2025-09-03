@@ -1,11 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
+  pathname: string;
+  searchParams?: Record<string, string>;
   currentPage: number;
   totalPages: number;
   showingStart: number;
@@ -23,17 +22,14 @@ export function Pagination({
   totalItems,
   itemName = "items",
   limit = 5,
+  pathname,
+  searchParams,
 }: PaginationProps) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   // hide everything if no items
   if (!totalItems || totalPages <= 0 || totalItems <= limit) return null;
 
-  console.log({ totalItems, totalPages });
-
   const setPageHref = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams);
     // keep other query params intact
     if (page <= 1) {
       params.delete("page");

@@ -29,7 +29,7 @@ export default function ViewMessageModal({
         await handleToggleReadStatus(message.id, "read");
       })();
     }
-  }, [message.id, message.status, handleToggleReadStatus]);
+  }, []);
 
   const cardRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(cardRef as React.RefObject<HTMLElement>, () =>

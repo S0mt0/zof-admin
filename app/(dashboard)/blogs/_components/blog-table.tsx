@@ -24,6 +24,7 @@ export function BlogTable({
   someCurrentSelected,
   pagination,
   isPending,
+  searchParams,
 }: BlogTableWrapperProps) {
   return (
     <Card>
@@ -68,6 +69,8 @@ export function BlogTable({
         </Table>
 
         <Pagination
+          pathname="/blogs"
+          searchParams={searchParams}
           currentPage={pagination.page}
           totalPages={pagination.totalPages}
           showingStart={(pagination.page - 1) * pagination.limit + 1}

@@ -24,6 +24,7 @@ export function EventTable({
   someCurrentSelected,
   pagination,
   isPending,
+  searchParams,
 }: EventTableProps) {
   return (
     <Card>
@@ -70,6 +71,8 @@ export function EventTable({
         </Table>
 
         <Pagination
+          pathname="/events"
+          searchParams={searchParams}
           currentPage={pagination.page}
           totalPages={pagination.totalPages}
           showingStart={(pagination.page - 1) * pagination.limit + 1}

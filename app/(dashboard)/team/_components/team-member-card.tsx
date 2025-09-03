@@ -49,7 +49,7 @@ export default function TeamMemberCard({
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12">
               <AvatarImage
-                src={member.avatar || "/placeholder.svg"}
+                src={member.avatar || "/placeholder-user.jpg"}
                 alt={member.name}
               />
               <AvatarFallback>{getInitials(member.name)}</AvatarFallback>

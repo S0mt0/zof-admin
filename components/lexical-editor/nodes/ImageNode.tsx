@@ -190,7 +190,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     return (
       <div className="image-container">
         <img
-          src={this.__src || "/placeholder.svg"}
+          src={this.__src || "/placeholder-user.jpg"}
           alt={this.__altText}
           style={{
             height: this.__height === "inherit" ? "inherit" : this.__height,

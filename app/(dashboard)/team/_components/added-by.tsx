@@ -27,7 +27,7 @@ export const AddedByCard = ({
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={admin.image || "/placeholder.svg"}
+              src={admin.image || "/placeholder-user.jpg"}
               alt={admin.name || "User"}
             />
             <AvatarFallback>{getInitials(admin.name)}</AvatarFallback>

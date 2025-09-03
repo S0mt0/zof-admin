@@ -14,7 +14,8 @@ import {
 export async function AppActivities({
   data,
   pagination,
-}: Paginated<AppActivity>) {
+  searchParams,
+}: Paginated<AppActivity> & { searchParams: Record<string, string> }) {
   return (
     <Card className="col-span-4 max-w-full">
       <CardHeader>
@@ -53,6 +54,8 @@ export async function AppActivities({
         </div>
 
         <Pagination
+          pathname="/"
+          searchParams={searchParams}
           currentPage={pagination.page}
           totalPages={pagination.totalPages}
           showingStart={(pagination.page - 1) * pagination.limit + 1}

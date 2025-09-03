@@ -229,7 +229,7 @@ export function EventForm({
               {formData.bannerImage ? (
                 <div className="relative">
                   <img
-                    src={formData.bannerImage || "/placeholder.svg"}
+                    src={formData.bannerImage || "/placeholder-user.jpg"}
                     alt="Banner preview"
                     className="w-full h-48 object-cover rounded-lg"
                   />

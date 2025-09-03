@@ -313,7 +313,7 @@ export default function TeamForm({ mode, initialData }: TeamFormProps) {
           <CardContent className="text-center space-y-4">
             <Avatar className="h-24 w-24 mx-auto">
               <AvatarImage
-                src={form.watch("avatar") || "/placeholder.svg"}
+                src={form.watch("avatar") || "/placeholder-user.jpg"}
                 alt={form.watch("name")}
               />
               <AvatarFallback className="text-lg">

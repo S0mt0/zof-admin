@@ -130,6 +130,8 @@ export const Messages = ({
       />
 
       <Pagination
+        pathname="/messages"
+        searchParams={searchParams}
         currentPage={pagination.page}
         totalPages={pagination.totalPages}
         showingStart={(pagination.page - 1) * pagination.limit + 1}
