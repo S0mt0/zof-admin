@@ -14,6 +14,7 @@ import {
 import { MailService } from "../utils/mail.service";
 import { capitalize, currentUser } from "../utils";
 import { EDITORIAL_ROLES } from "../constants";
+import { revalidatePath } from "next/cache";
 
 export const createTeamMemberAction = async (
   values: z.infer<typeof TeamMemberSchema>
@@ -45,6 +46,7 @@ export const createTeamMemberAction = async (
           created.name
         )} to the team as "${created.role}"`
       );
+      revalidatePath("/");
     }
 
     return { success: "Team member added" };
@@ -80,6 +82,7 @@ export const updateTeamMemberAction = async (
           user.role
         }) made some changes to ${capitalize(updated.name)}'s details.`
       );
+      revalidatePath("/");
     }
 
     return { success: "Team member updated" };
@@ -104,6 +107,7 @@ export const deleteTeamMemberAction = async (id: string) => {
           deleted.name
         } from the team`
       );
+      revalidatePath("/");
     }
 
     return { success: "Team member removed" };

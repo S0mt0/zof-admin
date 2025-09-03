@@ -10,6 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { ThemeToggle } from "./theme-toggle";
 
 interface DashboardHeaderProps {
   title?: string;
@@ -46,6 +47,7 @@ export function DashboardHeader({
           ))}
         </BreadcrumbList>
       </Breadcrumb>
+      <ThemeToggle className="ml-auto" />
     </header>
   );
 }

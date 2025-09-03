@@ -69,7 +69,7 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <CardWrapper
         backButtonLabel="Back to login"
         backButtonHref="/auth/login"

@@ -77,6 +77,7 @@ export function EventTable({
           )}
           totalItems={pagination.total}
           itemName="events"
+          limit={pagination.limit}
         />
       </CardContent>
     </Card>

@@ -2,7 +2,7 @@ import { SessionExpired } from "@/components/session-expired";
 import { getUserById } from "@/lib/db/repository";
 import { currentUser } from "@/lib/utils";
 
-export default async function BlogLayout({
+export default async function DashBoardLayout({
   children,
 }: {
   children: React.ReactNode;

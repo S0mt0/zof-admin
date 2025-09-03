@@ -25,7 +25,7 @@ export const ActivityStats = ({
       key={title}
       className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 xs:px-6 gap-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div
           className={`h-8 w-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md`}

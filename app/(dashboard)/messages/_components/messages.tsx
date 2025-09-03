@@ -139,6 +139,7 @@ export const Messages = ({
         )}
         totalItems={pagination.total}
         itemName="messages"
+        limit={pagination.limit}
       />
     </div>
   );

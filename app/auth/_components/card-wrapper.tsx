@@ -41,7 +41,7 @@ export const CardWrapper = ({
           className="w-14 h-auto mx-auto"
           priority
         />
-        <CardTitle className="text-2xl font-bold text-gray-700">
+        <CardTitle className="text-2xl font-bold text-gray-700 dark:text-neutral-100">
           {headerLabel}
         </CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

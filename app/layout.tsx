@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar/sidebar";
+import { ThemeProvider } from "@/components/theme-provider";
 import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -35,19 +36,26 @@ export default async function RootLayout({
 }) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${quicksand.className} ${inter.variable}`}>
-        <SessionProvider session={session}>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              {children}
-              <Toaster closeButton={true} />
-            </SidebarInset>
-          </SidebarProvider>
-        </SessionProvider>
-        <SpeedInsights />
-        <Analytics />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                {children}
+                <Toaster closeButton={true} />
+              </SidebarInset>
+            </SidebarProvider>
+          </SessionProvider>
+          <SpeedInsights />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

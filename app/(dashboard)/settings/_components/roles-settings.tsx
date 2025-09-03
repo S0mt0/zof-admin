@@ -109,11 +109,11 @@ export function RolesSettings({ users }: RolesSettingsProps) {
             disabled={isPending}
           />
           {showDropdown && filteredUsers.length > 0 && (
-            <div className="absolute z-50 mt-1 w-full max-h-48 overflow-auto rounded-md border bg-white shadow-md">
+            <Card className="absolute z-50 mt-2 w-full dark:bg-gray-900 max-h-48 max-w-96 overflow-auto">
               {filteredUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="cursor-pointer px-3 py-2 hover:bg-gray-100 text-sm"
+                  className="cursor-pointer px-3 py-2 dark:hover:bg-emerald-100/10 text-sm"
                   onClick={() => {
                     setSelectedUser(user);
                     setQuery(
@@ -121,16 +121,16 @@ export function RolesSettings({ users }: RolesSettingsProps) {
                     );
                   }}
                 >
-                  {capitalize(user.name)}
+                  {user.name}
                 </div>
               ))}
-            </div>
+            </Card>
           )}
         </div>
 
         {selectedUser && (
-          <div className="flex justify-between items-center bg-gray-100 p-2 rounded">
-            <strong className="text-sm">Current role:</strong>{" "}
+          <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
+            <strong className="text-sm dark:text-black">Current role:</strong>{" "}
             <Badge variant="default" className="bg-black">
               {capitalize(selectedUser.role)}
             </Badge>

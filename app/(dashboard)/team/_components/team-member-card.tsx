@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AddedByCard } from "./added-by";
+import { getInitials } from "@/lib/utils";
 
 type Props = {
   member: TeamMember;
@@ -51,12 +52,7 @@ export default function TeamMemberCard({
                 src={member.avatar || "/placeholder.svg"}
                 alt={member.name}
               />
-              <AvatarFallback>
-                {member.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-lg">{member.name}</CardTitle>
@@ -66,7 +62,7 @@ export default function TeamMemberCard({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+              <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>

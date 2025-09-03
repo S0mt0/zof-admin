@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { capitalize } from "@/lib/utils";
 import { getAllUsers } from "@/lib/db/repository";
 import { deleteUserAccountAction } from "@/lib/actions/users";
 
@@ -60,11 +59,7 @@ export function DeleteUsersAccount({ users }: DeleteUsersAccountProps) {
 
   const handleClick = () => {
     if (!selectedUser) return;
-    if (
-      !confirm(
-        `Are you sure you want to delete ${capitalize(selectedUser.name)}? `
-      )
-    )
+    if (!confirm(`Are you sure you want to delete ${selectedUser.name}? `))
       return;
 
     startTransition(() => {
@@ -99,11 +94,11 @@ export function DeleteUsersAccount({ users }: DeleteUsersAccountProps) {
             disabled={isPending}
           />
           {showDropdown && filteredUsers.length > 0 && (
-            <div className="absolute z-50 mt-1 w-full max-h-48 max-w-96 overflow-auto rounded-md border bg-white shadow-md">
+            <Card className="absolute z-50 mt-2 w-full dark:bg-gray-900 max-h-48 max-w-96 overflow-auto">
               {filteredUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="cursor-pointer px-3 py-2 hover:bg-gray-100 text-sm"
+                  className="cursor-pointer px-3 py-2 dark:hover:bg-emerald-100/10 text-sm"
                   onClick={() => {
                     setSelectedUser(user);
                     setQuery(
@@ -111,10 +106,10 @@ export function DeleteUsersAccount({ users }: DeleteUsersAccountProps) {
                     );
                   }}
                 >
-                  {capitalize(user.name)}
+                  {user.name}
                 </div>
               ))}
-            </div>
+            </Card>
           )}
         </div>
 

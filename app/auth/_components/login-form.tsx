@@ -66,7 +66,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <CardWrapper
         backButtonLabel="Don't have an account? Sign up"
         backButtonHref="/auth/signup"

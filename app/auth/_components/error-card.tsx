@@ -30,7 +30,7 @@ export const ErrorCard = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <CardWrapper
         headerLabel="Oops! Something went wrong!"
         backButtonHref="/auth/login"

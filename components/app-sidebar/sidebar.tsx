@@ -24,6 +24,7 @@ import { capitalize, currentUser } from "@/lib/utils";
 import { LogoutButton } from "../logout-button";
 import { NavigationItems } from "./navigation-item";
 import { SettingsItems } from "./settings-item";
+import { ThemeToggle } from "../theme-toggle";
 
 export async function AppSidebar({
   ...props
@@ -64,43 +65,46 @@ export async function AppSidebar({
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
-                  disabled={!user}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
+                    disabled={!user}
+                  >
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage src={user.image} alt="Admin" />
+                      <AvatarFallback className="rounded-lg bg-blue-300">
+                        <User className="h-4 w-4 text-white" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {user.name}
+                      </span>
+                      <span className="truncate text-xs">{user?.email}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg flex gap-4 justify-between items-center"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user?.image || ""} alt="Admin" />
-                    <AvatarFallback className="rounded-lg bg-blue-300">
-                      {/* {getInitials(user?.name!)} */}
-
-                      <User className="h-4 w-4 text-white" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {capitalize(user?.name!)}
-                    </span>
-                    <span className="truncate text-xs">{user?.email}</span>
-                  </div>
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <LogoutButton>
-                  <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log out
-                  </DropdownMenuItem>
-                </LogoutButton>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <LogoutButton className="w-full">
+                    <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-gray-400/20 dark:focus:text-white">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log out
+                    </DropdownMenuItem>
+                  </LogoutButton>
+                  <ThemeToggle />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <ThemeToggle />
+            )}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

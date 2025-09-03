@@ -102,7 +102,6 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
                   setIsEditing(false);
                   form.reset();
                 }}
-                disabled={disabled}
               >
                 Cancel
               </Button>

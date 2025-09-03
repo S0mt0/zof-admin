@@ -75,6 +75,7 @@ export function BlogTable({
           )}
           totalItems={pagination.total}
           itemName="posts"
+          limit={pagination.limit}
         />
       </CardContent>
     </Card>

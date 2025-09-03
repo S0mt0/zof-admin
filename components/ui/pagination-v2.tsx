@@ -12,6 +12,7 @@ interface PaginationProps {
   showingEnd: number;
   totalItems: number;
   itemName?: string;
+  limit?: number;
 }
 
 export function Pagination({
@@ -21,12 +22,15 @@ export function Pagination({
   showingEnd,
   totalItems,
   itemName = "items",
+  limit = 5,
 }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // hide everything if no items
-  if (!totalItems || totalPages <= 0) return null;
+  if (!totalItems || totalPages <= 0 || totalItems <= limit) return null;
+
+  console.log({ totalItems, totalPages });
 
   const setPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());

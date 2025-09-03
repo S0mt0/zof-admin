@@ -56,11 +56,11 @@ export function SignupForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <CardWrapper
         backButtonLabel="Already have an account? Sign in"
         backButtonHref="/auth/login"
-        headerLabel="Sign Up"
+        headerLabel="Register"
         showSocial
         description="Join the Zita Onyeka Foundation admin team"
       >

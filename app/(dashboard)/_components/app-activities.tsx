@@ -37,7 +37,7 @@ export async function AppActivities({
           {data.map((activity) => (
             <div
               key={activity.id}
-              className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50"
+              className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-50/10"
             >
               <div className="flex-1">
                 <p className="text-sm font-medium">{activity.title}</p>
@@ -62,6 +62,7 @@ export async function AppActivities({
           )}
           totalItems={pagination.total}
           itemName="activities"
+          limit={pagination.limit}
         />
       </CardContent>
     </Card>

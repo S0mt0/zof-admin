@@ -66,6 +66,7 @@ export const useMessages = (messages: IMessage[]) => {
             toast.error(res.error);
           } else if (res?.success) {
             toast.success(res.success);
+            setSelectedMessages([]);
           }
         })
         .catch(() => {
