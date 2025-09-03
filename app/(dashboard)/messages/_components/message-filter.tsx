@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Filter, Trash2 } from "lucide-react";
+import { useDebounceValue } from "usehooks-ts";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +51,13 @@ export function MessageFilters({
     updateSearchParams({ status });
   };
 
+  const [searchTerm, setSearchTerm] = useState(searchParams.search || "");
+  const [debouncedSearchTerm] = useDebounceValue(searchTerm, 800);
+
+  useEffect(() => {
+    handleSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "read":
@@ -71,18 +80,18 @@ export function MessageFilters({
         <Input
           placeholder="Search messages..."
           defaultValue={searchParams.search || ""}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 w-full"
         />
       </div>
-      <div className="flex items-center gap-4 w-full">
-        <div className="hidden lg:flex relative flex-1 w-full max-w-md shrink-0">
+      <div className="flex items-center gap-4">
+        <div className="hidden lg:flex relative flex-1 w-full max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search messages..."
             defaultValue={searchParams.search || ""}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10 w-full"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
           />
         </div>
 

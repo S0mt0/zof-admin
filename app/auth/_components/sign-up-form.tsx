@@ -60,7 +60,7 @@ export function SignupForm() {
       <CardWrapper
         backButtonLabel="Already have an account? Sign in"
         backButtonHref="/auth/login"
-        headerLabel="Forgot your password?"
+        headerLabel="Sign Up"
         showSocial
         description="Join the Zita Onyeka Foundation admin team"
       >

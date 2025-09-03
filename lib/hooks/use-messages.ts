@@ -77,13 +77,14 @@ export const useMessages = (messages: IMessage[]) => {
     });
   };
 
-  const handleBulkDelete = async () => {
+  const handleBulkDelete = () => {
     if (!user || !EDITORIAL_ROLES.includes(user.role)) {
       toast.error("Unauthorized");
       return;
     }
 
     if (selectedMessages.length === 0) return;
+    if (selectedMessages.length === 1) return handleDelete(selectedMessages[0]);
 
     if (
       confirm(
@@ -91,22 +92,23 @@ export const useMessages = (messages: IMessage[]) => {
       )
     ) {
       const loading = toast.loading("Deleting...");
-      try {
-        const result = await (selectedMessages.length === 1
-          ? handleDelete(selectedMessages[0])
-          : bulkDeleteMessagesAction(selectedMessages));
-
-        if (result && "success" in result && result.success) {
-          toast.success(result.success);
-          setSelectedMessages([]);
-        } else if (result && "error" in result && result.error) {
-          toast.error(result.error);
-        }
-      } catch (error) {
-        toast.error("Failed to delete messages");
-      } finally {
-        toast.dismiss(loading);
-      }
+      startTransition(() => {
+        bulkDeleteMessagesAction(selectedMessages)
+          .then((res) => {
+            if (res?.error) {
+              toast.error(res.error);
+            } else if (res?.success) {
+              toast.success(res.success);
+              setSelectedMessages([]);
+            }
+          })
+          .catch(() => {
+            toast.error("Failed to delete messages");
+          })
+          .finally(() => {
+            toast.dismiss(loading);
+          });
+      });
     }
   };
 

@@ -1,4 +1,5 @@
 "use server";
+import { revalidatePath } from "next/cache";
 
 import {
   addAppActivity,
@@ -22,7 +23,7 @@ export const toggleMessageStatusAction = async (
 
   try {
     await toggleStatus(id, status);
-
+    revalidatePath("/messages");
     return { success: "Message marked as read" };
   } catch (error) {
     return { error: "Error marking message as read" };
@@ -46,6 +47,8 @@ export const deleteMessageAction = async (id: string) => {
           deleted.sender
         )}. The subject of the message was "${capitalize(deleted.subject)}".`
       );
+
+      revalidatePath("/messages");
     }
 
     return { success: "Message deleted" };
@@ -104,6 +107,8 @@ export const bulkDeleteMessagesAction = async (ids: string[]) => {
         result.count
       } message(s)`
     );
+
+    revalidatePath("/messages");
 
     return { success: `${result.count} message(s) deleted successfully` };
   } catch (e) {

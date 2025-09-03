@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Search, Filter, Trash2 } from "lucide-react";
+import { useDebounceValue } from "usehooks-ts";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +53,13 @@ export function BlogFilters({
     updateSearchParams({ featured });
   };
 
+  const [searchTerm, setSearchTerm] = useState(searchParams.search || "");
+  const [debouncedSearchTerm] = useDebounceValue(searchTerm, 800);
+
+  useEffect(() => {
+    handleSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "published":
@@ -85,7 +94,7 @@ export function BlogFilters({
         <Input
           placeholder="Search blog posts..."
           defaultValue={searchParams.search || ""}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 w-full"
         />
       </div>
@@ -95,7 +104,7 @@ export function BlogFilters({
           <Input
             placeholder="Search blog posts..."
             defaultValue={searchParams.search || ""}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full"
           />
         </div>
