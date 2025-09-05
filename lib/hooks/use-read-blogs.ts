@@ -9,6 +9,10 @@ import { useCurrentUser } from "./use-current-user";
 export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   const [isPending, startTransition] = useTransition();
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
+  const [actionType, setActionType] = useState<"bulk" | "single" | null>(null);
+  const [targetId, setTargetId] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const router = useRouter();
   const user = useCurrentUser();
 
@@ -19,6 +23,8 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
         : [...prev, blogId]
     );
   };
+
+  const toggleDialog = () => setOpenDialog((curr) => !curr);
 
   const handleSelectAll = () => {
     const currentBlogIds = blogs.map((blog) => blog.id);
@@ -45,31 +51,26 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
 
     if (selectedBlogs.length === 1) return handleDeleteBlog(selectedBlogs[0]);
 
-    if (
-      confirm(
-        `Are you sure you want to delete ${selectedBlogs.length} blog post(s)?`
-      )
-    ) {
-      const loading = toast.loading("Please wait...");
+    const loading = toast.loading("Please wait...");
 
-      startTransition(() => {
-        bulkDeleteBlogsAction(selectedBlogs)
-          .then((result) => {
-            if (result.success) {
-              toast.success(result.success);
-              setSelectedBlogs([]);
-            } else {
-              toast.error(result.error);
-            }
-          })
-          .catch((e) => {
-            toast.error("Failed to delete blogs");
-          })
-          .finally(() => {
-            toast.dismiss(loading);
-          });
-      });
-    }
+    startTransition(() => {
+      bulkDeleteBlogsAction(selectedBlogs)
+        .then((result) => {
+          if (result.success) {
+            toast.success(result.success);
+            setSelectedBlogs([]);
+          } else {
+            toast.error(result.error);
+          }
+        })
+        .catch((e) => {
+          toast.error("Failed to delete blogs");
+        })
+        .finally(() => {
+          toast.dismiss(loading);
+          toggleDialog();
+        });
+    });
   };
 
   const handleDeleteBlog = (blogId: string) => {
@@ -78,27 +79,28 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
       return;
     }
 
-    if (confirm("Are you sure you want to delete this blog post?")) {
-      const loading = toast.loading("Please wait...");
+    console.log("hello world...");
 
-      startTransition(() => {
-        deleteBlogAction(blogId)
-          .then((result) => {
-            if (result.success) {
-              toast.success(result.success);
-              setSelectedBlogs([]);
-            } else {
-              toast.error(result.error);
-            }
-          })
-          .catch((e) => {
-            toast.error("Failed to delete blog");
-          })
-          .finally(() => {
-            toast.dismiss(loading);
-          });
-      });
-    }
+    const loading = toast.loading("Please wait...");
+
+    startTransition(() => {
+      deleteBlogAction(blogId)
+        .then((result) => {
+          if (result.success) {
+            toast.success(result.success);
+            setSelectedBlogs([]);
+          } else {
+            toast.error(result.error);
+          }
+        })
+        .catch((e) => {
+          toast.error("Failed to delete blog");
+        })
+        .finally(() => {
+          toast.dismiss(loading);
+          toggleDialog();
+        });
+    });
   };
 
   const allCurrentSelected =
@@ -121,11 +123,17 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
     allCurrentSelected,
     someCurrentSelected,
     isPending,
+    actionType,
+    targetId,
+    openDialog,
     handleSelectBlog,
     handleSelectAll,
     handleBulkDelete,
     handleDeleteBlog,
     handleViewBlog,
     handleEditBlog,
+    setActionType,
+    setTargetId,
+    toggleDialog,
   };
 };

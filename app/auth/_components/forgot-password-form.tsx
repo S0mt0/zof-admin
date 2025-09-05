@@ -52,7 +52,7 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh_-_4rem)] flex items-center justify-center px-4">
       <CardWrapper
         backButtonLabel="Back to login"
         backButtonHref="/auth/login"

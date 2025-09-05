@@ -8,6 +8,7 @@ import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
 
 import { useReadTeam } from "@/lib/hooks";
+import { AlertDialog } from "@/components/alert-dialog";
 
 export function TeamMembers({ members }: { members: TeamMember[] }) {
   const {
@@ -19,6 +20,7 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     isPending,
     router,
     searchTerm,
+    openDialog,
     getStatusColor,
     handleDelete,
     openEmailModal,
@@ -27,6 +29,7 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     setEmailMessage,
     setEmailSubject,
     setEmailOpen,
+    toggleDialog,
   } = useReadTeam(members);
 
   return (
@@ -59,6 +62,8 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
               onEmail={() => openEmailModal(member)}
               onDelete={() => handleDelete(member)}
               getStatusColor={getStatusColor}
+              openDialog={openDialog}
+              toggleDialog={toggleDialog}
             />
           ))}
         </div>

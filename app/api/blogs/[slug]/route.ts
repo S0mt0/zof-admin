@@ -21,7 +21,7 @@ export async function GET(
     const data = await getBlogBySlug(slug);
 
     return Response.json(
-      { message: "Blogs fetched successfully", data },
+      { message: "Blog fetched successfully", data },
       {
         headers: {
           "Access-Control-Allow-Origin": FRONTEND_BASE_URL,

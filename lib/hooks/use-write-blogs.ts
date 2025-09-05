@@ -168,7 +168,17 @@ export const useWriteBlogs = ({
 
       const submissionData = {
         ...payload,
-        publishedAt: mode === "create" ? new Date() : payload.publishedAt,
+        publishedAt: (() => {
+          if (mode === "create") {
+            if (submitType === "published") {
+              return new Date();
+            } else {
+              return undefined;
+            }
+          } else {
+            return payload.publishedAt;
+          }
+        })(),
         slug: generateSlug(payload.title),
         status: submitType,
       };

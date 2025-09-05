@@ -1,38 +1,25 @@
+import { Prisma } from "@prisma/client";
+
 import { emptyPaginatedData } from "@/lib/constants";
 import { db } from "../config";
 import { prismaPaginate } from "@/lib/utils/db.utils";
 
-export const getAllEvents = async ({
-  limit,
-  page,
-  featured,
-  search,
-  status,
-}: {
+interface ListEventsOptions {
+  where?: Prisma.EventWhereInput;
+  select?: Prisma.EventSelect;
+  include?: Prisma.EventInclude;
+  orderBy?: Prisma.EventOrderByWithRelationInput;
   page: number;
   limit: number;
-  search?: string;
-  status?: string;
-  featured?: string;
-}) => {
-  const where: any = {};
+}
 
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { excerpt: { contains: search, mode: "insensitive" } },
-      { location: { contains: search, mode: "insensitive" } },
-    ];
-  }
-
-  if (status && status !== "all") {
-    where.status = status;
-  }
-
-  if (featured && featured !== "all") {
-    where.featured = featured === "featured";
-  }
-
+export const getAllEvents = async ({
+  where,
+  select,
+  orderBy = { createdAt: "asc" },
+  page,
+  limit,
+}: ListEventsOptions) => {
   try {
     return prismaPaginate({
       page,
@@ -40,17 +27,21 @@ export const getAllEvents = async ({
       model: db.event,
       args: {
         where,
-        include: {
-          createdByUser: {
-            select: {
-              name: true,
-              image: true,
-              email: true,
-              emailNotifications: true,
-            },
-          },
-        },
-        orderBy: { date: "asc" },
+        orderBy,
+        ...(select
+          ? { select }
+          : {
+              include: {
+                author: {
+                  select: {
+                    name: true,
+                    image: true,
+                    email: true,
+                    emailNotifications: true,
+                  },
+                },
+              },
+            }),
       },
     });
   } catch (error) {

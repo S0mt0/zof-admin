@@ -134,7 +134,7 @@ model Event {
   name                 String      @unique
   slug                 String      @unique
   detail               String?     
-  excerpt               String?     
+  excerpt              String?     
   date                 DateTime
   startTime            String
   endTime              String?

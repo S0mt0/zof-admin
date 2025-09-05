@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { useOnClickOutside } from "usehooks-ts";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,

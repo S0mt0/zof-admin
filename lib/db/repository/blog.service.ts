@@ -1,37 +1,25 @@
+import { Prisma } from "@prisma/client";
+
 import { emptyPaginatedData } from "@/lib/constants";
 import { db } from "../config";
 import { prismaPaginate } from "@/lib/utils/db.utils";
 
-export const getAllBlogs = async ({
-  limit,
-  page,
-  featured,
-  search,
-  status,
-}: {
+interface ListBlogsOptions {
+  where?: Prisma.BlogWhereInput;
+  select?: Prisma.BlogSelect;
+  include?: Prisma.BlogInclude;
+  orderBy?: Prisma.BlogOrderByWithRelationInput;
   page: number;
   limit: number;
-  search?: string;
-  status?: string | null;
-  featured?: string | null;
-}) => {
-  const where: any = {};
+}
 
-  if (search) {
-    where.OR = [
-      { title: { contains: search, mode: "insensitive" } },
-      { excerpt: { contains: search, mode: "insensitive" } },
-    ];
-  }
-
-  if (status && status !== "all") {
-    where.status = status;
-  }
-
-  if (featured && featured !== "all") {
-    where.featured = featured === "featured";
-  }
-
+export const getAllBlogs = async ({
+  where,
+  select,
+  orderBy = { createdAt: "desc" },
+  page,
+  limit,
+}: ListBlogsOptions) => {
   try {
     return await prismaPaginate({
       page,
@@ -39,17 +27,21 @@ export const getAllBlogs = async ({
       model: db.blog,
       args: {
         where,
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-              email: true,
-              emailNotifications: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
+        orderBy,
+        ...(select
+          ? { select }
+          : {
+              include: {
+                author: {
+                  select: {
+                    name: true,
+                    image: true,
+                    email: true,
+                    emailNotifications: true,
+                  },
+                },
+              },
+            }),
       },
     });
   } catch (error) {

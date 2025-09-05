@@ -16,11 +16,11 @@ import { capitalize } from "@/lib/utils";
 export const TableContent = ({
   blogs,
   selectedBlogs,
+  isPending,
   onSelectBlog,
   onViewBlog,
   onEditBlog,
   onDeleteBlog,
-  isPending,
 }: BlogTableProps) => {
   const getStatusColor = (status: Blog["status"]) => {
     switch (status) {

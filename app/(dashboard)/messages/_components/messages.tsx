@@ -14,6 +14,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import EmailModal from "@/components/email-modal";
 import ViewMessageModal from "./view-message-modal";
+import { AlertDialog } from "@/components/alert-dialog";
 
 export const Messages = ({
   data: messages,
@@ -32,6 +33,9 @@ export const Messages = ({
     replyTo,
     replySubject,
     activeMessage,
+    actionType,
+    openDialog,
+    targetId,
     handleBulkDelete,
     handleSelectAll,
     handleDelete,
@@ -43,13 +47,24 @@ export const Messages = ({
     setReplyModalOpen,
     setReplyMessage,
     openReplyModal,
+    setActionType,
+    setTargetId,
+    toggleDialog,
   } = useMessages(messages);
+
+  const dialogMessage =
+    actionType === "bulk"
+      ? `Do you really want to delete ${selectedMessages.length} message(s)?`
+      : "Are you sure you want to delete this message post?";
 
   return (
     <div className="flex flex-col gap-4">
       <MessageFilters
         searchParams={searchParams}
-        onBulkDelete={handleBulkDelete}
+        onBulkDelete={() => {
+          setActionType("bulk");
+          toggleDialog();
+        }}
         selectedCount={selectedMessages.length}
         unreadCount={unreadCount}
       />
@@ -96,7 +111,11 @@ export const Messages = ({
                 <MessageCard
                   key={message.id}
                   message={message}
-                  handleDeleteMessage={handleDelete}
+                  handleDeleteMessage={(id) => {
+                    setActionType("single");
+                    setTargetId(id);
+                    toggleDialog();
+                  }}
                   openReplyModal={openReplyModal}
                   handleSelectMessage={handleSelectMessage}
                   handleToggleReadStatus={toggleMessageStatus}
@@ -127,6 +146,17 @@ export const Messages = ({
         toggleMessageModal={toggleMessageModal}
         message={activeMessage}
         handleToggleReadStatus={toggleMessageStatus}
+      />
+
+      <AlertDialog
+        isOpen={openDialog}
+        onCancel={toggleDialog}
+        onOk={() => {
+          if (actionType === "bulk") return handleBulkDelete();
+          if (actionType === "single" && targetId)
+            return handleDelete(targetId);
+        }}
+        message={dialogMessage}
       />
 
       <Pagination

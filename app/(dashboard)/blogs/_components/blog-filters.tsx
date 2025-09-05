@@ -88,6 +88,11 @@ export function BlogFilters({
   const user = useCurrentUser();
   const isDisabled = !user || !EDITORIAL_ROLES.includes(user.role) || isPending;
 
+  const dialogMessage =
+    selectedCount <= 1
+      ? "Are you sure you want to delete this blog post?"
+      : `Do you really want to delete ${selectedCount} blog posts?`;
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
       <div className="flex lg:hidden relative flex-1 shrink-0 w-full">

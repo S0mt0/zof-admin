@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LogOut, User } from "lucide-react";
 
 import {
@@ -20,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { capitalize, currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils";
 import { LogoutButton } from "../logout-button";
 import { NavigationItems } from "./navigation-item";
 import { SettingsItems } from "./settings-item";
@@ -34,12 +35,22 @@ export async function AppSidebar({
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-2">
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-bold">Zita Onyeka Foundation</span>
-            <span className="truncate text-xs text-muted-foreground">
-              Admin Dashboard
-            </span>
+        <div className="flex items-center gap-2 py-2">
+          <div className="flex items-center justify-start gap-1.5 text-left text-sm leading-tight">
+            <Image
+              height={200}
+              width={200}
+              src={"/zof-logo.png"}
+              alt="@zof-logo"
+              className="w-10 h-auto mx-auto"
+              priority
+            />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-bold">Zita Onyeka Foundation</span>
+              <span className="truncate text-xs text-muted-foreground">
+                Admin Dashboard
+              </span>
+            </div>
           </div>
         </div>
       </SidebarHeader>

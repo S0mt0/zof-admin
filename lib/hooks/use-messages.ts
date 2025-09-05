@@ -12,6 +12,9 @@ import { useCurrentUser } from "./use-current-user";
 
 export const useMessages = (messages: IMessage[]) => {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const [actionType, setActionType] = useState<"bulk" | "single" | null>(null);
+  const [targetId, setTargetId] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const [isPending, startTransition] = useTransition();
 
@@ -32,6 +35,8 @@ export const useMessages = (messages: IMessage[]) => {
         : [...prev, messageId]
     );
   };
+
+  const toggleDialog = () => setOpenDialog((curr) => !curr);
 
   const handleSelectAll = () => {
     const currentMessageIds = messages.map((message) => message.id);
@@ -55,8 +60,6 @@ export const useMessages = (messages: IMessage[]) => {
       toast.error("Unauthorized");
       return;
     }
-
-    if (!confirm("Delete message?")) return;
 
     const loading = toast.loading("Deleting...");
     startTransition(() => {
@@ -87,30 +90,24 @@ export const useMessages = (messages: IMessage[]) => {
     if (selectedMessages.length === 0) return;
     if (selectedMessages.length === 1) return handleDelete(selectedMessages[0]);
 
-    if (
-      confirm(
-        `Are you sure you want to delete ${selectedMessages.length} messages?`
-      )
-    ) {
-      const loading = toast.loading("Deleting...");
-      startTransition(() => {
-        bulkDeleteMessagesAction(selectedMessages)
-          .then((res) => {
-            if (res?.error) {
-              toast.error(res.error);
-            } else if (res?.success) {
-              toast.success(res.success);
-              setSelectedMessages([]);
-            }
-          })
-          .catch(() => {
-            toast.error("Failed to delete messages");
-          })
-          .finally(() => {
-            toast.dismiss(loading);
-          });
-      });
-    }
+    const loading = toast.loading("Deleting...");
+    startTransition(() => {
+      bulkDeleteMessagesAction(selectedMessages)
+        .then((res) => {
+          if (res?.error) {
+            toast.error(res.error);
+          } else if (res?.success) {
+            toast.success(res.success);
+            setSelectedMessages([]);
+          }
+        })
+        .catch(() => {
+          toast.error("Failed to delete messages");
+        })
+        .finally(() => {
+          toast.dismiss(loading);
+        });
+    });
   };
 
   const openReplyModal = (message: IMessage) => {
@@ -201,6 +198,9 @@ export const useMessages = (messages: IMessage[]) => {
     allCurrentSelected,
     someCurrentSelected,
     activeMessage,
+    actionType,
+    targetId,
+    openDialog,
     handleBulkDelete,
     handleDelete,
     openReplyModal,
@@ -212,5 +212,8 @@ export const useMessages = (messages: IMessage[]) => {
     toggleMessageStatus,
     handleSelectMessage,
     handleSelectAll,
+    setActionType,
+    setTargetId,
+    toggleDialog,
   };
 };

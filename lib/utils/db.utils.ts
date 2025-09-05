@@ -24,3 +24,34 @@ export async function prismaPaginate<M, A = any>({
     },
   } as const;
 }
+
+export const allowedPublicBlogSelectFields = [
+  "id",
+  "title",
+  "excerpt",
+  "slug",
+  "status",
+  "featured",
+  "publishedAt",
+  "content",
+  "bannerImage",
+] as const;
+
+export type AllowedBlogSelectField =
+  (typeof allowedPublicBlogSelectFields)[number];
+
+export const allowedPublicEventSelectFields = [
+  "id",
+  "name",
+  "excerpt",
+  "slug",
+  "status",
+  "date",
+  "startTime",
+  "featured",
+  "location",
+  "bannerImage",
+] as const;
+
+export type AllowedEventSelectField =
+  (typeof allowedPublicEventSelectFields)[number];

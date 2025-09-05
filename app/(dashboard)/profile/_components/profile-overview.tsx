@@ -67,7 +67,7 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
           <LogoutButton>
             <Button
               variant="outline"
-              className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+              className="w-full text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-50/10 dark:hover:text-white transition-all  hover:text-red-700 hover:border-red-300"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Log Out

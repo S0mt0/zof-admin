@@ -16,6 +16,9 @@ export const useReadTeam = (members: TeamMember[]) => {
   const [emailTo, setEmailTo] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const toggleDialog = () => setOpenDialog((curr) => !curr);
 
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
@@ -45,12 +48,16 @@ export const useReadTeam = (members: TeamMember[]) => {
       return;
     }
 
-    if (!confirm(`Remove ${member.name}?`)) return;
     startTransition(() => {
-      deleteTeamMemberAction(member.id).then((res) => {
-        if (res?.error) toast.error(res.error);
-        if (res?.success) toast.success(res.success);
-      });
+      deleteTeamMemberAction(member.id)
+        .then((res) => {
+          if (res?.error) toast.error(res.error);
+          if (res?.success) toast.success(res.success);
+        })
+        .catch((e) => {
+          toast.error("Something went wrong");
+        })
+        .finally(() => toggleDialog());
     });
   };
 
@@ -96,6 +103,7 @@ export const useReadTeam = (members: TeamMember[]) => {
     emailMessage,
     filteredMembers,
     searchTerm,
+    openDialog,
     setSearchTerm,
     getStatusColor,
     handleDelete,
@@ -104,5 +112,6 @@ export const useReadTeam = (members: TeamMember[]) => {
     setEmailSubject,
     setEmailMessage,
     setEmailOpen,
+    toggleDialog,
   };
 };

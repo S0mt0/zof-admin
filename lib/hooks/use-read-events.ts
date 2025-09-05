@@ -9,6 +9,10 @@ import { useCurrentUser } from "./use-current-user";
 export const useReadEvents = (events: IEvent[]) => {
   const [isPending, startTransition] = useTransition();
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [actionType, setActionType] = useState<"bulk" | "single" | null>(null);
+  const [targetId, setTargetId] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const router = useRouter();
   const user = useCurrentUser();
 
@@ -19,6 +23,8 @@ export const useReadEvents = (events: IEvent[]) => {
         : [...prev, eventId]
     );
   };
+
+  const toggleDialog = () => setOpenDialog((curr) => !curr);
 
   const handleSelectAll = () => {
     const currentEventIds = events.map((event) => event.id);
@@ -46,30 +52,25 @@ export const useReadEvents = (events: IEvent[]) => {
     if (selectedEvents.length === 1)
       return handleDeleteEvent(selectedEvents[0]);
 
-    if (
-      confirm(
-        `Are you sure you want to delete ${selectedEvents.length} events?`
-      )
-    ) {
-      const loading = toast.loading("Please wait...");
-      startTransition(() => {
-        bulkDeleteEventsAction(selectedEvents)
-          .then((result) => {
-            if (result.success) {
-              toast.success(result.success);
-              setSelectedEvents([]);
-            } else {
-              toast.error(result.error);
-            }
-          })
-          .catch((e) => {
-            toast.error("Failed to delete events");
-          })
-          .finally(() => {
-            toast.dismiss(loading);
-          });
-      });
-    }
+    const loading = toast.loading("Please wait...");
+    startTransition(() => {
+      bulkDeleteEventsAction(selectedEvents)
+        .then((result) => {
+          if (result.success) {
+            toast.success(result.success);
+            setSelectedEvents([]);
+          } else {
+            toast.error(result.error);
+          }
+        })
+        .catch((e) => {
+          toast.error("Failed to delete events");
+        })
+        .finally(() => {
+          toast.dismiss(loading);
+          toggleDialog();
+        });
+    });
   };
 
   const handleDeleteEvent = (eventId: string) => {
@@ -78,26 +79,25 @@ export const useReadEvents = (events: IEvent[]) => {
       return;
     }
 
-    if (confirm("Are you sure you want to delete this event?")) {
-      const loading = toast.loading("Please wait...");
-      startTransition(() => {
-        deleteEventAction(eventId)
-          .then((result) => {
-            if (result.success) {
-              toast.success(result.success);
-              setSelectedEvents([]);
-            } else {
-              toast.error(result.error);
-            }
-          })
-          .catch((e) => {
-            toast.error("Failed to delete event");
-          })
-          .finally(() => {
-            toast.dismiss(loading);
-          });
-      });
-    }
+    const loading = toast.loading("Please wait...");
+    startTransition(() => {
+      deleteEventAction(eventId)
+        .then((result) => {
+          if (result.success) {
+            toast.success(result.success);
+            setSelectedEvents([]);
+          } else {
+            toast.error(result.error);
+          }
+        })
+        .catch((e) => {
+          toast.error("Failed to delete event");
+        })
+        .finally(() => {
+          toast.dismiss(loading);
+          toggleDialog();
+        });
+    });
   };
 
   const allCurrentSelected =
@@ -121,11 +121,17 @@ export const useReadEvents = (events: IEvent[]) => {
     allCurrentSelected,
     someCurrentSelected,
     isPending,
+    actionType,
+    targetId,
+    openDialog,
     handleSelectEvent,
     handleSelectAll,
     handleBulkDelete,
     handleDeleteEvent,
     handleViewEvent,
     handleEditEvent,
+    setActionType,
+    setTargetId,
+    toggleDialog,
   };
 };
