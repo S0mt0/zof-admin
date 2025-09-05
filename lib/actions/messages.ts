@@ -41,9 +41,7 @@ export const deleteMessageAction = async (id: string) => {
     if (deleted) {
       await addAppActivity(
         "Message deleted",
-        `${capitalize(user.name!)} (${
-          user.role
-        }) deleted a message from ${capitalize(
+        `${user.name} (${user.role}) deleted a message from ${capitalize(
           deleted.sender
         )}. The subject of the message was "${capitalize(deleted.subject)}".`
       );
@@ -80,7 +78,7 @@ export const replyMessageAction = async (
 
     await addAppActivity(
       `Reply to ${capitalize(recipient) || to}`,
-      `${capitalize(user.name!)} (${user.role}) responded to a message from ${
+      `${user.name} (${user.role}) responded to a message from ${
         capitalize(recipient) || to
       }. The subject of the message was "${capitalize(subject)}".`
     );
@@ -103,9 +101,7 @@ export const bulkDeleteMessagesAction = async (ids: string[]) => {
 
     await addAppActivity(
       "Message(s) deleted",
-      `${capitalize(user.name!)} (${user.role}) deleted ${
-        result.count
-      } message(s)`
+      `${user.name} (${user.role}) deleted ${result.count} message(s)`
     );
 
     revalidatePath("/messages");

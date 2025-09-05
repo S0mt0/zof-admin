@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 import { SignUpSchema } from "../schemas";
 import { createUser, getUserByEmail } from "../db/repository";
-import { generateVerificationToken } from "../utils";
+import { capitalize, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { DEFAULT_ADMIN_EMAILS } from "../constants";
 
@@ -21,7 +21,7 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
   if (existingUser) return { error: "Email taken, try another one." };
 
   await createUser({
-    name,
+    name: capitalize(name),
     email: email.toLocaleLowerCase(),
     password: hashedPassword,
     role: DEFAULT_ADMIN_EMAILS.includes(email) ? "admin" : "user",

@@ -85,6 +85,7 @@ export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
             return handleDeleteBlog(targetId);
         }}
         message={dialogMessage}
+        isPending={isPending}
       />
     </div>
   );

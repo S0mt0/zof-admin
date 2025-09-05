@@ -95,7 +95,7 @@ export const updateBlogAction = async (
     if (updated) {
       await addAppActivity(
         "Blog post updated",
-        `${capitalize(user.name!)} (${
+        `${user.name} (${
           user.role
         }) made some changes to the blog post, titled "${capitalize(
           blog.title
@@ -136,7 +136,7 @@ export const deleteBlogAction = async (id: string) => {
     if (deleted) {
       await addAppActivity(
         "Blog post deleted",
-        `${capitalize(user.name!)} (${
+        `${user.name} (${
           user.role
         }) deleted the blog post, titled "${capitalize(deleted.title)}"`
       );
@@ -171,9 +171,7 @@ export const bulkDeleteBlogsAction = async (ids: string[]) => {
 
     await addAppActivity(
       "Blog post(s) deleted",
-      `${capitalize(user.name!)} (${user.role}) deleted ${
-        result.count
-      } blog post(s)"`
+      `${user.name} (${user.role}) deleted ${result.count} blog post(s)"`
     );
 
     revalidateTag("blog");

@@ -85,6 +85,7 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
             return handleDeleteEvent(targetId);
         }}
         message={dialogMessage}
+        isPending={isPending}
       />
     </div>
   );

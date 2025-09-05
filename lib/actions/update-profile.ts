@@ -10,7 +10,7 @@ import {
 } from "../schemas";
 import { getUserByEmail, getUserById, updateUser } from "../db/repository";
 import { update } from "@/auth";
-import { currentUser, generateVerificationToken } from "../utils";
+import { capitalize, currentUser, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 
 export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
@@ -22,8 +22,15 @@ export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
 
   if (!validatedFields.success) return { error: "Invalid fields!" };
 
+  const name = validatedFields.data?.name;
+  let payload = validatedFields.data;
+
+  if (name) {
+    payload = { ...validatedFields.data, name: capitalize(name) };
+  }
+
   try {
-    await updateUser(user.id, validatedFields.data);
+    await updateUser(user.id, payload);
 
     return { success: "Profile updated successfully!" };
   } catch (error) {

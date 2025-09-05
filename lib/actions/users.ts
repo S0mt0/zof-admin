@@ -36,7 +36,7 @@ export const changeUserRoleAction = async (userId: string, role: Role) => {
     if (updated) {
       await addAppActivity(
         "User Role Update",
-        `${capitalize(user.name!)} (${user.role}) has updated ${capitalize(
+        `${user.name} (${user.role}) has updated ${capitalize(
           existing.name
         )}'s user role from "${capitalize(existing.role)}" to "${capitalize(
           updated.role
@@ -79,7 +79,7 @@ export const deleteUserAccountAction = async (userId: string) => {
     if (deleted) {
       await addAppActivity(
         "User Account Deleted",
-        `${capitalize(user.name!)} (${user.role}) has removed ${capitalize(
+        `${user.name} (${user.role}) has removed ${capitalize(
           deleted.name
         )} from the board`
       );

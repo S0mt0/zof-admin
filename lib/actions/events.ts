@@ -52,9 +52,7 @@ export const createEventAction = async (
     if (newEvent) {
       await addAppActivity(
         "New event added",
-        `${capitalize(user.name!)} just added a new event, "${capitalize(
-          newEvent.name
-        )}"`
+        `${user.name} just added a new event, "${capitalize(newEvent.name)}"`
       );
 
       revalidateTag("event");
@@ -97,7 +95,7 @@ export const updateEventAction = async (
     if (updated) {
       await addAppActivity(
         "Event updated",
-        `${capitalize(user.name!)} (${
+        `${user.name} (${
           user.role
         }) made some changes to the event, "${capitalize(event.name)}"`
       );
@@ -136,9 +134,9 @@ export const deleteEventAction = async (eventId: string) => {
     if (deleted) {
       await addAppActivity(
         "Event deleted",
-        `${capitalize(user.name!)} (${
-          user.role
-        }) deleted the event, "${capitalize(deleted.name)}"`
+        `${user.name} (${user.role}) deleted the event, "${capitalize(
+          deleted.name
+        )}"`
       );
 
       if (
@@ -171,9 +169,7 @@ export const bulkDeleteEventsAction = async (ids: string[]) => {
 
     await addAppActivity(
       "Event(s) deleted",
-      `${capitalize(user.name!)} (${user.role}) deleted ${
-        result.count
-      } event(s)"`
+      `${user.name} (${user.role}) deleted ${result.count} event(s)"`
     );
 
     revalidateTag("event");

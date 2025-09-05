@@ -36,15 +36,14 @@ export const createTeamMemberAction = async (
       ...data,
       addedBy: user.id,
       joinDate: new Date(data.joinDate),
+      name: capitalize(validated.data.name),
     };
 
     const created = await createTeamMember(payload);
     if (created) {
       await addAppActivity(
         "New team member added",
-        `${capitalize(user.name!)} (${user.role}) added ${capitalize(
-          created.name
-        )} to the team as "${created.role}"`
+        `${user.name} (${user.role}) added ${created.name} to the team as "${created.role}"`
       );
       revalidatePath("/");
     }
@@ -68,7 +67,11 @@ export const updateTeamMemberAction = async (
   if (!validated.success) return { error: "Invalid fields" };
 
   try {
-    const data = validated.data;
+    let data = validated.data;
+
+    if (data.name) {
+      data = { ...data, name: capitalize(data.name) };
+    }
 
     const updated = await updateTeamMember(id, {
       ...data,
@@ -78,9 +81,7 @@ export const updateTeamMemberAction = async (
     if (updated) {
       await addAppActivity(
         "Team member info updated",
-        `${capitalize(user.name!)} (${
-          user.role
-        }) made some changes to ${capitalize(updated.name)}'s details.`
+        `${user.name} (${user.role}) made some changes to ${updated.name}'s details.`
       );
       revalidatePath("/");
     }
@@ -103,9 +104,7 @@ export const deleteTeamMemberAction = async (id: string) => {
     if (deleted) {
       await addAppActivity(
         "Team member removed",
-        `${capitalize(user.name!)} (${user.role}) removed ${
-          deleted.name
-        } from the team`
+        `${user.name} (${user.role}) removed ${deleted.name} from the team`
       );
       revalidatePath("/");
     }

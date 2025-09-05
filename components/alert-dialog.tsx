@@ -17,6 +17,7 @@ type Props = {
   onOk: () => void;
   message?: string;
   isOpen: boolean;
+  isPending?: boolean;
 };
 
 export const AlertDialog = ({
@@ -24,6 +25,7 @@ export const AlertDialog = ({
   onOk,
   message,
   isOpen = false,
+  isPending = false,
 }: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(cardRef as React.RefObject<HTMLElement>, () => onCancel());
@@ -50,7 +52,7 @@ export const AlertDialog = ({
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button onClick={onOk} className="text-white">
+          <Button onClick={onOk} disabled={isPending} className="text-white">
             OK
           </Button>
         </CardFooter>

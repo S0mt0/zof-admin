@@ -157,6 +157,7 @@ export const Messages = ({
             return handleDelete(targetId);
         }}
         message={dialogMessage}
+        isPending={isPending}
       />
 
       <Pagination

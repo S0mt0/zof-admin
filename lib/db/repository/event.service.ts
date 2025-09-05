@@ -32,7 +32,7 @@ export const getAllEvents = async ({
           ? { select }
           : {
               include: {
-                author: {
+                createdByUser: {
                   select: {
                     name: true,
                     image: true,

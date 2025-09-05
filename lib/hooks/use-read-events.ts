@@ -46,6 +46,7 @@ export const useReadEvents = (events: IEvent[]) => {
       toast.error("Unauthorized");
       return;
     }
+    toggleDialog();
 
     if (selectedEvents.length === 0) return;
 
@@ -68,7 +69,6 @@ export const useReadEvents = (events: IEvent[]) => {
         })
         .finally(() => {
           toast.dismiss(loading);
-          toggleDialog();
         });
     });
   };
@@ -78,6 +78,7 @@ export const useReadEvents = (events: IEvent[]) => {
       toast.error("Unauthorized");
       return;
     }
+    toggleDialog();
 
     const loading = toast.loading("Please wait...");
     startTransition(() => {
@@ -95,7 +96,6 @@ export const useReadEvents = (events: IEvent[]) => {
         })
         .finally(() => {
           toast.dismiss(loading);
-          toggleDialog();
         });
     });
   };

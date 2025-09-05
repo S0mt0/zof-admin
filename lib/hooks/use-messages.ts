@@ -60,6 +60,7 @@ export const useMessages = (messages: IMessage[]) => {
       toast.error("Unauthorized");
       return;
     }
+    toggleDialog();
 
     const loading = toast.loading("Deleting...");
     startTransition(() => {
@@ -86,6 +87,7 @@ export const useMessages = (messages: IMessage[]) => {
       toast.error("Unauthorized");
       return;
     }
+    toggleDialog();
 
     if (selectedMessages.length === 0) return;
     if (selectedMessages.length === 1) return handleDelete(selectedMessages[0]);

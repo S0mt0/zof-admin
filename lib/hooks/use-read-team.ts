@@ -16,6 +16,7 @@ export const useReadTeam = (members: TeamMember[]) => {
   const [emailTo, setEmailTo] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
+  const [target, setTarget] = useState<TeamMember | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const toggleDialog = () => setOpenDialog((curr) => !curr);
@@ -42,22 +43,23 @@ export const useReadTeam = (members: TeamMember[]) => {
     }
   };
 
-  const handleDelete = (member: TeamMember) => {
+  const handleDelete = (mmemberId: string) => {
     if (!user || !EDITORIAL_ROLES.includes(user.role)) {
       toast.error("Unauthorized");
       return;
     }
 
+    toggleDialog();
+
     startTransition(() => {
-      deleteTeamMemberAction(member.id)
+      deleteTeamMemberAction(mmemberId)
         .then((res) => {
           if (res?.error) toast.error(res.error);
           if (res?.success) toast.success(res.success);
         })
         .catch((e) => {
           toast.error("Something went wrong");
-        })
-        .finally(() => toggleDialog());
+        });
     });
   };
 
@@ -104,6 +106,7 @@ export const useReadTeam = (members: TeamMember[]) => {
     filteredMembers,
     searchTerm,
     openDialog,
+    target,
     setSearchTerm,
     getStatusColor,
     handleDelete,
@@ -113,5 +116,6 @@ export const useReadTeam = (members: TeamMember[]) => {
     setEmailMessage,
     setEmailOpen,
     toggleDialog,
+    setTarget,
   };
 };

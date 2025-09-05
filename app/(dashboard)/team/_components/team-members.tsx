@@ -21,6 +21,7 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     router,
     searchTerm,
     openDialog,
+    target,
     getStatusColor,
     handleDelete,
     openEmailModal,
@@ -30,6 +31,7 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     setEmailSubject,
     setEmailOpen,
     toggleDialog,
+    setTarget,
   } = useReadTeam(members);
 
   return (
@@ -60,10 +62,11 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
               member={member}
               onEdit={() => router.push(`/team/${member.id}/edit`)}
               onEmail={() => openEmailModal(member)}
-              onDelete={() => handleDelete(member)}
+              onDelete={() => {
+                setTarget(member);
+                toggleDialog();
+              }}
               getStatusColor={getStatusColor}
-              openDialog={openDialog}
-              toggleDialog={toggleDialog}
             />
           ))}
         </div>
@@ -80,6 +83,14 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
         onSend={sendEmail}
         disabled={isPending}
         pending={isPending}
+      />
+
+      <AlertDialog
+        isOpen={openDialog}
+        onCancel={toggleDialog}
+        onOk={() => handleDelete(target?.id!)}
+        message={`Are you sure you want to remove ${target?.name} from the team?`}
+        isPending={isPending}
       />
     </div>
   );

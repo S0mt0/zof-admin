@@ -46,6 +46,7 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
       toast.error("Unauthorized");
       return;
     }
+    toggleDialog();
 
     if (selectedBlogs.length === 0) return;
 
@@ -68,7 +69,6 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
         })
         .finally(() => {
           toast.dismiss(loading);
-          toggleDialog();
         });
     });
   };
@@ -78,8 +78,7 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
       toast.error("Unauthorized");
       return;
     }
-
-    console.log("hello world...");
+    toggleDialog();
 
     const loading = toast.loading("Please wait...");
 
@@ -98,7 +97,6 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
         })
         .finally(() => {
           toast.dismiss(loading);
-          toggleDialog();
         });
     });
   };
