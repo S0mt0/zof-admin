@@ -21,7 +21,7 @@ export default async function Page({
 
   if (searchParams.search) {
     where.OR = [
-      { title: { contains: searchParams.search, mode: "insensitive" } },
+      { name: { contains: searchParams.search, mode: "insensitive" } },
       { excerpt: { contains: searchParams.search, mode: "insensitive" } },
     ];
   }
