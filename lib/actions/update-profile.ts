@@ -1,6 +1,7 @@
 "use server";
 import * as z from "zod";
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 
 import {
   ProfileSchema,
@@ -31,6 +32,8 @@ export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
 
   try {
     await updateUser(user.id, payload);
+    revalidatePath("/profile");
+    revalidatePath("/");
 
     return { success: "Profile updated successfully!" };
   } catch (error) {
@@ -49,7 +52,8 @@ export const updateProfileImage = async (imageUrl: string) => {
 
   try {
     await updateUser(userId, { image: imageUrl });
-
+    revalidatePath("/profile");
+    revalidatePath("/");
     return { success: "Profile image updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -82,7 +86,7 @@ export const updateEmail = async (
     }
 
     const updated = await updateUser(user.id, {
-      email: email,
+      email: email.toLocaleLowerCase(),
       emailVerified: null,
     }); // Reset email verification since email changed
 
@@ -93,6 +97,8 @@ export const updateEmail = async (
       await mailer.sendVerificationEmail(email, token);
 
       await update({ user: { email: user?.email } });
+      revalidatePath("/profile");
+      revalidatePath("/");
 
       return {
         success:
@@ -154,7 +160,7 @@ export const updateNotificationPreferences = async (
 
   try {
     await updateUser(user.id, validatedFields.data);
-
+    revalidatePath("/profile");
     return { success: "Notification preferences updated!" };
   } catch (error) {
     return { error: "Something went wrong!" };
