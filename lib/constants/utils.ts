@@ -17,7 +17,7 @@ export const ACCEPTED_IMAGE_TYPES = [
   "image/heic",
 ];
 
-export const MAX_IMAGE_SIZE = 8 * 1000 * 1024; // 8MB
+export const MAX_IMAGE_SIZE = 5 * 1000 * 1024; // 5MB
 
 export const EDITORIAL_ROLES: Role[] = ["admin", "editor"];
 

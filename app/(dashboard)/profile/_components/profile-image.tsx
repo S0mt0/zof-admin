@@ -8,17 +8,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { handleFileUpload } from "@/lib/utils";
 import { updateProfileImage } from "@/lib/actions/update-profile";
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "@/lib/constants";
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
-const MAX_FILE_SIZE = 8000000; // 8MB
-
-export const ProfileImage = ({
-  imgUrl = "",
-  userId,
-}: {
-  imgUrl?: string;
-  userId: string;
-}) => {
+export const ProfileImage = ({ imgUrl = "" }: { imgUrl?: string }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -37,13 +29,13 @@ export const ProfileImage = ({
     }
 
     const file = files[0];
-    if (!ACCEPTED_TYPES.includes(file.type)) {
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       toast.error("Unsupported file type. Use jpg, jpeg, png, or gif.");
       e.target.value = "";
       return;
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > MAX_IMAGE_SIZE) {
       toast.error("File size must not be more than 8MB");
       e.target.value = "";
       return;
@@ -60,7 +52,7 @@ export const ProfileImage = ({
             return;
           }
 
-          const res = await updateProfileImage(objectUrl, userId);
+          const res = await updateProfileImage(objectUrl);
           if (res?.error) {
             toast.error(res.error);
             return;

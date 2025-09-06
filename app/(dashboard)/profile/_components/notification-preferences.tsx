@@ -86,34 +86,40 @@ export function NotificationPreferences({ profile }: { profile: IUser }) {
                 )}
               />
             </div>
-
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Weekly Reports</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive weekly analytics reports
-                </p>
-              </div>
-              <FormField
-                control={form.control}
-                name="weeklyReports"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked);
-                          handleNotificationChange("weeklyReports", checked);
-                        }}
-                        // disabled={isPending}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+            {profile.role === "admin" && (
+              <>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Weekly Reports</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receive weekly analytics reports
+                    </p>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="weeklyReports"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
+                              handleNotificationChange(
+                                "weeklyReports",
+                                checked
+                              );
+                            }}
+                            // disabled={isPending}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
+            )}
 
             <Separator />
             <div className="flex items-center justify-between">

@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     await Promise.all([
       db.message.create({ data }),
-      mailer.send({
+      mailer.sendMail({
         subject: data.subject,
         to: "noreply.backoffice.server@gmail.com",
         text: `You have a new message from ${data.sender} (${data.email}): ${data.content}`,

@@ -38,7 +38,11 @@ export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
   }
 };
 
-export const updateProfileImage = async (imageUrl: string, userId: string) => {
+export const updateProfileImage = async (imageUrl: string) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session. Please log in again." };
+
   if (!imageUrl || !userId) {
     return { error: "Invalid image or user!" };
   }

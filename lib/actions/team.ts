@@ -129,7 +129,7 @@ export const emailTeamMemberAction = async (
 
   try {
     const mailer = new MailService();
-    await mailer.send({
+    await mailer.sendMail({
       to,
       subject,
       text: message,

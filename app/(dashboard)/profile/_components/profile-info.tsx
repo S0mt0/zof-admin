@@ -58,16 +58,6 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     startTransition(() => {
-      const hasChanges =
-        values.name !== profile?.name ||
-        values.bio !== profile?.bio ||
-        values.location !== profile?.location ||
-        values.phone !== profile?.phone;
-
-      if (!hasChanges) {
-        return; // Do nothing if values didn't change
-      }
-
       updateProfile(values).then((data) => {
         if (data?.error) toast.error(data.error);
 
@@ -82,11 +72,6 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
 
   const onEmailSubmit = (values: z.infer<typeof EmailUpdateSchema>) => {
     startTransition(() => {
-      const hasChanges = values.email !== profile?.email;
-      if (!hasChanges) {
-        return; // Do nothing if value didn't change
-      }
-
       updateEmail(values).then((data) => {
         if (data?.error) {
           toast.error(data.error);
@@ -99,6 +84,13 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
       });
     });
   };
+
+  const emailHasChanges = emailForm.watch("email") !== profile.email;
+  const profileHasChanges =
+    form.watch("name") !== profile?.name ||
+    form.watch("bio") !== profile?.bio ||
+    form.watch("location") !== profile?.location ||
+    form.watch("phone") !== profile?.phone;
 
   return (
     <div className="space-y-6">
@@ -117,7 +109,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                 <Button
                   variant="default"
                   onClick={() => form.handleSubmit(onSubmit)()}
-                  disabled={isPending}
+                  disabled={isPending || !profileHasChanges}
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {isPending ? "Saving..." : "Save Changes"}
@@ -245,7 +237,7 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
                   <Button
                     variant="default"
                     onClick={() => emailForm.handleSubmit(onEmailSubmit)()}
-                    disabled={isPending}
+                    disabled={isPending || !emailHasChanges}
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {isPending ? "Updating..." : "Update Email"}

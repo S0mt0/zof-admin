@@ -85,7 +85,7 @@ export const deleteUserAccountAction = async (userId: string) => {
       );
 
       const mailer = new MailService();
-      await mailer.send({
+      await mailer.sendMail({
         to: deleted.email,
         subject: "Account deleted",
         text: `Your account has been deleted by the admin. If you believe this was a mstake, please contact admin or support.`,

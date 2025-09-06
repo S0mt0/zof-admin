@@ -19,7 +19,7 @@ export const ProfileOverview = ({ profile }: { profile: IUser }) => {
   return (
     <Card className="md:col-span-1">
       <CardHeader className="text-center">
-        <ProfileImage imgUrl={profile?.image!} userId={profile?.id} />
+        <ProfileImage imgUrl={profile?.image!} />
         <div className="space-y-1">
           <CardTitle className="text-xl">{capitalize(profile?.name)}</CardTitle>
           <CardDescription className="flex items-center justify-center gap-1">

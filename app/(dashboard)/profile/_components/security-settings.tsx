@@ -43,7 +43,7 @@ export function SecuritySettings({ profile }: { profile: IUser }) {
 
   const onSubmit = (values: z.infer<typeof PasswordUpdateSchema>) => {
     startTransition(() => {
-      updatePassword(values, profile?.id).then((data) => {
+      updatePassword(values).then((data) => {
         if (data?.error) toast.error(data.error);
 
         if (data?.success) {
