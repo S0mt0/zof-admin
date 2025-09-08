@@ -10,6 +10,7 @@ import type {
 } from "lexical";
 import type React from "react"; // Import React to declare JSX
 import { $applyNodeReplacement, DecoratorNode } from "lexical";
+import Image from "next/image";
 
 export interface ImagePayload {
   altText: string;
@@ -95,7 +96,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     element.setAttribute("height", this.__height.toString());
     element.style.display = "block";
     element.style.margin = "1rem auto";
-    element.style.maxWidth = "700px";
+    element.style.maxWidth = "100%";
     element.style.width = "100%";
     element.style.objectFit = "cover";
     element.style.objectPosition = "center";
@@ -188,24 +189,30 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
   decorate(): React.JSX.Element {
     // Use React.JSX.Element instead of JSX.Element
     return (
-      <div className="image-container">
-        <img
-          src={this.__src || "/placeholder-user.jpg"}
+      <figure className="min-w-full w-full max-w-full">
+        <Image
+          width={1000}
+          height={800}
+          src={this.__src}
           alt={this.__altText}
           style={{
             height: this.__height === "inherit" ? "inherit" : this.__height,
             width: this.__width === "inherit" ? "100%" : this.__width,
             display: "block",
-            margin: "1rem auto",
+            margin: "1rem 0",
+            verticalAlign: "middle",
+            maxWidth: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
           }}
-          className="!w-full !max-w-[700px] !aspect-video block mx-auto object-cover object-center my-6 rounded-md"
+          className="w-full h-auto block object-cover object-center my-6 rounded-sm"
         />
         {this.__caption && (
           <figcaption className="text-center text-sm text-muted-foreground mt-2 italic">
             {this.__caption}
           </figcaption>
         )}
-      </div>
+      </figure>
     );
   }
 }

@@ -41,7 +41,7 @@ import {
 import { TfiLayoutLineSolid } from "react-icons/tfi";
 import { FaImage } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
-import { BiUndo, BiRedo } from "react-icons/bi";
+import { FaRedo, FaUndo } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -186,7 +186,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createCodeNode() as unknown as any);
+          $setBlocksType(selection, () => $createCodeNode());
         }
       });
     }
@@ -328,7 +328,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
 
     editor.update(() => {
       const imageNode = $createImageNode({
-        altText: alt,
+        altText: caption || alt,
         caption,
         src: url,
       });
@@ -425,7 +425,11 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         }
 
         if (uploadedUrl) {
-          doInsertImageWithUrl(uploadedUrl, selectedFile.name, imageCaption);
+          doInsertImageWithUrl(
+            uploadedUrl,
+            selectedFile.name.split(".")[0],
+            imageCaption
+          );
           setSelectedFile(null);
           setImageCaption("");
           setIsImagePopoverOpen(false);
@@ -495,7 +499,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           type="button"
           onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
         >
-          <BiUndo className="h-4 w-4" />
+          <FaUndo className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
@@ -503,7 +507,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           type="button"
           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         >
-          <BiRedo className="h-4 w-4" />
+          <FaRedo className="h-4 w-4" />
         </Button>
 
         <div className="w-px h-6 bg-border mx-1" />

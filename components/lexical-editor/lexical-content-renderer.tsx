@@ -12,6 +12,7 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { YouTubeNode } from "./nodes/YouTubeNode";
+import { cn } from "@/lib/utils";
 
 interface LexicalContentRendererProps {
   content: string;
@@ -20,7 +21,7 @@ interface LexicalContentRendererProps {
 
 export function LexicalContentRenderer({
   content,
-  className = "prose prose-lg dark:prose-invert max-w-none",
+  className = "prose prose-lg dark:prose-invert",
 }: LexicalContentRendererProps) {
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
@@ -96,7 +97,7 @@ export function LexicalContentRenderer({
 
   return (
     <div
-      className={className}
+      className={cn("min-w-full w-full max-w-full", className)}
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
   );

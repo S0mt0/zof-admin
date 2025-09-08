@@ -77,12 +77,13 @@ export class YouTubeNode extends DecoratorNode<React.JSX.Element> {
   exportDOM(): DOMExportOutput {
     const element = document.createElement("iframe");
     element.setAttribute("src", `https://www.youtube.com/embed/${this.__id}`);
-    element.setAttribute("width", "560");
-    element.setAttribute("height", "315");
+    element.setAttribute("width", "100%");
+    element.setAttribute("height", "auto");
     element.setAttribute("frameborder", "0");
     element.setAttribute("allowfullscreen", "true");
     element.style.display = "block";
-    element.style.margin = "0 auto";
+    element.style.margin = "1rem auto";
+    element.style.aspectRatio = "16/9";
     return { element };
   }
 
@@ -119,18 +120,16 @@ export class YouTubeNode extends DecoratorNode<React.JSX.Element> {
   decorate(): React.JSX.Element {
     // Use React.JSX.Element instead of JSX.Element
     return (
-      <div className="flex justify-center my-4">
-        <iframe
-          width="700"
-          height="394"
-          src={`https://www.youtube.com/embed/${this.__id}`}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen={true}
-          title="YouTube video"
-          className="!w-full !max-w-[700px] !aspect-video block mx-auto rounded-md shadow-lg my-8"
-        />
-      </div>
+      <iframe
+        width="700"
+        height="394"
+        src={`https://www.youtube.com/embed/${this.__id}`}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen={true}
+        title="YouTube video"
+        className="w-full aspect-video block rounded-sm shadow-lg my-8"
+      />
     );
   }
 }

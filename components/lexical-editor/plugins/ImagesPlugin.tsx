@@ -7,19 +7,11 @@ import { DRAG_DROP_PASTE } from "@lexical/rich-text";
 import { ImageNode } from "../nodes/ImageNode";
 import type { JSX } from "react";
 
-const ACCEPTABLE_IMAGE_TYPES = [
-  "image/",
-  "image/heic",
-  "image/heif",
-  "image/gif",
-  "image/webp",
-];
-
 export function ImagesPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    if (!editor.hasNodes([ImageNode as unknown as any])) {
+    if (!editor.hasNodes([ImageNode])) {
       throw new Error("ImagesPlugin: ImageNode not registered on editor");
     }
 
@@ -46,10 +38,10 @@ function eventFiles(event: InputEvent): [boolean, Array<File>, boolean] {
   let types: Set<string> = new Set();
 
   if (event.type === "dragover" || event.type === "drop") {
-    dataTransfer = (event as unknown as DragEvent).dataTransfer;
+    dataTransfer = event?.dataTransfer;
   } else if (event.type === "paste") {
     dataTransfer = (event as unknown as ClipboardEvent).clipboardData;
-    isComposing = (event as any).isComposing;
+    isComposing = event?.isComposing;
   }
 
   if (dataTransfer !== null) {

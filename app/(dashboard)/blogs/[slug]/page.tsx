@@ -156,10 +156,7 @@ export default async function ViewBlogPage({
         )}
 
         {/* Blog Content */}
-        <LexicalContentRenderer
-          content={blog.content}
-          className="prose prose-lg dark:prose-invert w-full my-12"
-        />
+        <LexicalContentRenderer content={blog.content} />
 
         {/* Tags */}
         {blog.tags.length > 0 && (
