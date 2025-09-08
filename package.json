@@ -62,6 +62,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
+    "draft-js": "^0.11.7",
     "input-otp": "1.4.1",
     "jspdf": "latest",
     "jspdf-autotable": "^5.0.2",
@@ -72,6 +73,7 @@
     "next-themes": "latest",
     "nodemailer": "^7.0.5",
     "react": "^19.1.1",
+    "react-colorful": "^5.6.1",
     "react-day-picker": "9.7.0",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.54.1",
@@ -88,6 +90,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.11.18",
     "@types/node": "^22",
     "@types/nodemailer": "^7.0.0",
     "@types/react": "^19.1.10",

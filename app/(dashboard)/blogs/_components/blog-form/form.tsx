@@ -21,6 +21,7 @@ import { ExcerptInput } from "./excerpt";
 import { TagsInput } from "./tags";
 import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
 import { useWriteBlogs } from "@/lib/hooks";
+import RichTextEditor from "@/components/draft-editor/editor";
 
 export default function BlogForm(props: {
   initialData?: Omit<Blog, "comments"> | null;
@@ -139,12 +140,14 @@ export default function BlogForm(props: {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EditorWrapper
+              {/* <EditorWrapper
                 value={formData.content}
                 onChange={handleContentChange}
                 disabled={isPending}
                 placeholder="Write your blog content..."
-              />
+              /> */}
+
+              <RichTextEditor />
             </CardContent>
           </Card>
         </div>
