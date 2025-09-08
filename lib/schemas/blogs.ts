@@ -16,6 +16,8 @@ export const BlogFormSchema = z.object({
     .string()
     .url({ message: "Please upload a banner image for your blog post" }),
   featured: z.boolean().default(false),
-  tags: z.array(z.string()).default([]),
+  tags: z
+    .array(z.string())
+    .min(1, { message: "Add at least one tag to help categorize your blog" }),
   publishedAt: z.date().optional(),
 });

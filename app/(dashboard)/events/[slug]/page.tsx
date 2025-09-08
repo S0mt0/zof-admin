@@ -162,7 +162,7 @@ export default async function ViewEventPage({
         )}
         {/* Tags */}
         {event.tags && event.tags.length > 0 && (
-          <div className="mb-8">
+          <div className="my-8">
             <Separator className="mb-6" />
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-muted-foreground">

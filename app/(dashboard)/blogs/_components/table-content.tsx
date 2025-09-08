@@ -48,7 +48,7 @@ export const TableContent = ({
           <TableCell>
             <div>
               <div className="font-medium">{capitalize(blog.title)}</div>
-              <div className="text-sm text-muted-foreground md:hidden">
+              <div className="text-sm text-muted-foreground md:hidden shrink-0 whitespace-nowrap">
                 {blog.featured ? "⭐ Featured" : "Not Featured"}
               </div>
               <div className="text-sm text-muted-foreground line-clamp-1 mt-1">
@@ -60,7 +60,7 @@ export const TableContent = ({
             {blog.featured ? (
               <Badge
                 variant="secondary"
-                className="bg-yellow-100 text-yellow-800 border-yellow-200"
+                className="bg-yellow-100 text-yellow-800 border-yellow-200 shrink-0 whitespace-nowrap"
               >
                 ⭐ Featured
               </Badge>

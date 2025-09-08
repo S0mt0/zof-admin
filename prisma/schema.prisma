@@ -105,9 +105,9 @@ model Blog {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   title       String     @unique
   slug        String     @unique
-  excerpt     String
-  content     String     
-  bannerImage String
+  excerpt     String     @default("")
+  content     String     @default("")     
+  bannerImage String     @default("") 
   status      BlogStatus @default(draft)
   featured    Boolean    @default(false)
   tags        String[]
@@ -133,15 +133,15 @@ model Event {
   id                   String      @id @default(auto()) @map("_id") @db.ObjectId
   name                 String      @unique
   slug                 String      @unique
-  detail               String?     
-  excerpt              String?     
+  detail               String      @default("")    
+  excerpt              String      @default("")    
   date                 DateTime
   startTime            String
   endTime              String?
   location             String
   maxAttendees         Int?
   currentAttendees     Int         @default(0)
-  bannerImage          String
+  bannerImage          String      @default("") 
   organizer            String?
   status               EventStatus @default(draft)
   featured             Boolean     @default(false)

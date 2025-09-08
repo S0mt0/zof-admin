@@ -8,7 +8,6 @@ import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-// Import your custom nodes
 import { HorizontalRuleNode } from "./nodes/HorizontalRuleNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { YouTubeNode } from "./nodes/YouTubeNode";

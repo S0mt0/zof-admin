@@ -85,7 +85,7 @@ export const TableContent = ({
             {event.featured ? (
               <Badge
                 variant="secondary"
-                className="bg-yellow-100 text-yellow-800 border-yellow-200"
+                className="bg-yellow-100 text-yellow-800 border-yellow-200 shrink-0 whitespace-nowrap"
               >
                 ⭐ Featured
               </Badge>

@@ -4,8 +4,8 @@ interface IEvent {
   id: string;
   name: string;
   slug: string;
-  detail?: string | null;
-  excerpt?: string | null;
+  detail?: string;
+  excerpt?: string;
   organizer?: string | null;
   date: Date;
   startTime: string;

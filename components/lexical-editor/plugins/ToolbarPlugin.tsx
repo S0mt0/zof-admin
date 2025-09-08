@@ -953,7 +953,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
       {/* Link Editor Popup */}
       {isLinkEditMode && (
         <div className="absolute top-full left-0 mt-2 z-50">
-          <div className="flex items-center gap-2 p-2 bg-white border rounded-lg shadow-lg">
+          <div className="flex items-center gap-2 p-2 bg-card border rounded-lg shadow-lg">
             <Input
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}

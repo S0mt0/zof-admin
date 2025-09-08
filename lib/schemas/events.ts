@@ -24,7 +24,9 @@ export const EventFormSchema = z.object({
     .enum(["upcoming", "draft", "completed", "cancelled"])
     .default("draft"),
   featured: z.boolean().default(false),
-  tags: z.array(z.string()).default([]),
+  tags: z
+    .array(z.string())
+    .min(1, { message: "Add at least one tag to help categorize your event" }),
   ticketPrice: z.string().optional(),
   registrationRequired: z.boolean().default(false),
 });
