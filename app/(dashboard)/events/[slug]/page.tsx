@@ -72,7 +72,7 @@ export default async function ViewEventPage({
 
         {/* Banner */}
         <div className="mb-8">
-          <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+          <div className="w-full h-auto rounded overflow-hidden bg-muted">
             <Image
               src={event.bannerImage}
               alt={event.name}
@@ -157,10 +157,7 @@ export default async function ViewEventPage({
             <h3 className="text-lg font-extrabold leading-loose">
               About this event
             </h3>
-            <LexicalContentRenderer
-              content={event.detail}
-              className="prose prose-lg dark:prose-invert w-full mb-12 mt-2"
-            />
+            <LexicalContentRenderer content={event.detail} />
           </div>
         )}
         {/* Tags */}

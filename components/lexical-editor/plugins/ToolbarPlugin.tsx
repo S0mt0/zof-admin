@@ -1,6 +1,5 @@
 "use client";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $getSelection,
   $isRangeSelection,
@@ -13,6 +12,7 @@ import {
   INDENT_CONTENT_COMMAND,
   OUTDENT_CONTENT_COMMAND,
   TextFormatType,
+  $createTextNode,
 } from "lexical";
 import {
   $createHeadingNode,
@@ -23,6 +23,12 @@ import {
 import { $createCodeNode } from "@lexical/code";
 import { $setBlocksType, $patchStyleText } from "@lexical/selection";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import {
+  INSERT_ORDERED_LIST_COMMAND,
+  INSERT_UNORDERED_LIST_COMMAND,
+  REMOVE_LIST_COMMAND,
+  $isListNode,
+} from "@lexical/list";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Bold,
@@ -37,11 +43,24 @@ import {
   Type,
   Minus,
   Link,
+  ListOrdered,
+  List,
+  Code,
+  Quote,
+  Heading3,
+  Heading2,
+  Heading1,
+  Pilcrow,
+  X,
+  Check,
 } from "lucide-react";
+import { toast } from "sonner";
 import { TfiLayoutLineSolid } from "react-icons/tfi";
 import { FaImage } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
 import { FaRedo, FaUndo } from "react-icons/fa";
+
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -66,10 +85,7 @@ import { Input } from "@/components/ui/input";
 import { $createImageNode } from "../nodes/ImageNode";
 import { $createYouTubeNode } from "../nodes/YouTubeNode";
 import { $createHorizontalRuleNode } from "../nodes/HorizontalRuleNode";
-import { $createTextNode, TextNode } from "lexical";
-import { X, Check } from "lucide-react";
 import { handleFileUpload } from "@/lib/utils/helpers.utils";
-import { toast } from "sonner";
 
 interface ToolbarPluginProps {
   onImageUpload?: (file: File) => Promise<string>;
@@ -81,7 +97,7 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [_, setIsStrikethrough] = useState(false);
   const [blockType, setBlockType] = useState("paragraph");
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Arial");
@@ -109,7 +125,9 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           ? anchorNode
           : anchorNode.getTopLevelElementOrThrow();
 
-      if ($isHeadingNode(element)) {
+      if ($isListNode(element)) {
+        setBlockType(element.getListType());
+      } else if ($isHeadingNode(element)) {
         setBlockType(element.getTag());
       } else {
         setBlockType(element.getType());
@@ -177,6 +195,24 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           $setBlocksType(selection, () => $createQuoteNode());
         }
       });
+    }
+    editor.focus();
+  };
+
+  const formatOrderedList = () => {
+    if (blockType !== "ol") {
+      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    }
+    editor.focus();
+  };
+
+  const formatUnorderedList = () => {
+    if (blockType !== "ul") {
+      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }
     editor.focus();
   };
@@ -259,14 +295,6 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        const nodes = selection.getNodes();
-        const hasHighlight = nodes.some((node) => {
-          if (node instanceof TextNode) {
-            return node.hasFormat("highlight");
-          }
-          return false;
-        });
-
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight");
       }
     });
@@ -332,17 +360,12 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         caption,
         src: url,
       });
-      console.log("Image node created in editor update:", imageNode);
 
       const selection = $getSelection();
-      console.log("Current selection:", selection);
 
       if ($isRangeSelection(selection)) {
-        console.log("Inserting image node into selection");
         selection.insertNodes([imageNode]);
-        console.log("Image node inserted successfully");
       } else {
-        console.log("No valid range selection found, inserting at root");
         // If no selection, insert at the end of the root
         const root = $getRoot();
         const lastChild = root.getLastChild();
@@ -354,12 +377,10 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           paragraph.append(imageNode);
           root.append(paragraph);
         }
-        console.log("Image node inserted at root");
       }
 
       // Let's also check if the node is actually in the editor
       const root = $getRoot();
-      console.log("Root node children:", root.getChildren());
     });
   };
 
@@ -480,6 +501,10 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
         return "Quote";
       case "code":
         return "Code Block";
+      case "bullet":
+        return "Unordered List";
+      case "number":
+        return "Ordered List";
       default:
         return "Normal";
     }
@@ -523,38 +548,51 @@ export function ToolbarPlugin({ onImageUpload, disabled }: ToolbarPluginProps) {
           <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem onClick={formatParagraph}>
               <span className="flex items-center gap-2">
-                <span className="text-sm">≡</span>
+                <Pilcrow className="h-3 w-4" />
                 Normal
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => formatHeading("h1")}>
               <span className="flex items-center gap-2">
-                <span className="text-sm font-bold">H1</span>
+                <Heading1 className="h-3 w-4" />
                 Heading 1
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => formatHeading("h2")}>
               <span className="flex items-center gap-2">
-                <span className="text-sm font-bold">H2</span>
+                <Heading2 className="h-3 w-4" />
                 Heading 2
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => formatHeading("h3")}>
               <span className="flex items-center gap-2">
-                <span className="text-sm font-bold">H3</span>
+                <Heading3 className="h-3 w-4" />
                 Heading 3
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={formatQuote}>
               <span className="flex items-center gap-2">
-                <span className="text-sm">"</span>
+                <Quote className="h-3 w-4" />
                 Quote
               </span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={formatCodeBlock}>
               <span className="flex items-center gap-2">
-                <span className="text-sm">{"<>"}</span>
+                <Code className="h-3 w-4" />
                 Code Block
+              </span>
+            </DropdownMenuItem>
+            {/*  */}
+            <DropdownMenuItem onClick={formatOrderedList}>
+              <span className="flex items-center gap-2">
+                <ListOrdered className="h-3 w-4" />
+                Ordered List
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={formatUnorderedList}>
+              <span className="flex items-center gap-2">
+                <List className="h-3 w-4" />
+                Unordered List
               </span>
             </DropdownMenuItem>
           </DropdownMenuContent>

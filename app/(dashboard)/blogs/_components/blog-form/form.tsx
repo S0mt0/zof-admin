@@ -79,7 +79,7 @@ export default function BlogForm(props: {
             <CardHeader>
               <CardTitle>Banner Image</CardTitle>
               <CardDescription>
-                Upload a banner image for your blog post (optional)
+                Upload a banner image for your blog post
               </CardDescription>
             </CardHeader>
             <CardContent>

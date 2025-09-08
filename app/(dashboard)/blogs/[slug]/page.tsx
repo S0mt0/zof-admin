@@ -142,7 +142,7 @@ export default async function ViewBlogPage({
         {/* Banner Image */}
         {blog.bannerImage && (
           <div className="mb-8">
-            <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+            <div className="w-full h-auto rounded overflow-hidden bg-muted">
               <Image
                 src={blog.bannerImage}
                 alt={blog.title}

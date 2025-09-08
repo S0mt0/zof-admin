@@ -33,7 +33,7 @@ export const theme = {
     code: "bg-gray-100 px-1 py-0.5 rounded text-sm font-mono",
     highlight: "bg-yellow-200 px-1 rounded",
   },
-  code: "bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto my-4",
+  code: "bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto my-4 leading-loose",
   codeHighlight: {
     atrule: "text-purple-600",
     attr: "text-blue-600",

@@ -1,1 +1,2 @@
 create cron job vercel serverless function to send email reminders
+convert my custom lexical nodes, plugins, and renderer to am npm module, and install from github directly
