@@ -40,6 +40,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
     defaultValues: {
       maintenanceMode: websiteSettings?.maintenanceMode || false,
       blogComments: websiteSettings?.blogComments || false,
+      eventComments: websiteSettings?.eventComments || false,
       eventRegistration: websiteSettings?.eventRegistration || false,
     },
   });
@@ -60,6 +61,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
   const hasChanges =
     form.watch("maintenanceMode") !== websiteSettings?.maintenanceMode ||
     form.watch("blogComments") !== websiteSettings?.blogComments ||
+    form.watch("eventComments") !== websiteSettings?.eventComments ||
     form.watch("eventRegistration") !== websiteSettings?.eventRegistration;
 
   const disabled = isPending || !hasChanges;
@@ -82,7 +84,7 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
                 disabled={disabled}
               >
                 <Save className="h-4 w-4 mr-2" />
-                Save Changes
+                {isPending ? "Please wait..." : "Save Changes"}
               </Button>
               <Button
                 variant="outline"
@@ -90,7 +92,6 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
                   setIsEditing(false);
                   form.reset();
                 }}
-                disabled={disabled}
               >
                 Cancel
               </Button>
@@ -138,6 +139,28 @@ export const WebsiteSettings = ({ websiteSettings }: WebsiteSettingsProps) => {
                     <FormLabel>Blog Comments</FormLabel>
                     <p className="text-sm text-muted-foreground">
                       Allow visitors to comment on blog posts
+                    </p>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={!isEditing || isPending}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Separator />
+            <FormField
+              control={form.control}
+              name="eventComments"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <FormLabel>Event Comments</FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Allow visitors to comment on Events
                     </p>
                   </div>
                   <FormControl>

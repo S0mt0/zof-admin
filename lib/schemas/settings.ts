@@ -11,5 +11,6 @@ export const FoundationInfoSchema = z.object({
 export const WebsiteSettingsSchema = z.object({
   maintenanceMode: z.boolean(),
   blogComments: z.boolean(),
+  eventComments: z.boolean(),
   eventRegistration: z.boolean(),
 });

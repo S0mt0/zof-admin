@@ -45,6 +45,12 @@ enum MessageStatus {
   read
 }
 
+enum CommentStatus {
+  approved
+  rejected
+  pending
+}
+
 model User {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
@@ -117,7 +123,7 @@ model Blog {
   // Relations
   authorId    String?     @db.ObjectId
   author      User?       @relation(fields: [authorId], references: [id])
-  comments    Comment[]
+  comments    BlogComment[]
 
 
   
@@ -152,6 +158,8 @@ model Event {
   // Relations
   createdBy            String      @db.ObjectId
   createdByUser        User?       @relation(fields: [createdBy], references: [id])
+  comments             EventComment[]
+
 
   
   // Timestamps
@@ -234,13 +242,28 @@ model Message {
 
 
 
-model Comment {
+model BlogComment {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
   comment         String
   authorName      String
   authorEmail     String
   blog            Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
   blogId          String @db.ObjectId
+  status          CommentStatus @default(pending)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventComment {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  comment         String
+  authorName      String
+  authorEmail     String
+  event            Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId          String @db.ObjectId
+  status          CommentStatus @default(pending)
   
   // Timestamps
   createdAt DateTime @default(now())
@@ -283,7 +306,8 @@ model FoundationInfo {
 model WebsiteSettings {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   maintenanceMode     Boolean  @default(false)
-  blogComments        Boolean  @default(false)
+  blogComments        Boolean  @default(true)
+  eventComments        Boolean  @default(true)
   eventRegistration  Boolean  @default(false)
   
   // Timestamps

@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getWebsiteSettings } from "@/lib/db/repository";
+import { getFoundationInfo, getWebsiteSettings } from "@/lib/db/repository";
 
 export async function OPTIONS() {
   return new Response(null, {
@@ -13,11 +13,12 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const data = await getWebsiteSettings({
-      blogComments: true,
-      eventComments: true,
-      eventRegistration: true,
-      maintenanceMode: true,
+    const data = await getFoundationInfo({
+      address: true,
+      description: true,
+      email: true,
+      name: true,
+      phone: true,
     });
 
     return Response.json(

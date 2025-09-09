@@ -1,6 +1,8 @@
 import { prismaPaginate } from "@/lib/utils/db.utils";
 import { db } from "../config";
 import { emptyPaginatedData } from "@/lib/constants";
+import { MessageSchema } from "@/lib/schemas";
+import * as z from "zod";
 
 export const getAllMessages = async ({
   limit,
@@ -85,6 +87,16 @@ export const toggleStatus = async (id: string, status: MessageStatus) => {
     });
   } catch (error) {
     console.log("error deleting many messages", error);
+    return null;
+  }
+};
+
+export const createMessage = async (data: z.infer<typeof MessageSchema>) => {
+  try {
+    return (await db.message.create({
+      data,
+    })) as IMessage;
+  } catch (e) {
     return null;
   }
 };

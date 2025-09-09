@@ -13,6 +13,7 @@ import {
   getUserById,
 } from "../db/repository";
 import { currentUser } from "../utils";
+import { revalidatePath } from "next/cache";
 
 export const updateFoundationInfoAction = async (
   values: z.infer<typeof FoundationInfoSchema>
@@ -34,6 +35,8 @@ export const updateFoundationInfoAction = async (
     } else {
       await createFoundationInfo(validatedFields.data);
     }
+
+    revalidatePath("/settings");
     return { success: "Foundation information updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
@@ -61,6 +64,7 @@ export const updateWebsiteSettingsAction = async (
       await createWebsiteSettings(validatedFields.data);
     }
 
+    revalidatePath("/settings");
     return { success: "Website settings updated successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };

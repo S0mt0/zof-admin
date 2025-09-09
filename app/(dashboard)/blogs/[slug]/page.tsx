@@ -6,6 +6,7 @@ import {
   Edit,
   MessageCircle,
   Mail,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,6 +41,7 @@ export default async function ViewBlogPage({
 }) {
   const getBlogCached = unstable_cache(getBlogBySlug, [params?.slug], {
     tags: ["blog"],
+    revalidate: 300, // revalidate after 5 minutes
   });
 
   const blog = await getBlogCached(params.slug);
@@ -190,6 +192,10 @@ export default async function ViewBlogPage({
                   <div className="space-y-1" key={idx}>
                     <p className="text-sm">{comment.comment}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs">
+                        <User className="h-3 w-3" />
+                        {comment.authorName}
+                      </div>
                       <div className="flex items-center gap-1 text-xs">
                         <Mail className="h-3 w-3" />
                         {comment.authorEmail}

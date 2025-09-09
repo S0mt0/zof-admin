@@ -10,7 +10,7 @@ interface Blog {
   status: BlogStatus;
   featured: boolean;
   tags: string[];
-  comments?: IComment[];
+  comments?: IBlogComment[];
   views: number;
   createdBy: string;
   authorId?: string | null;

@@ -13,6 +13,7 @@ interface IWebsiteSettings {
   id: string;
   maintenanceMode: boolean;
   blogComments: boolean;
+  eventComments: boolean;
   eventRegistration: boolean;
   createdAt: Date;
   updatedAt: Date;

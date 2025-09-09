@@ -1,8 +1,12 @@
+import { Prisma } from "@prisma/client";
+
 import { db } from "../config";
 
-export const getFoundationInfo = async () => {
+export const getFoundationInfo = async (
+  select?: Prisma.FoundationInfoSelect
+) => {
   try {
-    const foundationInfo = await db.foundationInfo.findFirst();
+    const foundationInfo = await db.foundationInfo.findFirst({ select });
     return foundationInfo as IFoundationInfo | null;
   } catch (e) {
     return null;
@@ -35,9 +39,11 @@ export const createFoundationInfo = async (
   }
 };
 
-export const getWebsiteSettings = async () => {
+export const getWebsiteSettings = async (
+  select?: Prisma.WebsiteSettingsSelect
+) => {
   try {
-    const websiteSettings = await db.websiteSettings.findFirst();
+    const websiteSettings = await db.websiteSettings.findFirst({ select });
     return websiteSettings as IWebsiteSettings | null;
   } catch (e) {
     return null;

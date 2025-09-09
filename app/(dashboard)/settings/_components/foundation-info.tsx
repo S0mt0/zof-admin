@@ -94,7 +94,7 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
                 disabled={disabled}
               >
                 <Save className="h-4 w-4 mr-2" />
-                Save Changes
+                {isPending ? "Please wait..." : "Save Changes"}
               </Button>
               <Button
                 variant="outline"
