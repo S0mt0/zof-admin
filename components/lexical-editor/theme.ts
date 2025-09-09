@@ -2,7 +2,7 @@ export const theme = {
   ltr: "ltr",
   rtl: "rtl",
   placeholder: "text-gray-400",
-  paragraph: "mb-2",
+  paragraph: "mb-2 text-base",
   quote: "border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4",
   heading: {
     h1: "text-3xl font-bold mb-4",

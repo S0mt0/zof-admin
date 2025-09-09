@@ -223,7 +223,6 @@ export const useWriteBlogs = ({
     [formData, submitType, mode, initialData?.id]
   );
 
-  // Check for changes comparison
   const hasChanges = useMemo(() => {
     const arraysEqual = (a: string[] = [], b: string[] = []) =>
       a.length === b.length && a.every((v, i) => v === b[i]);

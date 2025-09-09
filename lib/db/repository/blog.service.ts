@@ -100,10 +100,10 @@ export const getBlogByTitle = async (title: string) => {
   }
 };
 
-export const getBlogBySlug = async (slug: string) => {
+export const getBlogBySlug = async (slug: string, status?: BlogStatus) => {
   try {
     return await db.blog.findFirst({
-      where: { slug },
+      where: status ? { slug, status } : { slug },
       include: {
         author: {
           select: {

@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
 
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { getAllBlogs } from "@/lib/db/repository";
@@ -6,7 +7,6 @@ import {
   allowedPublicBlogSelectFields,
   AllowedBlogSelectField,
 } from "@/lib/utils";
-import { Prisma } from "@prisma/client";
 
 export async function OPTIONS() {
   return new Response(null, {

@@ -82,6 +82,11 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  ol,
+  ul {
+    /* @apply list-outside; */
+  }
 }
 
 /* Custom scrollbar styles */

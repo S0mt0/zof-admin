@@ -89,6 +89,7 @@ export const updateBlogAction = async (
     })();
 
     if (!blog) return { error: "Blog post not found" };
+    const oldBlogTitle = blog.title;
 
     const updated = await updateBlogBySlug(slug, data);
 

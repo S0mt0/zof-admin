@@ -6,6 +6,7 @@ export const publicApiRoutes = [
   "/api/teams",
   "/api/info",
   "/api/message",
+  "/api/settings",
 ];
 
 export const authRoutes = [

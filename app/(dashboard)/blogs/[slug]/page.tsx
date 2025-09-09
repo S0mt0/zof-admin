@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { getBlogBySlug } from "@/lib/db/repository";
 import {
   capitalize,
+  cn,
   getInitials,
   getReadTime,
   getStatusColor,
@@ -64,15 +65,15 @@ export default async function ViewBlogPage({
         <header className="mb-8 space-y-6">
           {/* Status and Tags */}
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={getStatusColor(blog.status)}>
-              {capitalize(blog.status)}
+            <Badge className={cn("capitalize", getStatusColor(blog.status))}>
+              {blog.status}
             </Badge>
             {blog.featured && <Badge variant="secondary">Featured</Badge>}
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-            {capitalize(blog.title)}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight capitalize">
+            {blog.title}
           </h1>
 
           {/* Excerpt */}
@@ -95,8 +96,8 @@ export default async function ViewBlogPage({
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
-                <p className="font-medium">
-                  {capitalize(blog.author?.name) || "Zita-Onyeka Foundation"}
+                <p className="font-medium capitalize">
+                  {blog.author?.name || "Admin"}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                   <div className="flex items-center gap-1">
@@ -128,9 +129,7 @@ export default async function ViewBlogPage({
                 </Link>
               </Button>
               <ShareButton
-                title={`Read: "${capitalize(blog.title)}" by ${capitalize(
-                  blog.author?.name || "Zita-Onyeka Foundation"
-                )}`}
+                title={capitalize(blog.title)}
                 url={`${FRONTEND_BASE_URL}/blogs/${blog.slug}`}
               />
             </div>
@@ -140,20 +139,19 @@ export default async function ViewBlogPage({
         </header>
 
         {/* Banner Image */}
-        {blog.bannerImage && (
-          <div className="mb-8">
-            <div className="w-full h-auto rounded overflow-hidden bg-muted">
-              <Image
-                src={blog.bannerImage}
-                alt={blog.title}
-                className="w-full h-full object-cover object-center"
-                width={1200}
-                height={675}
-                priority={true}
-              />
-            </div>
+
+        <div className="mb-8">
+          <div className="w-full h-auto rounded overflow-hidden bg-muted">
+            <Image
+              src={blog.bannerImage}
+              alt={blog.title}
+              className="w-full h-full object-cover object-center"
+              width={1200}
+              height={675}
+              priority={true}
+            />
           </div>
-        )}
+        </div>
 
         {/* Blog Content */}
         <LexicalContentRenderer content={blog.content} />

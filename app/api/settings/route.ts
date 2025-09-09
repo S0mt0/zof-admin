@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getBlogBySlug } from "@/lib/db/repository";
+import { getWebsiteSettings } from "@/lib/db/repository";
 
 export async function OPTIONS() {
   return new Response(null, {
@@ -11,17 +11,12 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
-  const slug = params.slug;
-
+export async function GET() {
   try {
-    const data = await getBlogBySlug(slug, "published");
+    const data = await getWebsiteSettings();
 
     return Response.json(
-      { message: "Blog fetched successfully", data },
+      { message: "Settings fetched successfully", data },
       {
         headers: {
           "Access-Control-Allow-Origin": FRONTEND_BASE_URL,
@@ -32,7 +27,7 @@ export async function GET(
       }
     );
   } catch (error) {
-    console.error("Error fetching blog:", error);
+    console.error("Error fetching team members:", error);
 
     return Response.json(
       { message: "Something went wrong, try again." },
