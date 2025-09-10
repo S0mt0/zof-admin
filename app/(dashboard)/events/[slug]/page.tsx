@@ -6,6 +6,9 @@ import {
   Library,
   Banknote,
   Users,
+  User,
+  Mail,
+  Calendar,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,7 +23,7 @@ import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
 import { getEventBySlug } from "@/lib/db/repository";
-import { capitalize, formatTime, getStatusColor } from "@/lib/utils";
+import { capitalize, cn, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";
 
 export default async function ViewEventPage({
@@ -32,6 +35,7 @@ export default async function ViewEventPage({
 }) {
   const getEventCached = unstable_cache(getEventBySlug, [params?.slug], {
     tags: ["event"],
+    revalidate: 300,
   });
 
   const event = await getEventCached(params.slug);
@@ -48,8 +52,8 @@ export default async function ViewEventPage({
       <article className="container max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={getStatusColor(event.status)}>
-              {capitalize(event.status)}
+            <Badge className={cn("capitalize", getStatusColor(event.status))}>
+              {event.status}
             </Badge>
             {event.featured && <Badge variant="secondary">Featured</Badge>}
           </div>
@@ -174,6 +178,40 @@ export default async function ViewEventPage({
                     <Tag className="h-3 w-3 mr-1" />
                     {capitalize(tag)}
                   </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Comments */}
+        {event?.comments.length > 0 && (
+          <div className="mb-8">
+            <Separator className="mb-6" />
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Comments
+              </h3>
+
+              <div className="mt-4 space-y-4 text-sm">
+                {event.comments.map((comment, idx) => (
+                  <div className="space-y-1" key={idx}>
+                    <p className="text-sm">{comment.comment}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs">
+                        <User className="h-3 w-3" />
+                        {comment.authorName}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs">
+                        <Mail className="h-3 w-3" />
+                        {comment.authorEmail}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs">
+                        <Calendar className="h-3 w-3" />
+                        {format(comment.createdAt, "MMMM d, yyyy")}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

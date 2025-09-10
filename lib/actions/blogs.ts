@@ -94,14 +94,24 @@ export const updateBlogAction = async (
     const updated = await updateBlogBySlug(slug, data);
 
     if (updated) {
-      await addAppActivity(
-        "Blog post updated",
-        `${user.name} (${
+      let message = `${user.name} (${
+        user.role
+      }) made some changes to the blog post, titled "${capitalize(
+        oldBlogTitle
+      )}"`;
+
+      if (
+        data.title &&
+        updated.title.toLocaleLowerCase() !== oldBlogTitle.toLocaleLowerCase()
+      ) {
+        message = `${user.name} (${
           user.role
         }) made some changes to the blog post, titled "${capitalize(
-          blog.title
-        )}"`
-      );
+          oldBlogTitle
+        )}". They changed the title to "${capitalize(updated.title)}"`;
+      }
+
+      await addAppActivity("Blog post updated", message);
 
       revalidateTag("blog");
     }

@@ -38,13 +38,13 @@ export type AllowedBlogSelectField =
   (typeof allowedPublicBlogSelectFields)[number];
 
 export const allowedPublicEventSelectFields = [
-  "id",
   "name",
   "excerpt",
   "slug",
   "status",
   "date",
   "startTime",
+  "endTime",
   "featured",
   "location",
   "bannerImage",

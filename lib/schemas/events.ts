@@ -21,7 +21,7 @@ export const EventFormSchema = z.object({
     .string()
     .url({ message: "Please upload a banner image for your event" }),
   status: z
-    .enum(["upcoming", "draft", "completed", "cancelled"])
+    .enum(["upcoming", "draft", "completed", "cancelled", "happening"])
     .default("draft"),
   featured: z.boolean().default(false),
   tags: z

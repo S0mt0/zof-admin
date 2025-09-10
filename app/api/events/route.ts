@@ -20,7 +20,7 @@ export async function OPTIONS() {
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const status = (searchParams.get("status") || "upcoming") as EventStatus;
+  const paramStatus = searchParams.get("status") || "upcoming,happening";
   const featured = searchParams.get("featured") || "all";
   const fields = searchParams.get("fields") || undefined;
   const search = searchParams.get("search") || undefined;
@@ -59,11 +59,26 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const publicStatus: PublicEventStatus[] = [
+    "completed",
+    "happening",
+    "upcoming",
+  ];
+
+  let status: PublicEventStatus[] = [];
+
+  if (paramStatus) {
+    const requestedStatus = paramStatus.split(",") as PublicEventStatus[];
+    status = requestedStatus.filter((field) => publicStatus.includes(field));
+  } else {
+    status = publicStatus;
+  }
+
   try {
     const { data, pagination } = await getAllEvents({
       page,
       limit,
-      where: { ...where, status },
+      where: { ...where, status: { in: status } },
       select,
     });
 

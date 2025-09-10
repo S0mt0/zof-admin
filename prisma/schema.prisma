@@ -25,6 +25,7 @@ enum EventStatus {
   draft
   completed
   cancelled
+  happening
 }
 
 enum DonationStatus {

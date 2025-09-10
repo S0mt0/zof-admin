@@ -69,8 +69,8 @@ export const useWriteBlogs = ({
     setFormData((prev) => ({ ...prev, content: value }));
   }, []);
 
-  const handleStatusChange = useCallback((value: string) => {
-    setFormData((prev) => ({ ...prev, status: value as any }));
+  const handleStatusChange = useCallback((value: BlogStatus) => {
+    setFormData((prev) => ({ ...prev, status: value }));
   }, []);
 
   const handleFeaturedChange = useCallback((value: boolean) => {
@@ -180,7 +180,7 @@ export const useWriteBlogs = ({
           }
         })(),
         slug: generateSlug(payload.title),
-        status: submitType,
+        status: submitType === "draft" ? "draft" : payload.status,
       };
 
       const loading = toast.loading("Please wait...");

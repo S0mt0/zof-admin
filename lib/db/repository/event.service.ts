@@ -92,10 +92,13 @@ export const getEventByName = async (name: string) => {
   }
 };
 
-export const getEventBySlug = async (slug: string) => {
+export const getEventBySlug = async (
+  slug: string,
+  status?: Array<PublicEventStatus>
+) => {
   try {
     return await db.event.findUnique({
-      where: { slug },
+      where: status ? { slug, status: { in: status } } : { slug },
       include: {
         createdByUser: {
           select: {
@@ -103,6 +106,14 @@ export const getEventBySlug = async (slug: string) => {
             image: true,
             email: true,
             emailNotifications: true,
+          },
+        },
+        comments: {
+          select: {
+            authorName: true,
+            authorEmail: true,
+            comment: true,
+            createdAt: true,
           },
         },
       },

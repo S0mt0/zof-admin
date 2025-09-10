@@ -65,6 +65,8 @@ export function EventFilters({
     switch (status) {
       case "upcoming":
         return "Upcoming";
+      case "happening":
+        return "Happening";
       case "completed":
         return "Completed";
       case "draft":
@@ -125,6 +127,9 @@ export function EventFilters({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("upcoming")}>
               Upcoming
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("happening")}>
+              Happening
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("completed")}>
               Completed

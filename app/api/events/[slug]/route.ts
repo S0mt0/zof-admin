@@ -18,7 +18,11 @@ export async function GET(
   const slug = params.slug;
 
   try {
-    const data = await getEventBySlug(slug);
+    const data = await getEventBySlug(slug, [
+      "completed",
+      "happening",
+      "upcoming",
+    ]);
 
     return Response.json(
       { message: "Events fetched successfully", data },

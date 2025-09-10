@@ -1,4 +1,11 @@
-type EventStatus = "upcoming" | "draft" | "completed" | "cancelled";
+type EventStatus =
+  | "upcoming"
+  | "completed"
+  | "happening"
+  | "draft"
+  | "cancelled";
+
+type PublicEventStatus = "upcoming" | "completed" | "happening";
 
 interface IEvent {
   id: string;
@@ -17,6 +24,7 @@ interface IEvent {
   status: EventStatus;
   featured: boolean;
   tags: string[];
+  comments?: IEventComment[];
   ticketPrice?: string | null;
   registrationRequired: boolean;
   createdBy: string;

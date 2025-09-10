@@ -320,10 +320,10 @@ export function EventForm({
                   !formData.detail?.trim()
                 }
                 className="w-full"
-                onClick={() => setSubmitType("upcoming")}
+                onClick={() => setSubmitType("publish")}
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isPending && submitType === "upcoming"
+                {isPending && submitType === "publish"
                   ? "Publishing..."
                   : "Publish Event"}
               </Button>
@@ -400,14 +400,20 @@ export function EventForm({
                     Upcoming
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleStatusChange("cancelled")}
+                    onClick={() => handleStatusChange("happening")}
                   >
-                    Cancelled
+                    Happening
                   </DropdownMenuItem>
+
                   <DropdownMenuItem
                     onClick={() => handleStatusChange("completed")}
                   >
                     Completed
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange("cancelled")}
+                  >
+                    Cancelled
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

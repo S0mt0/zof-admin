@@ -60,12 +60,20 @@ export const useWriteEvents = ({
 
   const [formData, setFormData] = useState<EventFormData>(initialFormData);
   const [isPending, startTransition] = useTransition();
-  const [submitType, setSubmitType] = useState<EventStatus>("draft");
+  const [submitType, setSubmitType] = useState<"draft" | "publish">("draft");
 
   // Update form data when initialData changes (for edit mode)
   useEffect(() => {
     setFormData(initialFormData);
   }, [initialFormData]);
+
+  useEffect(() => {
+    console.log({ initialFormData });
+  }, [initialFormData]);
+
+  useEffect(() => {
+    console.log({ submitType });
+  }, [submitType]);
 
   // Individual field handlers to prevent unnecessary re-renders
   const handleNameChange = useCallback((value: string) => {
@@ -92,8 +100,8 @@ export const useWriteEvents = ({
     setFormData((prev) => ({ ...prev, detail: value }));
   }, []);
 
-  const handleStatusChange = useCallback((value: string) => {
-    setFormData((prev) => ({ ...prev, status: value as any }));
+  const handleStatusChange = useCallback((value: EventStatus) => {
+    setFormData((prev) => ({ ...prev, status: value }));
   }, []);
 
   const handleFeaturedChange = useCallback((value: boolean) => {
@@ -215,7 +223,7 @@ export const useWriteEvents = ({
 
       const submissionData = {
         ...payload,
-        status: submitType,
+        status: submitType === "draft" ? "draft" : payload.status,
         slug: generateSlug(payload.name),
         ticketPrice: (() => {
           let price = payload.ticketPrice?.trim();
