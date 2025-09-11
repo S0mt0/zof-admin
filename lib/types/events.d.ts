@@ -25,7 +25,7 @@ interface IEvent {
   featured: boolean;
   tags: string[];
   comments?: IEventComment[];
-  ticketPrice: string;
+  ticketPrice?: string | null;
   registrationRequired: boolean;
   createdBy: string;
   createdAt: Date;

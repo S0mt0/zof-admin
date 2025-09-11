@@ -32,6 +32,7 @@ export const allowedPublicBlogSelectFields = [
   "publishedAt",
   "tags",
   "bannerImage",
+  "updatedAt",
 ] as const;
 
 export type AllowedBlogSelectField =
@@ -48,6 +49,7 @@ export const allowedPublicEventSelectFields = [
   "featured",
   "location",
   "bannerImage",
+  "updatedAt",
 ] as const;
 
 export type AllowedEventSelectField =
