@@ -28,8 +28,8 @@ export function EventPage({ data, pagination, searchParams }: EventPageProps) {
 
   const dialogMessage =
     actionType === "bulk"
-      ? `Do you really want to delete ${selectedEvents.length} event post(s)?`
-      : "Are you sure you want to delete this event post?";
+      ? `Do you really want to delete ${selectedEvents.length} event(s)?`
+      : "Are you sure you want to delete this event?";
 
   if (data.length === 0) {
     return (

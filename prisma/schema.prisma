@@ -144,16 +144,16 @@ model Event {
   excerpt              String      @default("")    
   date                 DateTime
   startTime            String
-  endTime              String?
+  endTime              String      @default("") 
   location             String
   maxAttendees         Int?
   currentAttendees     Int         @default(0)
   bannerImage          String      @default("") 
-  organizer            String?
+  organizer            String      @default("") 
   status               EventStatus @default(draft)
   featured             Boolean     @default(false)
   tags                 String[]
-  ticketPrice          String?
+  ticketPrice          String?     @default("") 
   registrationRequired Boolean     @default(false)
   
   // Relations

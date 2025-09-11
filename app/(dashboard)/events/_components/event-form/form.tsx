@@ -239,6 +239,7 @@ export function EventForm({
                     onClick={onBannerClick}
                     className="absolute top-2 right-2"
                     disabled={isPending}
+                    type="button"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Change

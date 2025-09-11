@@ -87,6 +87,8 @@ export const updateEventAction = async (
 
     if (!event) return { error: "Event not found" };
 
+    console.log({ data });
+
     const updated = await updateEvent(eventId, {
       ...data,
       date: new Date(data.date),
@@ -102,6 +104,9 @@ export const updateEventAction = async (
 
       revalidateTag("event");
     }
+
+    console.log({ updated });
+
     return { success: "Event updated", data: { event: updated } };
   } catch (e) {
     return { error: "Failed to update event" };
@@ -145,7 +150,7 @@ export const deleteEventAction = async (eventId: string) => {
         deleted?.createdByUser?.emailNotifications
       ) {
         const mailer = new MailService();
-        await mailer.sendEventDeleteEmail(user as any, deleted);
+        await mailer.sendEventDeleteEmail(user as any, deleted as any);
       }
 
       revalidateTag("event");

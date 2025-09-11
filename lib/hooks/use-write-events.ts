@@ -67,14 +67,6 @@ export const useWriteEvents = ({
     setFormData(initialFormData);
   }, [initialFormData]);
 
-  useEffect(() => {
-    console.log({ initialFormData });
-  }, [initialFormData]);
-
-  useEffect(() => {
-    console.log({ submitType });
-  }, [submitType]);
-
   // Individual field handlers to prevent unnecessary re-renders
   const handleNameChange = useCallback((value: string) => {
     setFormData((prev) => ({ ...prev, name: value }));

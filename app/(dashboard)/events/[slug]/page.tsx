@@ -91,17 +91,17 @@ export default async function ViewEventPage({
         {/* Time */}
         <strong>{format(event.createdAt, "EEEE, MMMM d")}</strong>
         {/* Title */}
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-3 mt-1">
-          {capitalize(event.name)}
+        <h1 className="capitalize text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-3 mt-1">
+          {event.name}
         </h1>
 
         {/* Organizer and Meta */}
         <p className="font-medium mb-2">
-          <span className="text-muted-foreground mr-2">By</span>
+          <span className="text-muted-foreground mr-2 capitalize">By</span>
           {event.organizer
-            ? capitalize(event.organizer)
+            ? event.organizer
             : event.createdByUser
-            ? capitalize(event.createdByUser.name)
+            ? event.createdByUser.name
             : "Zita-Onyeka Foundation"}
         </p>
 
@@ -131,25 +131,31 @@ export default async function ViewEventPage({
             </div>
           </div>
 
-          {event.ticketPrice && (
+          {event.ticketPrice ? (
             <div className="text-base flex mb-2 items-center gap-2">
               <Banknote className="w-4 h-4 text-orange-500" />
               <span className="font-semibold">Ticket Price:</span>{" "}
               {event.ticketPrice}
             </div>
+          ) : (
+            ""
           )}
-          {event.registrationRequired && (
+          {event.registrationRequired ? (
             <div className="text-base mb-2 flex items-center gap-2">
               <Library className="w-4 h-4 text-orange-500" />
               <span className="font-semibold">Registration Required</span>
             </div>
+          ) : (
+            ""
           )}
-          {event.maxAttendees && event.maxAttendees > 0 && (
+          {event.maxAttendees && event.maxAttendees > 0 ? (
             <div className="text-base mb-2 flex items-center gap-2">
               <Users className="w-4 h-4 text-orange-500" />
               <span className="font-semibold">Max Attendees:</span>{" "}
               {event.maxAttendees}
             </div>
+          ) : (
+            ""
           )}
         </div>
         {/* <Separator /> */}
