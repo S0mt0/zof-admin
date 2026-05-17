@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getWebsiteSettings } from "@/lib/db/repository";
+import { getWebsiteSettings } from "@/lib/db/repository/settings.service";
 
 export async function OPTIONS() {
   return new Response(null, {

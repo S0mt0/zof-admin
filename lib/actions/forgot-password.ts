@@ -2,7 +2,7 @@
 import * as z from "zod";
 
 import { ForgotPasswordSchema } from "../schemas";
-import { getUserByEmail } from "../db/repository";
+import { getUserByEmail } from "../db/repository/user.service";
 import { generateResetPasswordToken, obscureEmail } from "../utils";
 import { MailService } from "../utils/mail.service";
 

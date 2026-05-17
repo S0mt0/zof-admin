@@ -3,7 +3,9 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { db } from "../db/config";
-import { getResetPasswordTokenByToken, getUserByEmail } from "../db/repository";
+import { getResetPasswordTokenByToken } from "../db/repository/reset-token.service";
+import { getUserByEmail } from "../db/repository/user.service";
+
 import { ResetPasswordSchema } from "../schemas";
 
 export async function resetPassword(

@@ -1,7 +1,7 @@
 "use client";
 import { Calendar, Users, Star, Clock } from "lucide-react";
 
-import { getEventsStats } from "@/lib/db/repository";
+import { getEventsStats } from "@/lib/db/repository/stats.service";
 import { ActivityStats } from "@/components/activity-stats";
 
 export function EventStats({

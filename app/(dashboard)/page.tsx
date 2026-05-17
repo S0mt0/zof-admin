@@ -4,7 +4,8 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { ActivityStats } from "@/components/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
 import { AppActivities } from "./_components/app-activities";
-import { getAppStats, getAppActivities } from "@/lib/db/repository";
+import { getAppActivities } from "@/lib/db/repository/app-activity.service";
+import { getAppStats } from "@/lib/db/repository/stats.service";
 
 export default async function Dashboard({
   searchParams,

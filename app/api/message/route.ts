@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { createMessage } from "@/lib/db/repository";
+import { createMessage } from "@/lib/db/repository/message.service";
 import { MessageSchema } from "@/lib/schemas/messages";
 import { MailService } from "@/lib/utils/mail.service";
 

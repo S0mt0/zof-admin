@@ -3,7 +3,7 @@
 import { FileText, Eye, Star, Clock } from "lucide-react";
 
 import { ActivityStats } from "@/components/activity-stats";
-import { getBlogsStats } from "@/lib/db/repository";
+import { getBlogsStats } from "@/lib/db/repository/stats.service";
 
 export function BlogStats({
   draft,

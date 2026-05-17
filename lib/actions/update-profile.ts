@@ -9,7 +9,11 @@ import {
   PasswordUpdateSchema,
   NotificationPreferencesSchema,
 } from "../schemas";
-import { getUserByEmail, getUserById, updateUser } from "../db/repository";
+import {
+  getUserByEmail,
+  getUserById,
+  updateUser,
+} from "../db/repository/user.service";
 import { update } from "@/auth";
 import { capitalize, currentUser, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";

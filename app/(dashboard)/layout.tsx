@@ -1,5 +1,5 @@
 import { SessionExpired } from "@/components/session-expired";
-import { getUserById } from "@/lib/db/repository";
+import { getUserById } from "@/lib/db/repository/user.service";
 import { currentUser } from "@/lib/utils";
 
 export default async function BlogLayout({

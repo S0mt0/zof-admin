@@ -4,13 +4,13 @@ import { revalidateTag } from "next/cache";
 import * as z from "zod";
 
 import {
-  addAppActivity,
   createBlog,
   deleteBlog,
   deleteManyBlogs,
-  getUserById,
   updateBlogBySlug,
-} from "../db/repository";
+} from "../db/repository/blog.service";
+import { getUserById } from "../db/repository/user.service";
+import { addAppActivity } from "../db/repository/app-activity.service";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { BlogFormSchema } from "../schemas";

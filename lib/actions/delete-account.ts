@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserById, deleteUser } from "../db/repository";
+import { getUserById, deleteUser } from "../db/repository/user.service";
 import { signOut } from "@/auth";
 import { currentUser } from "../utils";
 

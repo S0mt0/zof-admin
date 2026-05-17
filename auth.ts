@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
 import { DEFAULT_ADMIN_EMAILS } from "./lib/constants";
-import { getUserById, updateUser } from "./lib/db/repository";
+import { getUserById, updateUser } from "./lib/db/repository/user.service";
 import { db } from "./lib/db/config";
 
 export const {

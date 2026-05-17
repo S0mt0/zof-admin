@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { LoginSchema } from "../schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "../constants";
-import { getUserByEmail } from "../db/repository";
+import { getUserByEmail } from "../db/repository/user.service";
 import { generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 

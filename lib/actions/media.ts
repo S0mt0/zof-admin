@@ -5,13 +5,13 @@ import * as z from "zod";
 
 import { MediaSchema } from "../schemas";
 import {
-  addAppActivity,
   createMedia,
   deleteManyMedia,
   deleteMedia,
   getMediaById,
-  getUserById,
-} from "../db/repository";
+} from "../db/repository/media.service";
+import { getUserById } from "../db/repository/user.service";
+import { addAppActivity } from "../db/repository/app-activity.service";
 import { capitalize, currentUser } from "../utils";
 import { deleteS3Object } from "./s3";
 import { EDITORIAL_ROLES } from "../constants";
@@ -47,9 +47,9 @@ export const createMediaAction = async (
 
     await addAppActivity(
       "Media uploaded",
-      `${user.name} (${user.role}) uploaded a new ${created.type}, "${capitalize(
-        label
-      )}"`
+      `${user.name} (${user.role}) uploaded a new ${
+        created.type
+      }, "${capitalize(label)}"`
     );
 
     revalidatePath("/media");

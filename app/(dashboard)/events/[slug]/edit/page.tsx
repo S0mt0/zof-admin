@@ -1,5 +1,5 @@
 import { DashboardHeader } from "@/components/dashboard-header";
-import { getEventBySlug } from "@/lib/db/repository";
+import { getEventBySlug } from "@/lib/db/repository/event.service";
 import { EventForm } from "../../_components/event-form/form";
 import { EventNotFound } from "../../_components/not-found";
 import { Unauthorized } from "@/components/unauthorized";
@@ -29,7 +29,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
           { label: "Edit Event" },
         ]}
       />
-      <EventForm mode="edit" initialData={event} />
+      <EventForm mode="edit" initialData={event as any} />
     </div>
   );
 }

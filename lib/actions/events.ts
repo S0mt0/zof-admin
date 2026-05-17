@@ -4,13 +4,13 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import * as z from "zod";
 
 import {
-  addAppActivity,
   createEvent,
   updateEvent,
   deleteEvent,
   deleteManyEvents,
-  getUserById,
-} from "../db/repository";
+} from "../db/repository/event.service";
+import { getUserById } from "../db/repository/user.service";
+import { addAppActivity } from "../db/repository/app-activity.service";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { EventFormSchema } from "../schemas";

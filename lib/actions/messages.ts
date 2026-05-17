@@ -2,12 +2,12 @@
 import { revalidatePath } from "next/cache";
 
 import {
-  addAppActivity,
   deleteManyMessages,
   deleteMessage,
-  getUserById,
   toggleStatus,
-} from "../db/repository";
+} from "../db/repository/message.service";
+import { getUserById } from "../db/repository/user.service";
+import { addAppActivity } from "../db/repository/app-activity.service";
 import { MailService } from "../utils/mail.service";
 import { capitalize, currentUser } from "../utils";
 import { EDITORIAL_ROLES } from "../constants";

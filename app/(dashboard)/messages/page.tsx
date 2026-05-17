@@ -1,6 +1,9 @@
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Messages } from "./_components/messages";
-import { countUnreadMessages, getAllMessages } from "@/lib/db/repository";
+import {
+  countUnreadMessages,
+  getAllMessages,
+} from "@/lib/db/repository/message.service";
 import { currentUser } from "@/lib/utils";
 import { Unauthorized } from "@/components/unauthorized";
 import { EDITORIAL_ROLES } from "@/lib/constants";

@@ -10,8 +10,9 @@ import {
   getWebsiteSettings,
   updateWebsiteSettings,
   createWebsiteSettings,
-  getUserById,
-} from "../db/repository";
+} from "../db/repository/settings.service";
+import { getUserById } from "../db/repository/user.service";
+
 import { currentUser } from "../utils";
 import { revalidatePath } from "next/cache";
 

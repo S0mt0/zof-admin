@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { listTeamMembers } from "@/lib/db/repository";
+import { listTeamMembers } from "@/lib/db/repository/team.service";
 
 export async function OPTIONS() {
   return new Response(null, {

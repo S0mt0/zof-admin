@@ -1,7 +1,8 @@
 import { DashboardHeader } from "@/components/dashboard-header";
 import { MediaPage } from "./_components/media-page";
 import { MediaStats } from "./_components/media-stats";
-import { getMediaStats, listMedia } from "@/lib/db/repository";
+import { getMediaStats } from "@/lib/db/repository/stats.service";
+import { listMedia } from "@/lib/db/repository/media.service";
 
 export default async function Page({
   searchParams,

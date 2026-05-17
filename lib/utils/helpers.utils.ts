@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
 import { format, parse } from "date-fns";
 
-import { getVerificationTokenByEmail } from "../db/repository";
+import { getVerificationTokenByEmail } from "../db/repository/verification-token.service";
 import { db } from "../db/config";
 import { getUploadUrl } from "../actions/s3";
 

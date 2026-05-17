@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { addAppActivity, deleteUser, updateUser } from "../db/repository";
+import { deleteUser, updateUser } from "../db/repository/user.service";
 import { capitalize, currentUser } from "../utils";
 import { MailService } from "../utils/mail.service";
+import { addAppActivity } from "../db/repository/app-activity.service";
 
 export const changeUserRoleAction = async (userId: string, role: Role) => {
   const user = await currentUser();

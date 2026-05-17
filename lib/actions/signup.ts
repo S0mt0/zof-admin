@@ -3,7 +3,7 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { SignUpSchema } from "../schemas";
-import { createUser, getUserByEmail } from "../db/repository";
+import { createUser, getUserByEmail } from "../db/repository/user.service";
 import { capitalize, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
 import { DEFAULT_ADMIN_EMAILS } from "../constants";

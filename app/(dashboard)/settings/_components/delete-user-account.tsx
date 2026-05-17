@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { getAllUsers } from "@/lib/db/repository";
+import { getAllUsers } from "@/lib/db/repository/user.service";
 import { deleteUserAccountAction } from "@/lib/actions/users";
 
 interface DeleteUsersAccountProps {

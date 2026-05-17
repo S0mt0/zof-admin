@@ -1,6 +1,6 @@
 import { DashboardHeader } from "@/components/dashboard-header";
 import TeamForm from "../../_components/team-form";
-import { getTeamMemberById } from "@/lib/db/repository";
+import { getTeamMemberById } from "@/lib/db/repository/team.service";
 import { Unauthorized } from "@/components/unauthorized";
 import { currentUser } from "@/lib/utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";

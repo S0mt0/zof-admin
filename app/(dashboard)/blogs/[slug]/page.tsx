@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
-import { getBlogBySlug } from "@/lib/db/repository";
+import { getBlogBySlug } from "@/lib/db/repository/blog.service";
 import {
   capitalize,
   cn,

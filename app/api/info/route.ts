@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getFoundationInfo } from "@/lib/db/repository";
+import { getFoundationInfo } from "@/lib/db/repository/settings.service";
 
 export async function OPTIONS() {
   return new Response(null, {

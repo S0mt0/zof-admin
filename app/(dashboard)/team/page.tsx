@@ -1,4 +1,4 @@
-import { listTeamMembers } from "@/lib/db/repository";
+import { listTeamMembers } from "@/lib/db/repository/team.service";
 import { TeamMembers } from "./_components/team-members";
 import { DashboardHeader } from "@/components/dashboard-header";
 

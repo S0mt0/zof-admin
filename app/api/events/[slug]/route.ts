@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getEventBySlug } from "@/lib/db/repository";
+import { getEventBySlug } from "@/lib/db/repository/event.service";
 
 export async function OPTIONS() {
   return new Response(null, {

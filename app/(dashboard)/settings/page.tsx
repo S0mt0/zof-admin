@@ -1,10 +1,9 @@
 import { unstable_cache } from "next/cache";
 
 import {
-  getAllUsers,
   getFoundationInfo,
   getWebsiteSettings,
-} from "@/lib/db/repository";
+} from "@/lib/db/repository/settings.service";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { FoundationInfo } from "./_components/foundation-info";
 import { WebsiteSettings } from "./_components/website-settings";
@@ -13,6 +12,7 @@ import { Unauthorized } from "@/components/unauthorized";
 import { currentUser } from "@/lib/utils";
 import { RolesSettings } from "./_components/roles-settings";
 import { DeleteUsersAccount } from "./_components/delete-user-account";
+import { getAllUsers } from "@/lib/db/repository/user.service";
 
 export default async function Page() {
   const user = await currentUser();

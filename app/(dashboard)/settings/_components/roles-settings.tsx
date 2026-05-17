@@ -25,7 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { capitalize } from "@/lib/utils";
-import { getAllUsers } from "@/lib/db/repository";
+import { getAllUsers } from "@/lib/db/repository/user.service";
 import { changeUserRoleAction } from "@/lib/actions/users";
 
 interface RolesSettingsProps {
