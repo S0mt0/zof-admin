@@ -89,15 +89,12 @@ export function obscureEmail(email: string): string {
   return `${firstTwo}${obscuredMiddle}${lastChar}@${domain}`;
 }
 
-export const handleFileUpload = async (
-  e: React.ChangeEvent<HTMLInputElement>,
-  folder: "profile" | "blogs" | "events" | "documents"
+export const uploadFileToS3 = async (
+  file: File,
+  folder: S3FileFolders = "documents"
 ) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
   try {
-    const { url } = await getUploadUrl(file.name, file.type, folder);
+    const { url, key } = await getUploadUrl(file.name, file.type, folder);
 
     const response = await fetch(url, {
       method: "PUT",
@@ -111,10 +108,24 @@ export const handleFileUpload = async (
       );
     }
 
-    const objectUrl = url.split("?")[0];
-    return objectUrl;
+    return { url: url.split("?")[0], key };
   } catch (error) {
     console.error("Error Uploading to S3: ", error);
+    throw error;
+  }
+};
+
+export const handleFileUpload = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  folder: S3FileFolders
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const uploaded = await uploadFileToS3(file, folder);
+    return uploaded.url;
+  } catch (error) {
     throw error;
   }
 };

@@ -1,6 +1,10 @@
 "use server";
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3 = new S3Client({
@@ -26,4 +30,15 @@ export async function getUploadUrl(
 
   const url = await getSignedUrl(s3, command, { expiresIn: 60 });
   return { url, key };
+}
+
+export async function deleteS3Object(key: string) {
+  if (!key) return;
+
+  const command = new DeleteObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: key,
+  });
+
+  await s3.send(command);
 }

@@ -7,6 +7,7 @@ import {
   Users,
   Home,
   MessageSquare,
+  ImageIcon,
   Heart,
 } from "lucide-react";
 import {
@@ -39,6 +40,12 @@ const navigationItems = [
     url: "/messages",
     icon: MessageSquare,
     gradient: "from-pink-400 to-pink-600",
+  },
+  {
+    title: "Media",
+    url: "/media",
+    icon: ImageIcon,
+    gradient: "from-cyan-400 to-cyan-600",
   },
   // {
   //   title: "Donations",

@@ -1,4 +1,4 @@
-type S3FileFolders = "profile" | "blogs" | "events" | "documents";
+type S3FileFolders = "profile" | "blogs" | "events" | "documents" | "media";
 
 type PrismaPaginationOptions<M, A> = {
   page?: number;

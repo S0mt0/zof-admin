@@ -51,3 +51,18 @@ export async function getEventsStats() {
     return { total: 0, upcoming: 0, completed: 0, draft: 0, featured: 0 };
   }
 }
+
+export async function getMediaStats() {
+  try {
+    const [total, photos, videos] = await Promise.all([
+      db.media.count(),
+      db.media.count({ where: { type: "photo" } }),
+      db.media.count({ where: { type: "video" } }),
+    ]);
+
+    return { total, photos, videos };
+  } catch (error) {
+    console.log("Error fetching media stats: ", error);
+    return { total: 0, photos: 0, videos: 0 };
+  }
+}

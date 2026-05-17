@@ -8,3 +8,4 @@ export * from "./app-activity.service";
 export * from "./blog.service";
 export * from "./event.service";
 export * from "./message.service";
+export * from "./media.service";
