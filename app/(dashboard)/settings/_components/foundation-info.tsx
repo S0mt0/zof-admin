@@ -39,6 +39,25 @@ interface FoundationInfoProps {
   foundationInfo: IFoundationInfo | null;
 }
 
+const socialFields = [
+  { name: "facebook", label: "Facebook", placeholder: "facebook.com/foundation" },
+  { name: "x", label: "X", placeholder: "@foundation" },
+  { name: "instagram", label: "Instagram", placeholder: "@foundation" },
+  { name: "youtube", label: "YouTube", placeholder: "youtube.com/@foundation" },
+  { name: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/company/foundation" },
+  { name: "tiktok", label: "TikTok", placeholder: "@foundation" },
+  { name: "threads", label: "Threads", placeholder: "@foundation" },
+  { name: "whatsapp", label: "WhatsApp", placeholder: "+234..." },
+  { name: "telegram", label: "Telegram", placeholder: "@foundation" },
+  { name: "snapchat", label: "Snapchat", placeholder: "@foundation" },
+  { name: "pinterest", label: "Pinterest", placeholder: "pinterest.com/foundation" },
+  { name: "medium", label: "Medium", placeholder: "medium.com/@foundation" },
+] satisfies {
+  name: keyof z.infer<typeof FoundationInfoSchema>;
+  label: string;
+  placeholder: string;
+}[];
+
 export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -51,6 +70,18 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
       address: foundationInfo?.address || FOUNDATION_ADDRESS,
       phone: foundationInfo?.phone || FOUNDATION_PHONE,
       description: foundationInfo?.description || FOUNDATION_DESCRIPTION,
+      facebook: foundationInfo?.facebook || "",
+      x: foundationInfo?.x || "",
+      instagram: foundationInfo?.instagram || "",
+      youtube: foundationInfo?.youtube || "",
+      linkedin: foundationInfo?.linkedin || "",
+      tiktok: foundationInfo?.tiktok || "",
+      threads: foundationInfo?.threads || "",
+      whatsapp: foundationInfo?.whatsapp || "",
+      telegram: foundationInfo?.telegram || "",
+      snapchat: foundationInfo?.snapchat || "",
+      pinterest: foundationInfo?.pinterest || "",
+      medium: foundationInfo?.medium || "",
     },
   });
 
@@ -61,18 +92,14 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
 
         if (data?.success) {
           toast.success(data.success);
+          form.reset(values);
           setIsEditing(false);
         }
       });
     });
   };
 
-  const hasChanges =
-    form.watch("address") !== foundationInfo?.address ||
-    form.watch("description") !== foundationInfo?.description ||
-    form.watch("email") !== foundationInfo?.email ||
-    form.watch("name") !== foundationInfo?.name ||
-    form.watch("phone") !== foundationInfo?.phone;
+  const hasChanges = !foundationInfo || form.formState.isDirty;
 
   const disabled = isPending || !hasChanges;
 
@@ -205,8 +232,39 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
+                )}
+              />
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-medium">Social Contacts</h3>
+                <p className="text-sm text-muted-foreground">
+                  Add public handles, phone contacts, or profile links.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {socialFields.map((social) => (
+                  <FormField
+                    key={social.name}
+                    control={form.control}
+                    name={social.name}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{social.label}</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={!isEditing || isPending}
+                            placeholder={social.placeholder}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
           </form>
         </Form>
       </CardContent>

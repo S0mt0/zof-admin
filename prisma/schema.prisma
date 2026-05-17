@@ -88,6 +88,7 @@ model User {
   media Media[]
   accounts      Account[]
   addedTeamMembers TeamMember[]
+  addedVolunteers Volunteer[]
 }
 
 model Account {
@@ -229,6 +230,37 @@ model TeamMember {
   @@unique([name, role])
 }
 
+model Volunteer {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  volunteerType String
+  avatar        String?
+
+  // Relations
+  addedBy      String   @db.ObjectId
+  addedByUser  User?    @relation(fields: [addedBy], references: [id])
+
+  // Social contacts
+  facebook     String?
+  x            String?
+  instagram    String?
+  youtube      String?
+  linkedin     String?
+  tiktok       String?
+  threads      String?
+  whatsapp     String?
+  telegram     String?
+  snapchat     String?
+  pinterest    String?
+  medium       String?
+
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([name, volunteerType])
+}
+
 model Message {
   id        String        @id @default(auto()) @map("_id") @db.ObjectId
   sender    String
@@ -323,6 +355,18 @@ model FoundationInfo {
   description String?
   address     String?
   phone       String?
+  facebook    String?
+  x           String?
+  instagram   String?
+  youtube     String?
+  linkedin    String?
+  tiktok      String?
+  threads     String?
+  whatsapp    String?
+  telegram    String?
+  snapchat    String?
+  pinterest   String?
+  medium      String?
   
   // Timestamps
   createdAt   DateTime @default(now())

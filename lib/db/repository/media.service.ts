@@ -75,6 +75,31 @@ export const createMedia = async (data: Prisma.MediaCreateInput) => {
   }
 };
 
+export const createManyMedia = async (items: Prisma.MediaCreateInput[]) => {
+  try {
+    return await Promise.all(
+      items.map((data) =>
+        db.media.create({
+          data,
+          include: {
+            createdByUser: {
+              select: {
+                name: true,
+                email: true,
+                role: true,
+                image: true,
+              },
+            },
+          },
+        })
+      )
+    );
+  } catch (error) {
+    console.error("Error creating media items: ", error);
+    return null;
+  }
+};
+
 export const getMediaById = async (id: string) => {
   try {
     return await db.media.findUnique({
@@ -92,6 +117,31 @@ export const getMediaById = async (id: string) => {
     });
   } catch (error) {
     console.error("Error fetching media item: ", error);
+    return null;
+  }
+};
+
+export const updateMedia = async (
+  id: string,
+  data: Prisma.MediaUpdateInput
+) => {
+  try {
+    return await db.media.update({
+      where: { id },
+      data,
+      include: {
+        createdByUser: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error updating media item: ", error);
     return null;
   }
 };

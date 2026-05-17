@@ -9,11 +9,13 @@ import { Pagination } from "@/components/ui/pagination-v2";
 import { useReadMedia } from "@/lib/hooks";
 import MediaEmptyState from "./media-empty-state";
 import { MediaCard } from "./media-card";
+import { EditMediaForm } from "./edit-media-form";
 import { MediaFilters } from "./media-filters";
 import { UploadMediaForm } from "./upload-media-form";
 
 export function MediaPage({ data, pagination, searchParams }: MediaPageProps) {
   const [openUpload, setOpenUpload] = useState(false);
+  const [editingItem, setEditingItem] = useState<MediaRecord | null>(null);
   const {
     actionType,
     allCurrentSelected,
@@ -82,6 +84,7 @@ export function MediaPage({ data, pagination, searchParams }: MediaPageProps) {
                   checked={selectedMedia.includes(item.id)}
                   isPending={isPending}
                   onCheckedChange={() => handleSelectMedia(item.id)}
+                  onEdit={() => setEditingItem(item)}
                   onDelete={() => {
                     setActionType("single");
                     setTargetId(item.id);
@@ -110,6 +113,13 @@ export function MediaPage({ data, pagination, searchParams }: MediaPageProps) {
       )}
 
       <UploadMediaForm open={openUpload} onOpenChange={setOpenUpload} />
+      <EditMediaForm
+        item={editingItem}
+        open={!!editingItem}
+        onOpenChange={(open) => {
+          if (!open) setEditingItem(null);
+        }}
+      />
 
       <AlertDialog
         isOpen={openDialog}

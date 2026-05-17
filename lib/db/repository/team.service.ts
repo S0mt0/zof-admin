@@ -8,6 +8,14 @@ interface ListTeamMembersOptions {
   include?: Prisma.TeamMemberInclude;
   orderBy?: Prisma.TeamMemberOrderByWithRelationInput;
 }
+
+interface ListVolunteersOptions {
+  where?: Prisma.VolunteerWhereInput;
+  select?: Prisma.VolunteerSelect;
+  include?: Prisma.VolunteerInclude;
+  orderBy?: Prisma.VolunteerOrderByWithRelationInput;
+}
+
 export const listTeamMembers = async (
   options: ListTeamMembersOptions = {}
 ): Promise<TeamMember[]> => {
@@ -36,6 +44,87 @@ export const listTeamMembers = async (
   } catch (e) {
     console.error(e);
     return [] as TeamMember[];
+  }
+};
+
+export const listVolunteers = async (
+  options: ListVolunteersOptions = {}
+): Promise<Volunteer[]> => {
+  const {
+    where,
+    select,
+    include = {
+      addedByUser: {
+        select: {
+          name: true,
+          email: true,
+          role: true,
+          image: true,
+        },
+      },
+    },
+    orderBy = { createdAt: "desc" },
+  } = options;
+
+  try {
+    return await db.volunteer.findMany({
+      where,
+      orderBy,
+      ...(select ? { select } : { include }),
+    } as any);
+  } catch (e) {
+    console.error(e);
+    return [] as Volunteer[];
+  }
+};
+
+export const getUniqueVolunteer = async (
+  name: string,
+  volunteerType: string
+) => {
+  try {
+    return await db.volunteer.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: "insensitive",
+        },
+        volunteerType: {
+          equals: volunteerType,
+          mode: "insensitive",
+        },
+      },
+    });
+  } catch (e) {
+    return null;
+  }
+};
+
+export const createVolunteer = async (data: any) => {
+  try {
+    return (await db.volunteer.create({ data })) as Volunteer;
+  } catch (e) {
+    console.log("error creating volunteer", e);
+    return null;
+  }
+};
+
+export const updateVolunteer = async (
+  id: string,
+  data: Partial<Omit<Volunteer, "addedByUser">>
+) => {
+  try {
+    return (await db.volunteer.update({ where: { id }, data })) as Volunteer;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const deleteVolunteer = async (id: string) => {
+  try {
+    return (await db.volunteer.delete({ where: { id } })) as Volunteer;
+  } catch (e) {
+    return null;
   }
 };
 

@@ -6,8 +6,12 @@ import { Loader2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-import { ACCEPTED_IMAGE_TYPES, EDITORIAL_ROLES, MAX_IMAGE_SIZE } from "@/lib/constants";
-import { createMediaAction } from "@/lib/actions/media";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  EDITORIAL_ROLES,
+  MAX_IMAGE_SIZE,
+} from "@/lib/constants";
+import { createManyMediaAction, createMediaAction } from "@/lib/actions/media";
 import { useCurrentUser } from "@/lib/hooks";
 import { uploadFileToS3 } from "@/lib/utils";
 import {
@@ -35,6 +39,7 @@ type UploadState =
       type: "photo";
       src: string;
       srcKey: string;
+      files: UploadedPhoto[];
       alt: string;
       caption: string;
       description: string;
@@ -50,10 +55,17 @@ type UploadState =
       description: string;
     };
 
+type UploadedPhoto = {
+  src: string;
+  srcKey: string;
+  name: string;
+};
+
 const initialPhotoState: UploadState = {
   type: "photo",
   src: "",
   srcKey: "",
+  files: [],
   alt: "",
   caption: "",
   description: "",
@@ -124,13 +136,23 @@ export function UploadMediaForm({
     e: ChangeEvent<HTMLInputElement>,
     field: "src" | "poster"
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
 
     const isPoster = field === "poster";
-    const isValid = validateFile(
-      file,
-      isPoster || formData.type === "photo" ? "image" : "video"
+    const isPhotoUpload = field === "src" && formData.type === "photo";
+    const files = isPhotoUpload
+      ? selectedFiles.slice(0, 10)
+      : selectedFiles.slice(0, 1);
+
+    if (isPhotoUpload && selectedFiles.length > 10) {
+      toast.error("You can upload up to 10 photos at once.");
+      e.target.value = "";
+      return;
+    }
+
+    const isValid = files.every((file) =>
+      validateFile(file, isPoster || isPhotoUpload ? "image" : "video")
     );
 
     if (!isValid) {
@@ -142,25 +164,41 @@ export function UploadMediaForm({
     const loading = toast.loading("Uploading...");
 
     try {
-      const uploaded = await uploadFileToS3(file, "media");
+      const uploadedFiles = await Promise.all(
+        files.map(async (file) => {
+          const uploaded = await uploadFileToS3(file, "media");
+          return { src: uploaded.url, srcKey: uploaded.key, name: file.name };
+        })
+      );
 
       setFormData((prev) => {
+        const [uploaded] = uploadedFiles;
+
         if (field === "poster" && prev.type === "video") {
           return {
             ...prev,
-            poster: uploaded.url,
-            posterKey: uploaded.key,
+            poster: uploaded.src,
+            posterKey: uploaded.srcKey,
           };
         }
 
         if (prev.type === "photo") {
-          return { ...prev, src: uploaded.url, srcKey: uploaded.key };
+          return {
+            ...prev,
+            files: uploadedFiles,
+            src: uploaded.src,
+            srcKey: uploaded.srcKey,
+          };
         }
 
-        return { ...prev, src: uploaded.url, srcKey: uploaded.key };
+        return { ...prev, src: uploaded.src, srcKey: uploaded.srcKey };
       });
 
-      toast.success("Upload successful");
+      toast.success(
+        uploadedFiles.length > 1
+          ? `${uploadedFiles.length} photos uploaded`
+          : "Upload successful"
+      );
     } catch (error) {
       toast.error("Upload failed");
     } finally {
@@ -179,7 +217,21 @@ export function UploadMediaForm({
     const loading = toast.loading("Saving media...");
 
     startTransition(() => {
-      createMediaAction(formData as any)
+      const action =
+        formData.type === "photo"
+          ? createManyMediaAction(
+              formData.files.map((file) => ({
+                type: "photo",
+                src: file.src,
+                srcKey: file.srcKey,
+                alt: formData.alt,
+                caption: formData.caption,
+                description: formData.description,
+              }))
+            )
+          : createMediaAction(formData as any);
+
+      action
         .then((result) => {
           if (result.success) {
             toast.success(result.success);
@@ -217,7 +269,9 @@ export function UploadMediaForm({
             <Select
               value={formData.type}
               onValueChange={(value: MediaKind) =>
-                setFormData(value === "photo" ? initialPhotoState : initialVideoState)
+                setFormData(
+                  value === "photo" ? initialPhotoState : initialVideoState
+                )
               }
               disabled={isDisabled}
             >
@@ -237,6 +291,7 @@ export function UploadMediaForm({
               ref={mediaInputRef}
               type="file"
               accept={formData.type === "photo" ? "image/*" : "video/*"}
+              multiple={formData.type === "photo"}
               className="hidden"
               onChange={(e) => handleFileUpload(e, "src")}
             />
@@ -252,18 +307,31 @@ export function UploadMediaForm({
               ) : (
                 <UploadCloud className="mr-2 h-4 w-4" />
               )}
-              {formData.src ? "Replace file" : "Choose file"}
+              {formData.type === "photo"
+                ? formData.files.length > 0
+                  ? "Replace photos"
+                  : "Choose up to 10 photos"
+                : formData.src
+                  ? "Replace file"
+                  : "Choose file"}
             </Button>
             {formData.src ? (
               <div className="overflow-hidden rounded-lg border bg-muted">
                 {formData.type === "photo" ? (
-                  <div className="relative aspect-video">
-                    <Image
-                      src={formData.src}
-                      alt={"Media preview"}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="grid max-h-80 gap-2 overflow-y-auto p-2 sm:grid-cols-2">
+                    {formData.files.map((file) => (
+                      <div
+                        key={file.srcKey}
+                        className="relative aspect-video overflow-hidden rounded-md bg-background"
+                      >
+                        <Image
+                          src={file.src}
+                          alt={formData.alt || file.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <video

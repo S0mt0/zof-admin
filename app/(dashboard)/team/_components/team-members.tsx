@@ -6,11 +6,18 @@ import { Input } from "@/components/ui/input";
 import EmailModal from "@/components/email-modal";
 import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
+import { Volunteers } from "./volunteers";
 
 import { useReadTeam } from "@/lib/hooks";
 import { AlertDialog } from "@/components/alert-dialog";
 
-export function TeamMembers({ members }: { members: TeamMember[] }) {
+export function TeamMembers({
+  members,
+  volunteers,
+}: {
+  members: TeamMember[];
+  volunteers: Volunteer[];
+}) {
   const {
     emailMessage,
     emailOpen,
@@ -92,6 +99,8 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
         message={`Are you sure you want to remove ${target?.name} from the team?`}
         isPending={isPending}
       />
+
+      <Volunteers volunteers={volunteers} />
     </div>
   );
 }

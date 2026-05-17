@@ -2,12 +2,16 @@
 
 import * as z from "zod";
 
-import { TeamMemberSchema } from "../schemas";
+import { TeamMemberSchema, VolunteerSchema } from "../schemas";
 import {
+  createVolunteer,
   createTeamMember,
+  deleteVolunteer,
   updateTeamMember,
   deleteTeamMember,
+  getUniqueVolunteer,
   getUniqueTeamMember,
+  updateVolunteer,
 } from "../db/repository/team.service";
 import { getUserById } from "../db/repository/user.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
@@ -113,6 +117,99 @@ export const deleteTeamMemberAction = async (id: string) => {
     return { success: "Team member removed" };
   } catch (e) {
     return { error: "Could not remove team member" };
+  }
+};
+
+export const createVolunteerAction = async (
+  values: z.infer<typeof VolunteerSchema>
+) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session, please login again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  const validated = VolunteerSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  const existingVolunteer = await getUniqueVolunteer(
+    validated.data.name,
+    validated.data.volunteerType
+  );
+  if (existingVolunteer) return { error: "Volunteer already exists" };
+
+  try {
+    const created = await createVolunteer({
+      ...validated.data,
+      name: capitalize(validated.data.name),
+      addedBy: user.id,
+    });
+
+    if (created) {
+      await addAppActivity(
+        "New volunteer added",
+        `${user.name} (${user.role}) added ${created.name} as "${created.volunteerType}"`
+      );
+      revalidatePath("/team");
+    }
+
+    return { success: "Volunteer added" };
+  } catch (e) {
+    return { error: "Could not add volunteer" };
+  }
+};
+
+export const updateVolunteerAction = async (
+  id: string,
+  values: z.infer<typeof VolunteerSchema>
+) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session, please login again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  const validated = VolunteerSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    const updated = await updateVolunteer(id, {
+      ...validated.data,
+      name: capitalize(validated.data.name),
+    });
+
+    if (updated) {
+      await addAppActivity(
+        "Volunteer info updated",
+        `${user.name} (${user.role}) updated ${updated.name}'s volunteer details.`
+      );
+      revalidatePath("/team");
+    }
+
+    return { success: "Volunteer updated" };
+  } catch (e) {
+    return { error: "Could not update volunteer" };
+  }
+};
+
+export const deleteVolunteerAction = async (id: string) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session, please login again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  try {
+    const deleted = await deleteVolunteer(id);
+
+    if (deleted) {
+      await addAppActivity(
+        "Volunteer removed",
+        `${user.name} (${user.role}) removed ${deleted.name} from volunteers`
+      );
+      revalidatePath("/team");
+    }
+
+    return { success: "Volunteer removed" };
+  } catch (e) {
+    return { error: "Could not remove volunteer" };
   }
 };
 

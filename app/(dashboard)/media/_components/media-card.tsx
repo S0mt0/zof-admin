@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Film, Trash2 } from "lucide-react";
+import { Film, Pencil, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,14 @@ export function MediaCard({
   isPending,
   onCheckedChange,
   onDelete,
+  onEdit,
 }: {
   item: MediaRecord;
   checked: boolean;
   isPending: boolean;
   onCheckedChange: () => void;
   onDelete: () => void;
+  onEdit: () => void;
 }) {
   const label =
     item.type === "photo" ? item.alt : item.title || item.caption || "Video";
@@ -82,7 +84,7 @@ export function MediaCard({
         ) : null}
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between border-t px-4 py-3 text-xs text-muted-foreground">
+      <CardFooter className="flex items-center justify-between gap-3 border-t px-4 py-3 text-xs text-muted-foreground">
         <span>
           {new Date(item.createdAt).toLocaleDateString("en-US", {
             month: "short",
@@ -90,16 +92,27 @@ export function MediaCard({
             year: "numeric",
           })}
         </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDelete}
-          disabled={isPending}
-          className="text-red-600 hover:text-red-600"
-        >
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEdit}
+            disabled={isPending}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            disabled={isPending}
+            className="text-red-600 hover:text-red-600"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

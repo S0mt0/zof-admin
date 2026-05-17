@@ -3,18 +3,39 @@
 import { revalidatePath } from "next/cache";
 import * as z from "zod";
 
-import { MediaSchema } from "../schemas";
+import { MediaSchema, UpdateMediaSchema } from "../schemas";
 import {
+  createManyMedia,
   createMedia,
   deleteManyMedia,
   deleteMedia,
   getMediaById,
+  updateMedia,
 } from "../db/repository/media.service";
 import { getUserById } from "../db/repository/user.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
 import { capitalize, currentUser } from "../utils";
 import { deleteS3Object } from "./s3";
 import { EDITORIAL_ROLES } from "../constants";
+
+type S3DeleteTarget = {
+  srcKey: string;
+  posterKey?: string | null;
+};
+
+const deleteMediaFilesFromS3 = async (items: S3DeleteTarget[]) => {
+  const results = await Promise.allSettled(
+    items.flatMap((item) => [
+      deleteS3Object(item.srcKey),
+      item.posterKey ? deleteS3Object(item.posterKey) : Promise.resolve(),
+    ])
+  );
+
+  const failed = results.filter((result) => result.status === "rejected");
+  if (failed.length > 0) {
+    console.error("Some media files could not be deleted from S3", failed);
+  }
+};
 
 export const createMediaAction = async (
   values: z.input<typeof MediaSchema>
@@ -59,6 +80,94 @@ export const createMediaAction = async (
   }
 };
 
+export const createManyMediaAction = async (
+  values: z.input<typeof MediaSchema>[]
+) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+
+  if (!user) return { error: "Invalid session. Please log in again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+  if (values.length === 0) return { error: "No media items selected" };
+  if (values.length > 10) {
+    return { error: "You can upload up to 10 photos at once" };
+  }
+
+  const validated = z.array(MediaSchema).safeParse(values);
+  if (!validated.success) {
+    return { error: validated.error.errors[0]?.message || "Invalid fields" };
+  }
+
+  const hasVideo = validated.data.some((item) => item.type === "video");
+  if (hasVideo) return { error: "Batch upload is only available for photos" };
+
+  try {
+    const created = await createManyMedia(
+      validated.data.map((payload) => ({
+        ...payload,
+        createdBy: user.id,
+        type: payload.type,
+      })) as any
+    );
+
+    if (!created) return { error: "Failed to save media items" };
+
+    await addAppActivity(
+      "Media uploaded",
+      `${user.name} (${user.role}) uploaded ${created.length} photo(s) to the media library`
+    );
+
+    revalidatePath("/media");
+    return {
+      success: `${created.length} photo(s) uploaded successfully`,
+      data: { media: created },
+    };
+  } catch (error) {
+    return { error: "Failed to upload media" };
+  }
+};
+
+export const updateMediaAction = async (
+  values: z.input<typeof UpdateMediaSchema>
+) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+
+  if (!user) return { error: "Invalid session. Please log in again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  const validated = UpdateMediaSchema.safeParse(values);
+  if (!validated.success) {
+    return { error: validated.error.errors[0]?.message || "Invalid fields" };
+  }
+
+  try {
+    const { id, type, ...payload } = validated.data;
+    const media = await getMediaById(id);
+
+    if (!media) return { error: "Media item does not exist" };
+    if (media.type !== type) return { error: "Media type cannot be changed" };
+
+    const updated = await updateMedia(id, payload);
+    if (!updated) return { error: "Failed to update media item" };
+
+    const label =
+      updated.type === "photo"
+        ? updated.alt || updated.caption || "photo"
+        : updated.title || updated.caption || "video";
+
+    await addAppActivity(
+      "Media updated",
+      `${user.name} (${user.role}) updated ${updated.type}, "${capitalize(label)}"`
+    );
+
+    revalidatePath("/media");
+    return { success: "Media updated successfully", data: { media: updated } };
+  } catch (error) {
+    return { error: "Failed to update media" };
+  }
+};
+
 export const deleteMediaAction = async (id: string) => {
   const userId = (await currentUser())?.id;
   const user = await getUserById(userId || "");
@@ -73,10 +182,7 @@ export const deleteMediaAction = async (id: string) => {
     const deleted = await deleteMedia(id);
     if (!deleted) return { error: "Failed to delete media item" };
 
-    await Promise.all([
-      deleteS3Object(media.srcKey),
-      media.posterKey ? deleteS3Object(media.posterKey) : Promise.resolve(),
-    ]);
+    await deleteMediaFilesFromS3([media]);
 
     await addAppActivity(
       "Media deleted",
@@ -101,24 +207,20 @@ export const bulkDeleteMediaAction = async (ids: string[]) => {
   try {
     const deleted = await deleteManyMedia(ids);
     if (!deleted) return { error: "Failed to delete media items" };
+    if (deleted.items.length === 0) {
+      return { error: "Selected media items were already deleted" };
+    }
 
-    await Promise.all(
-      deleted.items.flatMap(
-        (item: { id: string; srcKey: string; posterKey: string | null }) => [
-          deleteS3Object(item.srcKey),
-          item.posterKey ? deleteS3Object(item.posterKey) : Promise.resolve(),
-        ]
-      )
-    );
+    await deleteMediaFilesFromS3(deleted.items);
 
     await addAppActivity(
       "Media deleted",
-      `${user.name} (${user.role}) deleted ${deleted.result.count} media item(s) from the library`
+      `${user.name} (${user.role}) deleted ${deleted.items.length} media item(s) from the library`
     );
 
     revalidatePath("/media");
     return {
-      success: `${deleted.result.count} media item(s) deleted successfully`,
+      success: `${deleted.items.length} media item(s) deleted successfully`,
     };
   } catch (error) {
     return { error: "Failed to delete media items" };

@@ -17,8 +17,20 @@ export async function GET() {
       address: true,
       description: true,
       email: true,
+      facebook: true,
+      instagram: true,
+      linkedin: true,
+      medium: true,
       name: true,
       phone: true,
+      pinterest: true,
+      snapchat: true,
+      telegram: true,
+      threads: true,
+      tiktok: true,
+      whatsapp: true,
+      x: true,
+      youtube: true,
     });
 
     return Response.json(

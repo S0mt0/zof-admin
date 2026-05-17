@@ -21,3 +21,26 @@ interface TeamMember {
   createdAt: Date;
   updatedAt: Date;
 }
+
+interface Volunteer {
+  id: string;
+  name: string;
+  volunteerType: string;
+  avatar?: string | null;
+  addedBy: string;
+  addedByUser?: Partial<IUser> | null;
+  facebook?: string | null;
+  x?: string | null;
+  instagram?: string | null;
+  youtube?: string | null;
+  linkedin?: string | null;
+  tiktok?: string | null;
+  threads?: string | null;
+  whatsapp?: string | null;
+  telegram?: string | null;
+  snapchat?: string | null;
+  pinterest?: string | null;
+  medium?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

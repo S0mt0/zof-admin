@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 const optionalText = z.string().trim().optional().or(z.literal(""));
+const nullableText = z.string().trim().nullable().optional();
 
 export const MediaSchema = z
   .discriminatedUnion("type", [
@@ -38,3 +39,26 @@ export const MediaSchema = z
       description: value.description?.trim() || undefined,
     };
   });
+
+export const UpdateMediaSchema = z
+  .discriminatedUnion("type", [
+    z.object({
+      id: z.string().min(1, { message: "Media item is required" }),
+      type: z.literal("photo"),
+      alt: z.string().trim().min(1, { message: "Alt text is required" }),
+      caption: nullableText,
+      description: nullableText,
+    }),
+    z.object({
+      id: z.string().min(1, { message: "Media item is required" }),
+      type: z.literal("video"),
+      title: z.string().trim().min(1, { message: "Title is required" }),
+      caption: nullableText,
+      description: nullableText,
+    }),
+  ])
+  .transform((value) => ({
+    ...value,
+    caption: value.caption?.trim() || null,
+    description: value.description?.trim() || null,
+  }));

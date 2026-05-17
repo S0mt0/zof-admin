@@ -54,3 +54,19 @@ export const allowedPublicEventSelectFields = [
 
 export type AllowedEventSelectField =
   (typeof allowedPublicEventSelectFields)[number];
+
+export const allowedPublicMediaSelectFields = [
+  "id",
+  "type",
+  "src",
+  "alt",
+  "poster",
+  "title",
+  "caption",
+  "description",
+  "createdAt",
+  "updatedAt",
+] as const;
+
+export type AllowedMediaSelectField =
+  (typeof allowedPublicMediaSelectFields)[number];
