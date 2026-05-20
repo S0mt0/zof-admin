@@ -17,6 +17,7 @@ import {
   deleteLandingFaq,
   deleteLandingStat,
   deleteLandingTestimonial,
+  listLandingFaqs,
   updateLandingFaq,
   updateLandingStat,
   updateLandingTestimonial,
@@ -36,6 +37,23 @@ const getAuthorizedUser = async () => {
   if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
 
   return { user };
+};
+
+const getNextLandingFaqOrder = async () => {
+  const faqs = await listLandingFaqs();
+  return faqs.reduce((max, faq) => Math.max(max, faq.order), -1) + 1;
+};
+
+const normalizeLandingFaqOrders = async () => {
+  const faqs = await listLandingFaqs();
+
+  await Promise.all(
+    faqs.map((faq, index) =>
+      faq.order === index
+        ? Promise.resolve(faq)
+        : updateLandingFaq(faq.id, { order: index })
+    )
+  );
 };
 
 export const updateAboutPageAction = async (
@@ -73,7 +91,10 @@ export const createLandingFaqAction = async (
   if (!validated.success) return { error: "Invalid fields" };
 
   try {
-    const created = await createLandingFaq(validated.data);
+    const created = await createLandingFaq({
+      ...validated.data,
+      order: await getNextLandingFaqOrder(),
+    });
     if (!created) return { error: "Could not add FAQ" };
 
     await addAppActivity(
@@ -121,6 +142,7 @@ export const deleteLandingFaqAction = async (id: string) => {
   try {
     const deleted = await deleteLandingFaq(id);
     if (!deleted) return { error: "Could not delete FAQ" };
+    await normalizeLandingFaqOrders();
 
     await addAppActivity(
       "Landing FAQ deleted",
@@ -131,6 +153,39 @@ export const deleteLandingFaqAction = async (id: string) => {
     return { success: "FAQ deleted" };
   } catch (error) {
     return { error: "Could not delete FAQ" };
+  }
+};
+
+const LandingFaqReorderSchema = z.array(
+  z.object({
+    id: z.string().min(1),
+    order: z.number().int().min(0),
+  })
+);
+
+export const reorderLandingFaqsAction = async (
+  values: z.infer<typeof LandingFaqReorderSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+
+  const validated = LandingFaqReorderSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid order data" };
+
+  try {
+    await Promise.all(
+      validated.data.map(({ id, order }) => updateLandingFaq(id, { order }))
+    );
+
+    await addAppActivity(
+      "Landing FAQs reordered",
+      `${auth.user.name} (${auth.user.role}) reordered landing page FAQs`
+    );
+
+    revalidatePath("/landing/faqs");
+    return { success: "FAQ order updated" };
+  } catch (error) {
+    return { error: "Could not update FAQ order" };
   }
 };
 

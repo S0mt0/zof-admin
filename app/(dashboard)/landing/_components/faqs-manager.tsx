@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import {
+  type DragEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
+import { Edit, GripVertical, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
   createLandingFaqAction,
   deleteLandingFaqAction,
+  reorderLandingFaqsAction,
   updateLandingFaqAction,
 } from "@/lib/actions/pages";
 import { AlertDialog } from "@/components/alert-dialog";
@@ -41,17 +49,49 @@ const emptyForm = {
   published: true,
 };
 
+const sortFaqs = (items: LandingFaq[]) =>
+  [...items].sort((a, b) => {
+    if (a.order !== b.order) return a.order - b.order;
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
+const moveFaq = (items: LandingFaq[], fromId: string, toId: string) => {
+  const fromIndex = items.findIndex((item) => item.id === fromId);
+  const toIndex = items.findIndex((item) => item.id === toId);
+
+  if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return items;
+
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, moved);
+  return next;
+};
+
 export function FaqsManager({ faqs }: { faqs: LandingFaq[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isReordering, startReorderTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [target, setTarget] = useState<LandingFaq | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<LandingFaq | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [items, setItems] = useState(() => sortFaqs(faqs));
+  const itemsRef = useRef(items);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const orderedFaqs = useMemo(() => sortFaqs(faqs), [faqs]);
+
+  useEffect(() => {
+    setItems(orderedFaqs);
+    itemsRef.current = orderedFaqs;
+  }, [orderedFaqs]);
 
   const openCreate = () => {
     setTarget(null);
-    setFormData(emptyForm);
+    setFormData({
+      ...emptyForm,
+      order: items.reduce((max, faq) => Math.max(max, faq.order), -1) + 1,
+    });
     setOpen(true);
   };
 
@@ -101,6 +141,60 @@ export function FaqsManager({ faqs }: { faqs: LandingFaq[] }) {
     });
   };
 
+  const persistOrder = (nextItems: LandingFaq[]) => {
+    const payload = nextItems.map((faq, index) => ({
+      id: faq.id,
+      order: index,
+    }));
+
+    startReorderTransition(() => {
+      reorderLandingFaqsAction(payload)
+        .then((res) => {
+          if (res?.error) {
+            setItems(orderedFaqs);
+            return toast.error(res.error);
+          }
+
+          if (res?.success) {
+            toast.success(res.success);
+            router.refresh();
+          }
+        })
+        .catch(() => {
+          setItems(orderedFaqs);
+          toast.error("Could not update FAQ order");
+        });
+    });
+  };
+
+  const handleDragStart = (
+    event: DragEvent<HTMLButtonElement>,
+    faqId: string
+  ) => {
+    setDraggedId(faqId);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", faqId);
+  };
+
+  const handleDragEnter = (targetId: string) => {
+    if (!draggedId || draggedId === targetId) return;
+
+    setDropTargetId(targetId);
+    setItems((current) => {
+      const next = moveFaq(current, draggedId, targetId);
+      itemsRef.current = next;
+      return next;
+    });
+  };
+
+  const handleDragEnd = () => {
+    if (!draggedId) return;
+
+    setDraggedId(null);
+    setDropTargetId(null);
+    persistOrder(itemsRef.current);
+  };
+
   return (
     <Card>
       <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -114,48 +208,92 @@ export function FaqsManager({ faqs }: { faqs: LandingFaq[] }) {
         </Button>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {faqs.length === 0 ? (
+        {items.length === 0 ? (
           <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
             No FAQs yet.
           </div>
         ) : (
-          faqs.map((faq) => (
-            <Card key={faq.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <CardTitle className="text-base">{faq.question}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {faq.answer}
-                    </CardDescription>
-                  </div>
-                  <Badge variant={faq.published ? "default" : "secondary"}>
-                    {faq.published ? "Published" : "Hidden"}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardFooter className="flex items-center justify-between border-t px-4 py-3">
-                <span className="text-xs text-muted-foreground">
-                  Order {faq.order}
-                </span>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" onClick={() => openEdit(faq)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDeleteTarget(faq)}
-                    className="text-red-600 hover:text-red-600"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          ))
+          <div className="grid gap-3">
+            <div className="flex items-center justify-between rounded-md border border-dashed bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+              <span>Drag the handle to rearrange questions vertically.</span>
+              {isReordering ? <span>Saving order...</span> : null}
+            </div>
+
+            {items.map((faq, index) => {
+              const isDragging = draggedId === faq.id;
+              const isDropTarget = dropTargetId === faq.id && !isDragging;
+
+              return (
+                <Card
+                  key={faq.id}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDragEnter={() => handleDragEnter(faq.id)}
+                  className={[
+                    "transition-all",
+                    isDragging
+                      ? "scale-[0.99] opacity-55 ring-2 ring-primary"
+                      : "",
+                    isDropTarget ? "border-primary bg-primary/5" : "",
+                  ].join(" ")}
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 gap-3">
+                        <button
+                          type="button"
+                          draggable={!isPending && !isReordering}
+                          aria-label={`Drag ${faq.question}`}
+                          onDragStart={(event) =>
+                            handleDragStart(event, faq.id)
+                          }
+                          onDragEnd={handleDragEnd}
+                          className="mt-0.5 flex h-10 w-10 shrink-0 cursor-grab items-center justify-center rounded-md border bg-background text-muted-foreground transition-colors hover:border-primary hover:text-primary active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={isPending || isReordering}
+                        >
+                          <GripVertical className="h-5 w-5" />
+                        </button>
+                        <div className="min-w-0">
+                          <CardTitle className="text-base">
+                            {faq.question}
+                          </CardTitle>
+                          <CardDescription className="line-clamp-2">
+                            {faq.answer}
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <Badge variant={faq.published ? "default" : "secondary"}>
+                        {faq.published ? "Published" : "Hidden"}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardFooter className="flex items-center justify-between border-t px-4 py-3">
+                    <span className="text-xs text-muted-foreground">
+                      Position {index + 1}
+                    </span>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEdit(faq)}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDeleteTarget(faq)}
+                        className="text-red-600 hover:text-red-600"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
         )}
       </CardContent>
 
@@ -187,20 +325,7 @@ export function FaqsManager({ faqs }: { faqs: LandingFaq[] }) {
                 rows={5}
               />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <Label>Order</Label>
-                <Input
-                  type="number"
-                  value={formData.order}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      order: Number(e.target.value),
-                    }))
-                  }
-                />
-              </div>
+            <div className="grid gap-4">
               <div className="flex items-center justify-between rounded-md border px-3 py-2">
                 <Label>Published</Label>
                 <Switch
