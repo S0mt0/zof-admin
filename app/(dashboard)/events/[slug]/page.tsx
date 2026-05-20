@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
+import { RichTextContentRenderer } from "@/components/rich-text-content-renderer";
 import { getEventBySlug } from "@/lib/db/repository/event.service";
 import { capitalize, cn, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";
@@ -167,7 +167,7 @@ export default async function ViewEventPage({
             <h3 className="text-lg font-extrabold leading-loose">
               About this event
             </h3>
-            <LexicalContentRenderer content={event.detail} />
+            <RichTextContentRenderer content={event.detail} />
           </div>
         )}
         {/* Tags */}

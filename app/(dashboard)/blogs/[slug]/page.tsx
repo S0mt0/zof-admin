@@ -30,7 +30,7 @@ import {
 import { BlogNotFound } from "../_components/not-found";
 import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { LexicalContentRenderer } from "@/components/lexical-editor/lexical-content-renderer";
+import { RichTextContentRenderer } from "@/components/rich-text-content-renderer";
 
 export default async function ViewBlogPage({
   params,
@@ -156,7 +156,7 @@ export default async function ViewBlogPage({
         </div>
 
         {/* Blog Content */}
-        <LexicalContentRenderer content={blog.content} />
+        <RichTextContentRenderer content={blog.content} />
 
         {/* Tags */}
         {blog.tags.length > 0 && (

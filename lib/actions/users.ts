@@ -10,6 +10,7 @@ export const changeUserRoleAction = async (userId: string, role: Role) => {
   const user = await currentUser();
   if (!user) return { error: "Invalid session, please login again." };
   if (user.role !== "admin") return { error: "Unauthorized" };
+  if (user.id === userId) return { error: "You cannot delete your own account" };
 
   try {
     const existing = await (async () => {

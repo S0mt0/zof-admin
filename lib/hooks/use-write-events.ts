@@ -20,6 +20,17 @@ interface EventFormData extends z.infer<typeof EventFormSchema> {
   newTag: string;
 }
 
+const toDateInputValue = (date?: string | Date | null) => {
+  if (!date) return new Date().toISOString().slice(0, 10);
+
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  return parsed.toISOString().slice(0, 10);
+};
+
 export const useWriteEvents = ({
   initialData,
   mode,
@@ -50,9 +61,7 @@ export const useWriteEvents = ({
       location: initialData?.location || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
-      date: initialData?.date
-        ? new Date(initialData?.date).toISOString().slice(0, 10)
-        : new Date().toISOString().slice(0, 10),
+      date: toDateInputValue(initialData?.date),
       newTag: "",
     }),
     [initialData]
@@ -73,7 +82,10 @@ export const useWriteEvents = ({
   }, []);
 
   const handleMaxAttendeesChange = useCallback((value: number) => {
-    setFormData((prev) => ({ ...prev, maxAttendees: value }));
+    setFormData((prev) => ({
+      ...prev,
+      maxAttendees: Number.isFinite(value) ? value : 0,
+    }));
   }, []);
 
   const handleDateChange = useCallback((value: string) => {

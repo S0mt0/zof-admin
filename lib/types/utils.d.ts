@@ -12,16 +12,6 @@ type PrismaPaginationOptions<M, A> = {
   };
 };
 
-interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  name?: string;
-  onImageUpload?: (file: File) => Promise<string>;
-  className?: string;
-  disabled?: boolean;
-}
-
 interface Paginated<T> {
   data: T[];
   pagination: {

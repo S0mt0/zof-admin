@@ -33,6 +33,15 @@ import { useWriteEvents } from "@/lib/hooks";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { formatTime } from "@/lib/utils";
 
+const formatEventDate = (value: string) => {
+  if (!value?.trim()) return "Date not set";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date not set";
+
+  return format(date, "yyyy-MM-dd");
+};
+
 export function EventForm({
   mode,
   initialData,
@@ -171,7 +180,9 @@ export function EventForm({
                     placeholder="e.g., 100"
                     value={formData.maxAttendees || ""}
                     onChange={(e) =>
-                      handleMaxAttendeesChange(Number(e.target.value))
+                      handleMaxAttendeesChange(
+                        e.target.value === "" ? 0 : e.target.valueAsNumber
+                      )
                     }
                     disabled={isPending}
                   />
@@ -351,11 +362,7 @@ export function EventForm({
             <CardContent className="space-y-3">
               <div className="flex items-center text-sm">
                 <Calendar className="h-4 w-4 mr-2 text-blue-500" />
-                <span>
-                  {formData.date.trim().length
-                    ? format(new Date(formData.date), "yyyy-MM-dd")
-                    : "Date not set"}
-                </span>
+                <span>{formatEventDate(formData.date)}</span>
               </div>
               <div className="flex items-center text-sm">
                 <Clock className="h-4 w-4 mr-2 text-green-500" />

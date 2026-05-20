@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
-import { format, parse } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 
 import { getVerificationTokenByEmail } from "../db/repository/verification-token.service";
 import { db } from "../db/config";
@@ -170,7 +170,11 @@ export const getStatusColor = (status: BlogStatus | EventStatus) => {
 };
 
 export function formatTime(time: string, zone: string = "WAT") {
+  if (!time?.trim()) return "";
+
   const parsed = parse(time, "HH:mm", new Date());
+  if (!isValid(parsed)) return time;
+
   const formatted = format(parsed, "hh:mm a");
 
   return `${formatted} ${zone}`;

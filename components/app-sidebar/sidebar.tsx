@@ -33,7 +33,7 @@ export async function AppSidebar({
   const user = await currentUser();
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="inset" {...props} className="z-50">
       <SidebarHeader>
         <div className="flex items-center gap-2 py-2">
           <div className="flex items-center justify-start gap-1.5 text-left text-sm leading-tight">

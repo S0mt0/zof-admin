@@ -26,14 +26,19 @@ import { Badge } from "@/components/ui/badge";
 
 import { capitalize } from "@/lib/utils";
 import { getAllUsers } from "@/lib/db/repository/user.service";
-import { changeUserRoleAction } from "@/lib/actions/users";
+import {
+  changeUserRoleAction,
+  deleteUserAccountAction,
+} from "@/lib/actions/users";
 
 interface RolesSettingsProps {
   users: Awaited<ReturnType<typeof getAllUsers>>;
+  currentUserId: string;
 }
 
-export function RolesSettings({ users }: RolesSettingsProps) {
+export function RolesSettings({ users, currentUserId }: RolesSettingsProps) {
   const [query, setQuery] = useState("");
+  const [availableUsers, setAvailableUsers] = useState(users);
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [role, setRole] = useState<Role>("user");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -45,11 +50,11 @@ export function RolesSettings({ users }: RolesSettingsProps) {
 
   useEffect(() => {
     if (query.trim() === "") {
-      setFilteredUsers(users);
+      setFilteredUsers(availableUsers);
       setSelectedUser(null);
       setShowDropdown(false);
     } else {
-      const results = users.filter(
+      const results = availableUsers.filter(
         (user) =>
           user.name.toLowerCase().includes(query.toLowerCase()) ||
           user.email.toLowerCase().includes(query.toLowerCase())
@@ -58,24 +63,26 @@ export function RolesSettings({ users }: RolesSettingsProps) {
       setFilteredUsers(results);
       setShowDropdown(true);
     }
-  }, [query, users]);
+  }, [availableUsers, query]);
+
+  useEffect(() => {
+    setAvailableUsers(users);
+  }, [users]);
 
   useOnClickOutside(dropdownRef as React.RefObject<HTMLElement>, () =>
     setShowDropdown(false)
   );
 
   useEffect(() => {
-    if (selectedUser) setShowDropdown(false);
-  }, [selectedUser]);
-
-  useEffect(() => {
-    if (selectedUser) setShowDropdown(false);
+    if (selectedUser) {
+      setRole(selectedUser.role);
+      setShowDropdown(false);
+    }
   }, [selectedUser]);
 
   const [isPending, startTransition] = useTransition();
 
   const handleClick = () => {
-    console.log({ selectedUser });
     if (!selectedUser) return;
     startTransition(() => {
       changeUserRoleAction(selectedUser.id, role).then((data) => {
@@ -83,6 +90,30 @@ export function RolesSettings({ users }: RolesSettingsProps) {
 
         if (data?.success) {
           toast.success(data.success);
+          setAvailableUsers((prev) =>
+            prev.map((user) =>
+              user.id === selectedUser.id ? { ...user, role } : user
+            )
+          );
+          setSelectedUser(null);
+          setQuery("");
+        }
+      });
+    });
+  };
+
+  const handleDelete = () => {
+    if (!selectedUser || selectedUser.id === currentUserId) return;
+
+    startTransition(() => {
+      deleteUserAccountAction(selectedUser.id).then((data) => {
+        if (data?.error) toast.error(data.error);
+
+        if (data?.success) {
+          toast.success(data.success);
+          setAvailableUsers((prev) =>
+            prev.filter((user) => user.id !== selectedUser.id)
+          );
           setSelectedUser(null);
           setQuery("");
         }
@@ -116,6 +147,7 @@ export function RolesSettings({ users }: RolesSettingsProps) {
                   className="cursor-pointer px-3 py-2 dark:hover:bg-emerald-100/10 text-sm"
                   onClick={() => {
                     setSelectedUser(user);
+                    setRole(user.role);
                     setQuery(
                       `${user.name} (${user.email.toLocaleLowerCase()})`
                     );
@@ -161,12 +193,25 @@ export function RolesSettings({ users }: RolesSettingsProps) {
           </Select>
         </SelectGroup>
 
-        <Button
-          disabled={!selectedUser || isPending || selectedUser.role === role}
-          onClick={handleClick}
-        >
-          {isPending ? "Updating..." : "Update Role"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            disabled={!selectedUser || isPending || selectedUser.role === role}
+            onClick={handleClick}
+          >
+            {isPending ? "Updating..." : "Update Role"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={
+              !selectedUser || isPending || selectedUser.id === currentUserId
+            }
+            onClick={handleDelete}
+          >
+            {isPending ? "Please wait..." : "Delete Admin/User"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

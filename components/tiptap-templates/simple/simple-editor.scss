@@ -74,7 +74,7 @@
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 767px) {
   .simple-editor-wrapper {
     border-radius: 0.5rem;
 
@@ -85,10 +85,27 @@
       height: auto;
       min-height: var(--tt-toolbar-height);
       max-width: 100%;
+      gap: 0.25rem;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
       padding: 0 0.5rem;
       border-top: 0;
       border-bottom: 1px solid hsl(var(--border));
       overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tiptap-toolbar-group {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+      }
     }
   }
 
