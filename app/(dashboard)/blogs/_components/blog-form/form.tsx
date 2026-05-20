@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +36,7 @@ export default function BlogForm(props: {
     inputRef,
     isPending,
     addTag,
+    handleCaptionChange,
     handleContentChange,
     handleExcerptChange,
     handleFeaturedChange,
@@ -126,6 +129,26 @@ export default function BlogForm(props: {
                 disabled={isPending}
                 hidden
               />
+
+              <div className="mt-4 space-y-2">
+                <Label htmlFor="caption">Image caption</Label>
+                <Textarea
+                  id="caption"
+                  value={formData.caption || ""}
+                  onChange={(e) => handleCaptionChange(e.target.value)}
+                  placeholder="Optional caption shown below the banner image..."
+                  maxLength={240}
+                  rows={3}
+                  disabled={isPending}
+                />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Optional</span>
+                  <span className="text-muted-foreground">
+                    {240 - (formData.caption?.length || 0)} characters
+                    remaining
+                  </span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

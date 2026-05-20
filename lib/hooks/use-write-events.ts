@@ -55,6 +55,7 @@ export const useWriteEvents = ({
       currentAttendees: initialData?.currentAttendees || 0,
       registrationRequired: initialData?.registrationRequired || false,
       bannerImage: initialData?.bannerImage || "",
+      caption: initialData?.caption || "",
       startTime: initialData?.startTime || "12:00",
       endTime: initialData?.endTime || "18:00",
       excerpt: initialData?.excerpt || "",
@@ -98,6 +99,10 @@ export const useWriteEvents = ({
 
   const handleExcerptChange = useCallback((value: string) => {
     setFormData((prev) => ({ ...prev, excerpt: value }));
+  }, []);
+
+  const handleCaptionChange = useCallback((value: string) => {
+    setFormData((prev) => ({ ...prev, caption: value }));
   }, []);
 
   const handleDetailChange = useCallback((value: string) => {
@@ -229,6 +234,7 @@ export const useWriteEvents = ({
         ...payload,
         status: submitType === "draft" ? "draft" : payload.status,
         slug: generateSlug(payload.name),
+        caption: payload.caption?.trim() || undefined,
         ticketPrice: (() => {
           let price = payload.ticketPrice?.trim();
 
@@ -304,6 +310,7 @@ export const useWriteEvents = ({
       formData.organizer !== initialFormData.organizer ||
       formData.status !== initialFormData.status ||
       formData.bannerImage !== initialFormData.bannerImage ||
+      formData.caption !== initialFormData.caption ||
       formData.featured !== initialFormData.featured ||
       !arraysEqual(formData.tags, initialFormData.tags)
     );
@@ -322,6 +329,7 @@ export const useWriteEvents = ({
     handleNameChange,
     handleExcerptChange,
     handleDetailChange,
+    handleCaptionChange,
     handleStatusChange,
     handleFeaturedChange,
     handleNewTagChange,

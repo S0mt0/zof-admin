@@ -15,6 +15,10 @@ export const BlogFormSchema = z.object({
   bannerImage: z
     .string()
     .url({ message: "Please upload a banner image for your blog post" }),
+  caption: z
+    .string()
+    .max(240, { message: "Caption must not exceed 240 characters" })
+    .optional(),
   featured: z.boolean().default(false),
   tags: z
     .array(z.string())

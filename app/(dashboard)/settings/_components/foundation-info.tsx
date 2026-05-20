@@ -40,21 +40,82 @@ interface FoundationInfoProps {
 }
 
 const socialFields = [
-  { name: "facebook", label: "Facebook", placeholder: "facebook.com/foundation" },
-  { name: "x", label: "X", placeholder: "@foundation" },
-  { name: "instagram", label: "Instagram", placeholder: "@foundation" },
-  { name: "youtube", label: "YouTube", placeholder: "youtube.com/@foundation" },
-  { name: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/company/foundation" },
-  { name: "tiktok", label: "TikTok", placeholder: "@foundation" },
-  { name: "threads", label: "Threads", placeholder: "@foundation" },
-  { name: "whatsapp", label: "WhatsApp", placeholder: "+234..." },
-  { name: "telegram", label: "Telegram", placeholder: "@foundation" },
-  { name: "snapchat", label: "Snapchat", placeholder: "@foundation" },
-  { name: "pinterest", label: "Pinterest", placeholder: "pinterest.com/foundation" },
-  { name: "medium", label: "Medium", placeholder: "medium.com/@foundation" },
+  {
+    name: "facebook",
+    label: "Facebook",
+    baseUrl: "facebook.com/",
+    placeholder: "foundation",
+  },
+  {
+    name: "x",
+    label: "X",
+    baseUrl: "x.com/",
+    placeholder: "foundation",
+  },
+  {
+    name: "instagram",
+    label: "Instagram",
+    baseUrl: "instagram.com/",
+    placeholder: "foundation",
+  },
+  {
+    name: "youtube",
+    label: "YouTube",
+    baseUrl: "youtube.com/@",
+    placeholder: "foundation",
+  },
+  {
+    name: "linkedin",
+    label: "LinkedIn",
+    baseUrl: "linkedin.com/company/",
+    placeholder: "foundation",
+  },
+  {
+    name: "tiktok",
+    label: "TikTok",
+    baseUrl: "tiktok.com/@",
+    placeholder: "foundation",
+  },
+  {
+    name: "threads",
+    label: "Threads",
+    baseUrl: "threads.net/@",
+    placeholder: "foundation",
+  },
+  {
+    name: "whatsapp",
+    label: "WhatsApp",
+    baseUrl: "wa.me/",
+    placeholder: "234...",
+  },
+  {
+    name: "telegram",
+    label: "Telegram",
+    baseUrl: "t.me/",
+    placeholder: "foundation",
+  },
+  {
+    name: "snapchat",
+    label: "Snapchat",
+    baseUrl: "snapchat.com/add/",
+    placeholder: "foundation",
+  },
+  {
+    name: "pinterest",
+    label: "Pinterest",
+    baseUrl: "pinterest.com/",
+    placeholder: "foundation",
+  },
+  {
+    name: "medium",
+    label: "Medium",
+    baseUrl: "medium.com/@",
+    placeholder: "foundation",
+  },
 ] satisfies {
   name: keyof z.infer<typeof FoundationInfoSchema>;
   label: string;
+  baseUrl: string;
   placeholder: string;
 }[];
 
@@ -252,11 +313,17 @@ export const FoundationInfo = ({ foundationInfo }: FoundationInfoProps) => {
                       <FormItem>
                         <FormLabel>{social.label}</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            disabled={!isEditing || isPending}
-                            placeholder={social.placeholder}
-                          />
+                          <div className="flex overflow-hidden rounded-md border bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                            <span className="flex shrink-0 items-center border-r bg-muted/40 px-3 text-sm text-muted-foreground/70">
+                              {social.baseUrl}
+                            </span>
+                            <Input
+                              {...field}
+                              disabled={!isEditing || isPending}
+                              placeholder={social.placeholder}
+                              className="min-w-0 flex-1 rounded-none border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

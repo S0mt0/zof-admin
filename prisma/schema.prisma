@@ -122,6 +122,7 @@ model Blog {
   excerpt     String     @default("")
   content     String     @default("")     
   bannerImage String     @default("") 
+  caption     String?
   status      BlogStatus @default(draft)
   featured    Boolean    @default(false)
   tags        String[]
@@ -156,6 +157,7 @@ model Event {
   maxAttendees         Int?
   currentAttendees     Int         @default(0)
   bannerImage          String      @default("") 
+  caption              String?
   organizer            String      @default("") 
   status               EventStatus @default(draft)
   featured             Boolean     @default(false)

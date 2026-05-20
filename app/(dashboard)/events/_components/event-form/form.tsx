@@ -57,6 +57,7 @@ export function EventForm({
     formRef,
     submitType,
     addTag,
+    handleCaptionChange,
     handleBackButton,
     handleDateChange,
     handleDetailChange,
@@ -277,6 +278,26 @@ export function EventForm({
                 disabled={isPending}
                 hidden
               />
+
+              <div className="mt-4 space-y-2">
+                <Label htmlFor="caption">Image caption</Label>
+                <Textarea
+                  id="caption"
+                  value={formData.caption || ""}
+                  onChange={(e) => handleCaptionChange(e.target.value)}
+                  placeholder="Optional caption shown below the event banner image..."
+                  maxLength={240}
+                  rows={3}
+                  disabled={isPending}
+                />
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Optional</span>
+                  <span className="text-muted-foreground">
+                    {240 - (formData.caption?.length || 0)} characters
+                    remaining
+                  </span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

@@ -7,6 +7,7 @@ interface Blog {
   excerpt: string;
   content: string;
   bannerImage: string;
+  caption?: string | null;
   status: BlogStatus;
   featured: boolean;
   tags: string[];

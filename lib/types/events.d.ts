@@ -21,6 +21,7 @@ interface IEvent {
   maxAttendees?: number | null;
   currentAttendees: number;
   bannerImage: string;
+  caption?: string | null;
   status: EventStatus;
   featured: boolean;
   tags: string[];

@@ -20,6 +20,10 @@ export const EventFormSchema = z.object({
   bannerImage: z
     .string()
     .url({ message: "Please upload a banner image for your event" }),
+  caption: z
+    .string()
+    .max(240, { message: "Caption must not exceed 240 characters" })
+    .optional(),
   status: z
     .enum(["upcoming", "draft", "completed", "cancelled", "happening"])
     .default("draft"),

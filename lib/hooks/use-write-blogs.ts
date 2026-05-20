@@ -39,6 +39,7 @@ export const useWriteBlogs = ({
       content: initialData?.content || "",
       status: initialData?.status || "draft",
       bannerImage: initialData?.bannerImage || "",
+      caption: initialData?.caption || "",
       featured: initialData?.featured || false,
       tags: initialData?.tags || [],
       publishedAt: initialData?.publishedAt || new Date(),
@@ -67,6 +68,10 @@ export const useWriteBlogs = ({
 
   const handleContentChange = useCallback((value: string) => {
     setFormData((prev) => ({ ...prev, content: value }));
+  }, []);
+
+  const handleCaptionChange = useCallback((value: string) => {
+    setFormData((prev) => ({ ...prev, caption: value }));
   }, []);
 
   const handleStatusChange = useCallback((value: BlogStatus) => {
@@ -181,6 +186,7 @@ export const useWriteBlogs = ({
         })(),
         slug: generateSlug(payload.title),
         status: submitType === "draft" ? "draft" : payload.status,
+        caption: payload.caption?.trim() || undefined,
       };
 
       const loading = toast.loading("Please wait...");
@@ -233,6 +239,7 @@ export const useWriteBlogs = ({
       formData.content !== initialFormData.content ||
       formData.status !== initialFormData.status ||
       formData.bannerImage !== initialFormData.bannerImage ||
+      formData.caption !== initialFormData.caption ||
       formData.featured !== initialFormData.featured ||
       !arraysEqual(formData.tags, initialFormData.tags)
     );
@@ -251,6 +258,7 @@ export const useWriteBlogs = ({
     handleTitleChange,
     handleExcerptChange,
     handleContentChange,
+    handleCaptionChange,
     handleStatusChange,
     handleFeaturedChange,
     handleNewTagChange,
