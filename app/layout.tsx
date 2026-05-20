@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
-import "./globals.css";
+import "./globals.scss";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
