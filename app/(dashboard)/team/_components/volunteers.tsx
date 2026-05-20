@@ -244,7 +244,7 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
   };
 
   return (
-    <Card>
+    <Card id="volunteers">
       <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <CardTitle>Volunteers</CardTitle>

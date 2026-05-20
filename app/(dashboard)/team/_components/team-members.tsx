@@ -6,18 +6,11 @@ import { Input } from "@/components/ui/input";
 import EmailModal from "@/components/email-modal";
 import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
-import { Volunteers } from "./volunteers";
 
 import { useReadTeam } from "@/lib/hooks";
 import { AlertDialog } from "@/components/alert-dialog";
 
-export function TeamMembers({
-  members,
-  volunteers,
-}: {
-  members: TeamMember[];
-  volunteers: Volunteer[];
-}) {
+export function TeamMembers({ members }: { members: TeamMember[] }) {
   const {
     emailMessage,
     emailOpen,
@@ -100,7 +93,6 @@ export function TeamMembers({
         isPending={isPending}
       />
 
-      <Volunteers volunteers={volunteers} />
     </div>
   );
 }

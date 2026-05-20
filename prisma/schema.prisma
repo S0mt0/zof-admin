@@ -373,6 +373,63 @@ model FoundationInfo {
   updatedAt   DateTime @updatedAt
 }
 
+model AboutPage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  aboutUs   String   @default("")
+  vision    String   @default("")
+  mission   String   @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LandingFaq {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+  answer    String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LandingTestimonial {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  role      String?
+  quote     String
+  avatar    String?
+  order     Int      @default(0)
+  published Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LandingStat {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  value     String
+  title     String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LandingExtra {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  heroImage   String?
+  themeVideo  String?
+  themeVideoPoster String?
+  themeVideoFile String?
+  aboutImage  String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model WebsiteSettings {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   maintenanceMode     Boolean  @default(false)

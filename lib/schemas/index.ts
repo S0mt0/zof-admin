@@ -9,3 +9,4 @@ export * from "./blogs";
 export * from "./events";
 export * from "./messages";
 export * from "./media";
+export * from "./pages";

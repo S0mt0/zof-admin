@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { listTeamMembers } from "@/lib/db/repository/team.service";
+import { listLandingTestimonials } from "@/lib/db/repository/pages.service";
 
 export async function OPTIONS() {
   return new Response(null, {
@@ -13,19 +13,19 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const data = await listTeamMembers({
-      where: { status: "active" },
+    const data = await listLandingTestimonials({
+      where: { published: true },
       select: {
         name: true,
         role: true,
-        email: true,
-        bio: true,
+        quote: true,
         avatar: true,
+        order: true,
       },
     });
 
     return Response.json(
-      { message: "Team members fetched successfully", data },
+      { message: "Testimonials fetched successfully", data },
       {
         headers: {
           "Access-Control-Allow-Origin": FRONTEND_BASE_URL,
@@ -36,7 +36,7 @@ export async function GET() {
       }
     );
   } catch (error) {
-    console.error("Error fetching team members:", error);
+    console.error("Error fetching testimonials:", error);
 
     return Response.json(
       { message: "Something went wrong, try again." },
