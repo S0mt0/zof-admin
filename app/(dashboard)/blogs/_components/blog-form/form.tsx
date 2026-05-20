@@ -19,8 +19,8 @@ import {
 import { TitleInput } from "./title";
 import { ExcerptInput } from "./excerpt";
 import { TagsInput } from "./tags";
-import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
 import { useWriteBlogs } from "@/lib/hooks";
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 
 export default function BlogForm(props: {
   initialData?: Omit<Blog, "comments"> | null;
@@ -139,12 +139,18 @@ export default function BlogForm(props: {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EditorWrapper
+              <SimpleEditor
                 value={formData.content}
                 onChange={handleContentChange}
                 disabled={isPending}
                 placeholder="Write your blog content..."
+                imageUploadFolder="blogs"
               />
+              <div className="text-xs text-muted-foreground text-right mt-2">
+                {formData.content.replace(/<[^>]*>/g, "").length} characters
+                {formData.content.replace(/<[^>]*>/g, "").length < 100 &&
+                  " (minimum 100 required for publishing)"}
+              </div>
             </CardContent>
           </Card>
         </div>

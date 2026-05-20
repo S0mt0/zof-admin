@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useWriteEvents } from "@/lib/hooks";
-import { EditorWrapper } from "@/components/lexical-editor/editor-wrapper";
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { formatTime } from "@/lib/utils";
 
 export function EventForm({
@@ -278,11 +278,12 @@ export function EventForm({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EditorWrapper
+              <SimpleEditor
                 value={formData.detail || ""}
                 onChange={handleDetailChange}
                 disabled={isPending}
                 placeholder="Describe your event in detail..."
+                imageUploadFolder="events"
               />
             </CardContent>
           </Card>

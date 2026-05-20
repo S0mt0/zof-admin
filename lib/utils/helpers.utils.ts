@@ -91,7 +91,8 @@ export function obscureEmail(email: string): string {
 
 export const uploadFileToS3 = async (
   file: File,
-  folder: S3FileFolders = "documents"
+  folder: S3FileFolders = "documents",
+  signal?: AbortSignal
 ) => {
   try {
     const { url, key } = await getUploadUrl(file.name, file.type, folder);
@@ -100,6 +101,7 @@ export const uploadFileToS3 = async (
       method: "PUT",
       headers: { "Content-Type": file.type },
       body: file,
+      signal,
     });
 
     if (!response.ok) {
@@ -116,14 +118,19 @@ export const uploadFileToS3 = async (
 };
 
 export const handleFileUpload = async (
-  e: React.ChangeEvent<HTMLInputElement>,
-  folder: S3FileFolders
+  source: File | React.ChangeEvent<HTMLInputElement>,
+  folder: S3FileFolders,
+  signal?: AbortSignal
 ) => {
-  const file = e.target.files?.[0];
+  const file =
+    typeof File !== "undefined" && source instanceof File
+      ? source
+      : (source as React.ChangeEvent<HTMLInputElement>).target.files?.[0];
+
   if (!file) return;
 
   try {
-    const uploaded = await uploadFileToS3(file, folder);
+    const uploaded = await uploadFileToS3(file, folder, signal);
     return uploaded.url;
   } catch (error) {
     throw error;

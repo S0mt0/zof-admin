@@ -64,16 +64,22 @@ import { useIsBreakpoint } from "@/lib/hooks/use-is-breakpoint";
 import { useWindowSize } from "@/lib/hooks/use-window-size";
 import { useCursorVisibility } from "@/lib/hooks/use-cursor-visibility";
 
-// --- Components ---
-import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
-
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { handleFileUpload } from "@/lib/utils";
+import { cn, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
-import content from "@/components/tiptap-templates/simple/data/content.json";
+type SimpleEditorProps = {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  name?: string;
+  className?: string;
+  disabled?: boolean;
+  imageUploadFolder?: S3FileFolders;
+};
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -146,10 +152,6 @@ const MainToolbarContent = ({
       <Spacer />
 
       {isMobile && <ToolbarSeparator />}
-
-      <ToolbarGroup>
-        <ThemeToggle />
-      </ToolbarGroup>
     </>
   );
 };
@@ -183,7 +185,15 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor() {
+export function SimpleEditor({
+  value,
+  onChange,
+  placeholder = "Start writing...",
+  name,
+  className,
+  disabled = false,
+  imageUploadFolder = "documents",
+}: SimpleEditorProps = {}) {
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
@@ -193,13 +203,15 @@ export function SimpleEditor() {
 
   const editor = useEditor({
     immediatelyRender: false,
+    editable: !disabled,
     editorProps: {
       attributes: {
         autocomplete: "off",
         autocorrect: "off",
         autocapitalize: "off",
-        "aria-label": "Main content area, start typing to enter text.",
+        "aria-label": placeholder,
         class: "simple-editor",
+        "data-placeholder": placeholder,
       },
     },
     extensions: [
@@ -224,11 +236,29 @@ export function SimpleEditor() {
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload,
+        upload: async (file, onProgress, abortSignal) => {
+          onProgress?.({ progress: 10 });
+
+          const url = await handleFileUpload(
+            file,
+            imageUploadFolder,
+            abortSignal
+          );
+
+          if (!url) {
+            throw new Error("Upload failed: No URL returned");
+          }
+
+          onProgress?.({ progress: 100 });
+          return url;
+        },
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    content: value ?? "",
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getHTML());
+    },
   });
 
   const rect = useCursorVisibility({
@@ -242,8 +272,24 @@ export function SimpleEditor() {
     }
   }, [isMobile, mobileView]);
 
+  useEffect(() => {
+    editor?.setEditable(!disabled);
+  }, [disabled, editor]);
+
+  useEffect(() => {
+    if (!editor || value === undefined) return;
+
+    const currentValue = editor.getHTML();
+    const nextValue = value || "";
+
+    if (currentValue !== nextValue) {
+      editor.commands.setContent(nextValue, { emitUpdate: false });
+    }
+  }, [editor, value]);
+
   return (
-    <div className="simple-editor-wrapper">
+    <div className={cn("simple-editor-wrapper", className)}>
+      {name ? <input type="hidden" name={name} value={value ?? ""} /> : null}
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
