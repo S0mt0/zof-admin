@@ -41,21 +41,20 @@ export function RichTextContentRenderer({
   }
 
   if (content.trim().startsWith("{")) {
-    try {
-      const textContent = extractTextFromSerializedContent(JSON.parse(content));
+    let textContent: string | null = null;
+    let parseError = false;
 
-      return (
-        <div className={cn("min-w-full w-full max-w-full", className)}>
-          {textContent || content}
-        </div>
-      );
+    try {
+      textContent = extractTextFromSerializedContent(JSON.parse(content));
     } catch {
-      return (
-        <div className={cn("min-w-full w-full max-w-full", className)}>
-          {content}
-        </div>
-      );
+      parseError = true;
     }
+
+    return (
+      <div className={cn("min-w-full w-full max-w-full", className)}>
+        {parseError ? content : textContent || content}
+      </div>
+    );
   }
 
   return (

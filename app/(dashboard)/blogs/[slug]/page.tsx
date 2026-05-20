@@ -30,7 +30,7 @@ import {
 import { BlogNotFound } from "../_components/not-found";
 import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { RichTextContentRenderer } from "@/components/rich-text-content-renderer";
+import { RichTextContentRenderer } from "@/components/render-richtext";
 
 export default async function ViewBlogPage({
   params,

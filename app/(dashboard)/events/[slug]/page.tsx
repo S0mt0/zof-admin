@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "@/components/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { RichTextContentRenderer } from "@/components/rich-text-content-renderer";
+import { RichTextContentRenderer } from "@/components/render-richtext";
 import { getEventBySlug } from "@/lib/db/repository/event.service";
 import { capitalize, cn, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";

@@ -1,12 +1,18 @@
 export const publicRoutes = ["/auth/verify-account"];
 
 export const publicApiRoutes = [
+  "/api/about",
   "/api/blogs",
   "/api/events",
-  "/api/teams",
+  "/api/faqs",
   "/api/info",
+  "/api/landing",
+  "/api/media",
   "/api/message",
   "/api/settings",
+  "/api/teams",
+  "/api/testimonials",
+  "/api/volunteers",
 ];
 
 export const authRoutes = [
