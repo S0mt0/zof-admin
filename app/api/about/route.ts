@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getAboutPage } from "@/lib/db/repository/pages.service";
+import { getAboutPage } from "@/lib/db/repository/pages/about";
 
 export async function OPTIONS() {
   return new Response(null, {

@@ -19,7 +19,7 @@ import {
   deleteLandingCardAction,
   reorderLandingCardsAction,
   updateLandingCardAction,
-} from "@/lib/actions/pages";
+} from "@/lib/actions/pages/landing/cards.actions";
 
 import {
   PublishSwitch,

@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { updateLandingHeroAction } from "@/lib/actions/pages";
+import { updateLandingHeroAction } from "@/lib/actions/pages/landing/hero.actions";
 import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
 
 import {

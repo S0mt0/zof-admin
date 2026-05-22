@@ -1,5 +1,5 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
-import { getAboutPage } from "@/lib/db/repository/pages.service";
+import { getAboutPage } from "@/lib/db/repository/pages/about";
 import { AboutPageForm } from "./_components/about-page-form";
 
 export default async function AboutPage() {

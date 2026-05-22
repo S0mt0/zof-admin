@@ -19,7 +19,7 @@ import {
   deleteLandingStatAction,
   reorderLandingStatsAction,
   updateLandingStatAction,
-} from "@/lib/actions/pages";
+} from "@/lib/actions/pages/landing/stats.actions";
 import { PublishSwitch, TextField } from "@/components/common/form-controls";
 import { SortableList } from "@/components/common/sortable-list";
 

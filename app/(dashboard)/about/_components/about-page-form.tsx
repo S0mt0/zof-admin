@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 
-import { updateAboutPageAction } from "@/lib/actions/pages";
+import { updateAboutPageAction } from "@/lib/actions/pages/about";
 import { Button } from "@/components/ui/button";
 import {
   Card,

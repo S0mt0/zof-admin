@@ -19,7 +19,7 @@ import {
   deleteLandingFaqAction,
   reorderLandingFaqsAction,
   updateLandingFaqAction,
-} from "@/lib/actions/pages";
+} from "@/lib/actions/pages/landing/faqs.actions";
 import {
   PublishSwitch,
   TextareaField,

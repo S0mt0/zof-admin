@@ -1,5 +1,5 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
-import { getLandingPageData } from "@/lib/db/repository/pages.service";
+import { getLandingPageData } from "@/lib/db/repository/pages/landing";
 
 import { HeroSectionEditor } from "./_components/hero-section-editor";
 

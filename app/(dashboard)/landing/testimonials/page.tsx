@@ -2,7 +2,7 @@ import { DashboardHeader } from "@/components/common/dashboard-header";
 import {
   getLandingPageData,
   listTestimonials,
-} from "@/lib/db/repository/pages.service";
+} from "@/lib/db/repository/pages/landing";
 
 import { TestimonialsSectionEditor } from "./_components/testimonials-section-editor";
 

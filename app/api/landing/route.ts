@@ -4,7 +4,7 @@ import { getAllEvents } from "@/lib/db/repository/event.service";
 import {
   getLandingPageData,
   listTestimonials,
-} from "@/lib/db/repository/pages.service";
+} from "@/lib/db/repository/pages/landing";
 import { listVolunteers } from "@/lib/db/repository/team.service";
 
 const corsHeaders = {

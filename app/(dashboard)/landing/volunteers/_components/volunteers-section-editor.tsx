@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Label } from "@/components/ui/label";
-import { updateLandingVolunteersAction } from "@/lib/actions/pages";
+import { updateLandingVolunteersAction } from "@/lib/actions/pages/landing/volunteers.actions";
 import { showActionResult } from "@/lib/pages/landing";
 
 import {

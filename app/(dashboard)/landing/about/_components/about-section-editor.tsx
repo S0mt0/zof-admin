@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { updateLandingAboutAction } from "@/lib/actions/pages";
+import { updateLandingAboutAction } from "@/lib/actions/pages/landing/about-section.actions";
 import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
 import { ImagePicker, SaveButton } from "@/components/common/form-controls";
 

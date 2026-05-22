@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { updateLandingTestimonialsSectionAction } from "@/lib/actions/pages";
+import { updateLandingTestimonialsSectionAction } from "@/lib/actions/pages/landing/testimonials-section.actions";
 import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 

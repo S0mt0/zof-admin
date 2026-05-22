@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { listTestimonials } from "@/lib/db/repository/pages.service";
+import { listTestimonials } from "@/lib/db/repository/pages/landing";
 
 export async function OPTIONS() {
   return new Response(null, {

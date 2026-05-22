@@ -29,7 +29,7 @@ import {
   deleteTestimonialAction,
   reorderTestimonialsAction,
   updateTestimonialAction,
-} from "@/lib/actions/pages";
+} from "@/lib/actions/pages/landing/testimonials.actions";
 import { uploadLandingImage } from "@/lib/pages/landing";
 import { getInitials } from "@/lib/utils";
 
