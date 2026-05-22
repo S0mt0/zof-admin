@@ -1,6 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { ImpactSectionEditor } from "./_components/impact-section-editor";
 
 export default async function LandingImpactPage() {
   const data = await getLandingPageData();
@@ -14,7 +15,7 @@ export default async function LandingImpactPage() {
           { label: "Impact" },
         ]}
       />
-      <LandingSectionEditor section="impact" data={data} />
+      <ImpactSectionEditor section={data.impact} />
     </div>
   );
 }

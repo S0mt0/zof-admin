@@ -1,9 +1,9 @@
 import { getWebsiteSettings } from "@/lib/db/repository/settings.service";
 import { getAllUsers } from "@/lib/db/repository/user.service";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { WebsiteSettings } from "./_components/website-settings";
 import { RolesSettings } from "./_components/roles-settings";
-import { Unauthorized } from "@/components/unauthorized";
+import { Unauthorized } from "@/components/common/unauthorized";
 
 import { currentUser } from "@/lib/utils";
 

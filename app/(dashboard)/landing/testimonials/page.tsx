@@ -1,9 +1,10 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import {
   getLandingPageData,
   listTestimonials,
 } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { TestimonialsSectionEditor } from "./_components/testimonials-section-editor";
 
 export default async function LandingTestimonialsPage() {
   const [data, testimonials] = await Promise.all([
@@ -20,9 +21,8 @@ export default async function LandingTestimonialsPage() {
           { label: "Testimonials" },
         ]}
       />
-      <LandingSectionEditor
-        section="testimonials"
-        data={data}
+      <TestimonialsSectionEditor
+        section={data.testimonials}
         testimonials={testimonials}
       />
     </div>

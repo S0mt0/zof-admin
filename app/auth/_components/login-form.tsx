@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/form";
 
 import { LoginSchema } from "@/lib/schemas";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/common/form-error";
+import { FormSuccess } from "@/components/common/form-success";
 import { login } from "@/lib/actions/login";
 import { useSearchParams } from "next/navigation";
 

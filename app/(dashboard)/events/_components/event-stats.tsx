@@ -2,7 +2,7 @@
 import { Calendar, Users, Star, Clock } from "lucide-react";
 
 import { getEventsStats } from "@/lib/db/repository/stats.service";
-import { ActivityStats } from "@/components/activity-stats";
+import { ActivityStats } from "@/components/common/activity-stats";
 
 export function EventStats({
   completed,

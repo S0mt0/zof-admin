@@ -5,9 +5,9 @@ import { HashLoader } from "react-spinners";
 import { useCallback, useEffect, useState } from "react";
 
 import { CardWrapper } from ".";
-import { FormError } from "@/components/form-error";
+import { FormError } from "@/components/common/form-error";
 import { verifyToken } from "@/lib/actions/verify-account";
-import { FormSuccess } from "@/components/form-success";
+import { FormSuccess } from "@/components/common/form-success";
 
 export const VerificationCard = () => {
   const searchParams = useSearchParams();

@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 
 interface NotFoundProps {
   onGoBack?: () => void;

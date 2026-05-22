@@ -1,8 +1,8 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import TeamForm from "../_components/team-form";
 import { currentUser } from "@/lib/utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
-import { Unauthorized } from "@/components/unauthorized";
+import { Unauthorized } from "@/components/common/unauthorized";
 
 export default async function NewTeamMemberPage() {
   const user = await currentUser();

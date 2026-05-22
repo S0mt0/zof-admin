@@ -4,7 +4,7 @@ import { useReadEvents } from "@/lib/hooks";
 import { EventFilters } from "./event-filters";
 import { EventTable } from "./event-table";
 import EventEmptyState from "./event-empty-state";
-import { AlertDialog } from "@/components/alert-dialog";
+import { AlertDialog } from "@/components/common/alert-dialog";
 
 export function EventPage({ data, pagination, searchParams }: EventPageProps) {
   const {

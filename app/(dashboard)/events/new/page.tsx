@@ -1,6 +1,6 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { EventForm } from "../_components/event-form/form";
-import { Unauthorized } from "@/components/unauthorized";
+import { Unauthorized } from "@/components/common/unauthorized";
 import { currentUser } from "@/lib/utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 

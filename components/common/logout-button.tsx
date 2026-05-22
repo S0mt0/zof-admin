@@ -2,7 +2,7 @@
 
 import { logout } from "@/lib/actions/logout";
 import { cn } from "@/lib/utils";
-import { useSidebar } from "./ui/sidebar";
+import { useSidebar } from "../ui/sidebar";
 
 export const LogoutButton = ({
   children,

@@ -1,6 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { FaqsSectionEditor } from "./_components/faqs-section-editor";
 
 export default async function LandingFaqsPage() {
   const data = await getLandingPageData();
@@ -14,7 +15,7 @@ export default async function LandingFaqsPage() {
           { label: "FAQs" },
         ]}
       />
-      <LandingSectionEditor section="faqs" data={data} />
+      <FaqsSectionEditor section={data.faqs} />
     </div>
   );
 }

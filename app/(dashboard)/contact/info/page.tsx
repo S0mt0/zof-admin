@@ -1,5 +1,5 @@
-import { DashboardHeader } from "@/components/dashboard-header";
-import { Unauthorized } from "@/components/unauthorized";
+import { DashboardHeader } from "@/components/common/dashboard-header";
+import { Unauthorized } from "@/components/common/unauthorized";
 import { getFoundationInfo } from "@/lib/db/repository/settings.service";
 import { currentUser } from "@/lib/utils";
 import { FoundationInfo } from "../../settings/_components/foundation-info";

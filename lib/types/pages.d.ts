@@ -113,3 +113,14 @@ interface Testimonial {
   createdAt: Date;
   updatedAt: Date;
 }
+
+type LandingSection =
+  | "hero"
+  | "about"
+  | "values"
+  | "volunteers"
+  | "impact"
+  | "testimonials"
+  | "featuredBlogs"
+  | "featuredEvents"
+  | "faqs";

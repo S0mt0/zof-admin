@@ -1,4 +1,4 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getAboutPage } from "@/lib/db/repository/pages.service";
 import { AboutPageForm } from "./_components/about-page-form";
 

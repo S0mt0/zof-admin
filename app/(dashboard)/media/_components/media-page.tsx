@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 
-import { AlertDialog } from "@/components/alert-dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog } from "@/components/common/alert-dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination-v2";
 import { useReadMedia } from "@/lib/hooks";

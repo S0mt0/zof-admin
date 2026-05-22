@@ -1,4 +1,4 @@
-import { SessionExpired } from "@/components/session-expired";
+import { SessionExpired } from "@/components/common/session-expired";
 import { getUserById } from "@/lib/db/repository/user.service";
 import { currentUser } from "@/lib/utils";
 

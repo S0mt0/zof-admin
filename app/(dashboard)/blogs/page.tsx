@@ -1,7 +1,7 @@
 import { getAllBlogs } from "@/lib/db/repository/blog.service";
 import { Blogs } from "./_components/blog-page";
 import { BlogStats } from "./_components/blog-stats";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getBlogsStats } from "@/lib/db/repository/stats.service";
 
 export default async function Page({

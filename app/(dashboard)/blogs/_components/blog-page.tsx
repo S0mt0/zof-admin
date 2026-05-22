@@ -4,7 +4,7 @@ import { BlogFilters } from "./blog-filters";
 import BlogEmptyState from "./blog-empty-state";
 import { BlogTable } from "./blog-table";
 import { useReadBlogs } from "@/lib/hooks";
-import { AlertDialog } from "@/components/alert-dialog";
+import { AlertDialog } from "@/components/common/alert-dialog";
 
 export function Blogs({ data, pagination, searchParams }: BlogsTableProps) {
   const {

@@ -2,7 +2,7 @@
 
 import { Film, ImageIcon, Library } from "lucide-react";
 
-import { ActivityStats } from "@/components/activity-stats";
+import { ActivityStats } from "@/components/common/activity-stats";
 import { getMediaStats } from "@/lib/db/repository/stats.service";
 
 export function MediaStats({

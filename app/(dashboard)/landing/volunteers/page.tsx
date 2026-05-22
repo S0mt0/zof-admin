@@ -1,7 +1,8 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
 import { listVolunteers } from "@/lib/db/repository/team.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { VolunteersSectionEditor } from "./_components/volunteers-section-editor";
 
 export default async function LandingVolunteersPage() {
   const [data, volunteers] = await Promise.all([
@@ -18,9 +19,8 @@ export default async function LandingVolunteersPage() {
           { label: "Volunteers" },
         ]}
       />
-      <LandingSectionEditor
-        section="volunteers"
-        data={data}
+      <VolunteersSectionEditor
+        section={data.volunteers}
         volunteers={volunteers}
       />
     </div>

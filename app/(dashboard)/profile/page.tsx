@@ -1,10 +1,10 @@
 import { User, Calendar, Edit3 } from "lucide-react";
 
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { currentUser } from "@/lib/utils";
 import { getAppStats } from "@/lib/db/repository/stats.service";
 import { ProfileOverview } from "./_components/profile-overview";
-import { ActivityStats } from "@/components/activity-stats";
+import { ActivityStats } from "@/components/common/activity-stats";
 import { ProfileInfo } from "./_components/profile-info";
 import { SecuritySettings } from "./_components/security-settings";
 import { NotificationPreferences } from "./_components/notification-preferences";

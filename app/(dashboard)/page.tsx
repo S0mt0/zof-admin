@@ -1,7 +1,7 @@
 import { FileText, Calendar, Users, MessageSquare } from "lucide-react";
 
-import { DashboardHeader } from "@/components/dashboard-header";
-import { ActivityStats } from "@/components/activity-stats";
+import { DashboardHeader } from "@/components/common/dashboard-header";
+import { ActivityStats } from "@/components/common/activity-stats";
 import { QuickActions } from "./_components/quick-actions";
 import { AppActivities } from "./_components/app-activities";
 import { getAppActivities } from "@/lib/db/repository/app-activity.service";

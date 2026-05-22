@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,

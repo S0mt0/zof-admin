@@ -3,7 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 import { CardWrapper } from ".";
-import { FormError } from "@/components/form-error";
+import { FormError } from "@/components/common/form-error";
 
 export const ErrorCard = () => {
   const searchParams = useSearchParams();

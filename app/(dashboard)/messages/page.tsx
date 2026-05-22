@@ -1,11 +1,11 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Messages } from "./_components/messages";
 import {
   countUnreadMessages,
   getAllMessages,
 } from "@/lib/db/repository/message.service";
 import { currentUser } from "@/lib/utils";
-import { Unauthorized } from "@/components/unauthorized";
+import { Unauthorized } from "@/components/common/unauthorized";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export default async function MessagesPage({

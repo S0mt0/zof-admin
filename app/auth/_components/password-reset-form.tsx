@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import { CardWrapper } from "./card-wrapper";
 import { ResetPasswordSchema } from "@/lib/schemas";
 import { resetPassword } from "@/lib/actions/reset-password";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/common/form-error";
+import { FormSuccess } from "@/components/common/form-success";
 import {
   Form,
   FormControl,

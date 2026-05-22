@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/form";
 import { SignUpSchema } from "@/lib/schemas";
 import { signup } from "@/lib/actions/signup";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/common/form-error";
+import { FormSuccess } from "@/components/common/form-success";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);

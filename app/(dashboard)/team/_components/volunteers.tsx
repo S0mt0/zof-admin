@@ -1,11 +1,17 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition, type ChangeEvent } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type ChangeEvent,
+} from "react";
 import { Edit, Plus, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { AlertDialog } from "@/components/alert-dialog";
+import { AlertDialog } from "@/components/common/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -306,14 +312,11 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
 
                 <CardFooter className="flex items-center justify-between border-t px-4 py-3">
                   <span className="text-xs text-muted-foreground">
-                    {new Date(volunteer.createdAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      }
-                    )}
+                    {new Date(volunteer.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </span>
                   <div className="flex items-center gap-1">
                     <Button
@@ -345,7 +348,8 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
 
       {volunteers.length > 0 ? (
         <CardFooter className="border-t text-sm text-muted-foreground">
-          {volunteers.length} volunteer(s), {visibleSocialCount} social contact(s)
+          {volunteers.length} volunteer(s), {visibleSocialCount} social
+          contact(s)
         </CardFooter>
       ) : null}
 
@@ -410,9 +414,7 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
                 <Input
                   id="volunteer-type"
                   value={formData.volunteerType}
-                  onChange={(e) =>
-                    updateField("volunteerType", e.target.value)
-                  }
+                  onChange={(e) => updateField("volunteerType", e.target.value)}
                   disabled={isPending}
                   placeholder="e.g., Event volunteer"
                 />
@@ -450,8 +452,8 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
               {isPending
                 ? "Please wait..."
                 : target
-                  ? "Update Volunteer"
-                  : "Add Volunteer"}
+                ? "Update Volunteer"
+                : "Add Volunteer"}
             </Button>
           </DialogFooter>
         </DialogContent>

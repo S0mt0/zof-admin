@@ -12,7 +12,7 @@ import {
 import { capitalize } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LogoutButton } from "@/components/logout-button";
+import { LogoutButton } from "@/components/common/logout-button";
 import { ProfileImage } from "./profile-image";
 
 export const ProfileOverview = ({ profile }: { profile: IUser }) => {

@@ -19,8 +19,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/common/form-error";
+import { FormSuccess } from "@/components/common/form-success";
 
 export function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();

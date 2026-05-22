@@ -3,12 +3,12 @@ import { Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import EmailModal from "@/components/email-modal";
+import EmailModal from "@/components/common/email-modal";
 import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
 
 import { useReadTeam } from "@/lib/hooks";
-import { AlertDialog } from "@/components/alert-dialog";
+import { AlertDialog } from "@/components/common/alert-dialog";
 
 export function TeamMembers({ members }: { members: TeamMember[] }) {
   const {
@@ -92,7 +92,6 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
         message={`Are you sure you want to remove ${target?.name} from the team?`}
         isPending={isPending}
       />
-
     </div>
   );
 }

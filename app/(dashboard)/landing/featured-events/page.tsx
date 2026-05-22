@@ -1,6 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { FeaturedEventsSectionEditor } from "./_components/featured-events-section-editor";
 
 export default async function LandingFeaturedEventsPage() {
   const data = await getLandingPageData();
@@ -14,7 +15,7 @@ export default async function LandingFeaturedEventsPage() {
           { label: "Featured Events" },
         ]}
       />
-      <LandingSectionEditor section="featuredEvents" data={data} />
+      <FeaturedEventsSectionEditor section={data.featuredEvents} />
     </div>
   );
 }

@@ -22,10 +22,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { currentUser } from "@/lib/utils";
-import { LogoutButton } from "../logout-button";
+import { LogoutButton } from "../common/logout-button";
 import { NavigationItems } from "./navigation-item";
 import { SettingsItems } from "./settings-item";
-import { ThemeToggle } from "../theme-toggle";
+import { ThemeToggle } from "../common/theme-toggle";
 
 export async function AppSidebar({
   ...props

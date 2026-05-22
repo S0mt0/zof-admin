@@ -2,7 +2,7 @@
 
 import { FileText, Eye, Star, Clock } from "lucide-react";
 
-import { ActivityStats } from "@/components/activity-stats";
+import { ActivityStats } from "@/components/common/activity-stats";
 import { getBlogsStats } from "@/lib/db/repository/stats.service";
 
 export function BlogStats({

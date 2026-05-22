@@ -9,8 +9,8 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-} from "./ui/card";
-import { Button } from "./ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 
 type Props = {
   onCancel: () => void;

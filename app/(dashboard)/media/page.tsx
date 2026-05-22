@@ -1,4 +1,4 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { MediaPage } from "./_components/media-page";
 import { MediaStats } from "./_components/media-stats";
 import { getMediaStats } from "@/lib/db/repository/stats.service";

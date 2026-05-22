@@ -1,6 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { HeroSectionEditor } from "./_components/hero-section-editor";
 
 export default async function LandingHeroPage() {
   const data = await getLandingPageData();
@@ -14,7 +15,7 @@ export default async function LandingHeroPage() {
           { label: "Hero" },
         ]}
       />
-      <LandingSectionEditor section="hero" data={data} />
+      <HeroSectionEditor hero={data.hero} />
     </div>
   );
 }

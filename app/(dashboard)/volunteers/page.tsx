@@ -1,4 +1,4 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { listVolunteers } from "@/lib/db/repository/team.service";
 import { Volunteers } from "../team/_components/volunteers";
 

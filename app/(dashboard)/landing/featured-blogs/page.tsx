@@ -1,6 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getLandingPageData } from "@/lib/db/repository/pages.service";
-import { LandingSectionEditor } from "../_components/landing-section-editor";
+
+import { FeaturedBlogsSectionEditor } from "./_components/featured-blogs-section-editor";
 
 export default async function LandingFeaturedBlogsPage() {
   const data = await getLandingPageData();
@@ -14,7 +15,7 @@ export default async function LandingFeaturedBlogsPage() {
           { label: "Featured Blogs" },
         ]}
       />
-      <LandingSectionEditor section="featuredBlogs" data={data} />
+      <FeaturedBlogsSectionEditor section={data.featuredBlogs} />
     </div>
   );
 }

@@ -5,8 +5,8 @@ import { useOnClickOutside } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { Textarea } from "./ui/textarea";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { Textarea } from "../ui/textarea";
 
 interface EmailModalProps {
   open: boolean;

@@ -13,7 +13,7 @@ import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { format } from "date-fns";
 
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,9 +28,9 @@ import {
   getStatusColor,
 } from "@/lib/utils";
 import { BlogNotFound } from "../_components/not-found";
-import { ShareButton } from "@/components/share-button";
+import { ShareButton } from "@/components/common/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { RichTextContentRenderer } from "@/components/render-richtext";
+import { RichTextContentRenderer } from "@/components/common/render-richtext";
 
 export default async function ViewBlogPage({
   params,

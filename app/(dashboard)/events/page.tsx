@@ -1,7 +1,7 @@
 import { getAllEvents } from "@/lib/db/repository/event.service";
 import { EventPage } from "./_components/event-page";
 import { EventStats } from "./_components/event-stats";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getEventsStats } from "@/lib/db/repository/stats.service";
 
 export default async function Page({

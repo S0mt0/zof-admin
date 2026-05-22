@@ -15,13 +15,13 @@ import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { format } from "date-fns";
 
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShareButton } from "@/components/share-button";
+import { ShareButton } from "@/components/common/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { RichTextContentRenderer } from "@/components/render-richtext";
+import { RichTextContentRenderer } from "@/components/common/render-richtext";
 import { getEventBySlug } from "@/lib/db/repository/event.service";
 import { capitalize, cn, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";

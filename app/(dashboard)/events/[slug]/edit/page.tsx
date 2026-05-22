@@ -1,8 +1,8 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getEventBySlug } from "@/lib/db/repository/event.service";
 import { EventForm } from "../../_components/event-form/form";
 import { EventNotFound } from "../../_components/not-found";
-import { Unauthorized } from "@/components/unauthorized";
+import { Unauthorized } from "@/components/common/unauthorized";
 import { currentUser } from "@/lib/utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 

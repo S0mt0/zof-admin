@@ -1,8 +1,6 @@
-import {
-  listTeamMembers,
-} from "@/lib/db/repository/team.service";
+import { listTeamMembers } from "@/lib/db/repository/team.service";
 import { TeamMembers } from "./_components/team-members";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/common/dashboard-header";
 
 export default async function Page() {
   const members = await listTeamMembers();

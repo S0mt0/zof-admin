@@ -12,9 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import EmailModal from "@/components/email-modal";
+import EmailModal from "@/components/common/email-modal";
 import ViewMessageModal from "./view-message-modal";
-import { AlertDialog } from "@/components/alert-dialog";
+import { AlertDialog } from "@/components/common/alert-dialog";
 
 export const Messages = ({
   data: messages,
