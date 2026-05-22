@@ -7,6 +7,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { ResourcePanel } from "./resource-panel";
+import { CtaButtonsManager } from "./cta-buttons-manager";
 import { SectionCopyCard } from "./section-copy-card";
 
 export function FeaturedContentEditor({
@@ -17,12 +18,16 @@ export function FeaturedContentEditor({
   type: "blogs" | "events";
   section: FeaturedContentSectionContent;
   action: (
-    values: FeaturedContentSectionContent
+    values: Omit<FeaturedContentSectionContent, "ctas">
   ) => Promise<{ error?: string; success?: string }>;
 }) {
-  const [formData, setFormData] = useState(section);
+  const [formData, setFormData] = useState({
+    intro: section.intro,
+    limit: section.limit,
+  });
   const [isPending, startTransition] = useTransition();
   const href = type === "blogs" ? "/blogs" : "/events";
+  const sectionKey = type === "blogs" ? "featuredBlogs" : "featuredEvents";
 
   const onSubmit = () => {
     startTransition(() => {
@@ -49,6 +54,7 @@ export function FeaturedContentEditor({
           }
         />
       </SectionCopyCard>
+      <CtaButtonsManager section={sectionKey} items={section.ctas} />
       <ResourcePanel
         title={`Featured ${type}`}
         description={`Featured ${type} come from the published ${type} collection.`}

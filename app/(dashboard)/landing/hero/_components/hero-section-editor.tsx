@@ -19,6 +19,7 @@ import {
   TextareaField,
   TextField,
 } from "@/components/common/form-controls";
+import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
 
 export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
@@ -80,6 +81,7 @@ export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
           />
         </CardContent>
       </Card>
+      <CtaButtonsManager section="hero" items={hero.ctas} />
     </LandingSectionShell>
   );
 }

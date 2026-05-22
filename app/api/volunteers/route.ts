@@ -15,9 +15,11 @@ export async function GET() {
   try {
     const data = await listVolunteers({
       select: {
+        id: true,
         name: true,
         volunteerType: true,
         avatar: true,
+        featured: true,
         facebook: true,
         x: true,
         instagram: true,

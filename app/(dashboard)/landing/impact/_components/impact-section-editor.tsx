@@ -8,6 +8,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
 import { SectionCopyCard } from "../../_components/section-copy-card";
 import { StatsManager } from "./stats-manager";
 
@@ -46,6 +47,7 @@ export function ImpactSectionEditor({
           }
         />
       </SectionCopyCard>
+      <CtaButtonsManager section="impact" items={section.ctas} />
       <StatsManager items={section.stats} />
     </LandingSectionShell>
   );

@@ -7,7 +7,7 @@ import {
   useTransition,
   type ChangeEvent,
 } from "react";
-import { Edit, Plus, Trash2, Upload } from "lucide-react";
+import { Edit, Plus, Star, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   createVolunteerAction,
   deleteVolunteerAction,
@@ -44,6 +45,7 @@ import { getInitials, handleFileUpload } from "@/lib/utils";
 type VolunteerFormState = {
   name: string;
   volunteerType: string;
+  featured: boolean;
   avatar: string;
   facebook: string;
   x: string;
@@ -62,6 +64,7 @@ type VolunteerFormState = {
 const initialFormState: VolunteerFormState = {
   name: "",
   volunteerType: "",
+  featured: false,
   avatar: "",
   facebook: "",
   x: "",
@@ -101,6 +104,7 @@ const getInitialFormState = (volunteer: Volunteer | null): VolunteerFormState =>
     ? {
         name: volunteer.name || "",
         volunteerType: volunteer.volunteerType || "",
+        featured: Boolean(volunteer.featured),
         avatar: volunteer.avatar || "",
         facebook: volunteer.facebook || "",
         x: volunteer.x || "",
@@ -150,7 +154,10 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
     setOpenForm(true);
   };
 
-  const updateField = (name: keyof VolunteerFormState, value: string) => {
+  const updateField = (
+    name: keyof VolunteerFormState,
+    value: string | boolean
+  ) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -294,7 +301,15 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
                         </CardDescription>
                       </div>
                     </div>
-                    <Badge variant="secondary">Volunteer</Badge>
+                    <div className="flex flex-col items-end gap-2">
+                      {volunteer.featured ? (
+                        <Badge className="gap-1 bg-amber-500 text-white hover:bg-amber-500">
+                          <Star className="h-3 w-3 fill-current" />
+                          Featured
+                        </Badge>
+                      ) : null}
+                      <Badge variant="secondary">Volunteer</Badge>
+                    </div>
                   </div>
                 </CardHeader>
 
@@ -419,6 +434,22 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
                   placeholder="e.g., Event volunteer"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border bg-muted/20 px-4 py-3">
+              <div>
+                <Label>Featured volunteer</Label>
+                <p className="text-xs text-muted-foreground">
+                  Only one volunteer can hold the large landing-page feature.
+                </p>
+              </div>
+              <Switch
+                checked={formData.featured}
+                onCheckedChange={(featured) =>
+                  updateField("featured", featured)
+                }
+                disabled={isPending}
+              />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">

@@ -150,6 +150,8 @@ export const createVolunteerAction = async (
         `${user.name} (${user.role}) added ${created.name} as "${created.volunteerType}"`
       );
       revalidatePath("/team");
+      revalidatePath("/volunteers");
+      revalidatePath("/landing/volunteers");
     }
 
     return { success: "Volunteer added" };
@@ -182,6 +184,8 @@ export const updateVolunteerAction = async (
         `${user.name} (${user.role}) updated ${updated.name}'s volunteer details.`
       );
       revalidatePath("/team");
+      revalidatePath("/volunteers");
+      revalidatePath("/landing/volunteers");
     }
 
     return { success: "Volunteer updated" };
@@ -205,6 +209,8 @@ export const deleteVolunteerAction = async (id: string) => {
         `${user.name} (${user.role}) removed ${deleted.name} from volunteers`
       );
       revalidatePath("/team");
+      revalidatePath("/volunteers");
+      revalidatePath("/landing/volunteers");
     }
 
     return { success: "Volunteer removed" };

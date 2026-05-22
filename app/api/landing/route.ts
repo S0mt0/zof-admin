@@ -13,6 +13,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+const publishedCtas = (items: CtaButtonContent[] = []) =>
+  items
+    .filter((item) => item.published)
+    .sort((a, b) => a.order - b.order)
+    .slice(0, 2);
+
 export async function OPTIONS() {
   return new Response(null, { headers: corsHeaders });
 }
@@ -66,6 +72,7 @@ export async function GET() {
           name: true,
           volunteerType: true,
           avatar: true,
+          featured: true,
           facebook: true,
           x: true,
           instagram: true,
@@ -83,37 +90,48 @@ export async function GET() {
     ]);
 
     const data = {
-      hero: landing.hero,
+      hero: {
+        ...landing.hero,
+        ctas: publishedCtas(landing.hero.ctas),
+      },
       about: {
         ...landing.about,
+        ctas: publishedCtas(landing.about.ctas),
         cards: landing.about.cards.filter((card) => card.published),
       },
       values: {
         ...landing.values,
+        ctas: publishedCtas(landing.values.ctas),
         cards: landing.values.cards.filter((card) => card.published),
       },
       volunteers: {
         ...landing.volunteers,
+        ctas: publishedCtas(landing.volunteers.ctas),
         items: volunteers,
       },
       impact: {
         ...landing.impact,
+        ctas: publishedCtas(landing.impact.ctas),
         stats: landing.impact.stats.filter((stat) => stat.published),
       },
       testimonials: {
         ...landing.testimonials,
+        ctas: publishedCtas(landing.testimonials.ctas),
         items: testimonials.slice(0, landing.testimonials.limit),
       },
       featuredBlogs: {
         ...landing.featuredBlogs,
+        ctas: publishedCtas(landing.featuredBlogs.ctas),
         items: blogs.data || [],
       },
       featuredEvents: {
         ...landing.featuredEvents,
+        ctas: publishedCtas(landing.featuredEvents.ctas),
         items: events.data || [],
       },
       faqs: {
         ...landing.faqs,
+        ctas: publishedCtas(landing.faqs.ctas),
         items: landing.faqs.items.filter((faq) => faq.published),
       },
     };

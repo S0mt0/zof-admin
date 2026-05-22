@@ -102,6 +102,13 @@ export const getUniqueVolunteer = async (
 
 export const createVolunteer = async (data: any) => {
   try {
+    if (data.featured) {
+      await db.volunteer.updateMany({
+        where: { featured: true },
+        data: { featured: false },
+      });
+    }
+
     return (await db.volunteer.create({ data })) as Volunteer;
   } catch (e) {
     console.log("error creating volunteer", e);
@@ -114,6 +121,13 @@ export const updateVolunteer = async (
   data: Partial<Omit<Volunteer, "addedByUser">>
 ) => {
   try {
+    if (data.featured) {
+      await db.volunteer.updateMany({
+        where: { featured: true, id: { not: id } },
+        data: { featured: false },
+      });
+    }
+
     return (await db.volunteer.update({ where: { id }, data })) as Volunteer;
   } catch (e) {
     return null;

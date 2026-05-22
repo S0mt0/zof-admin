@@ -27,6 +27,7 @@ interface Volunteer {
   name: string;
   volunteerType: string;
   avatar?: string | null;
+  featured: boolean;
   addedBy: string;
   addedByUser?: Partial<IUser> | null;
   facebook?: string | null;

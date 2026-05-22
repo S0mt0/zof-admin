@@ -8,6 +8,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
 import { SectionCopyCard } from "../../_components/section-copy-card";
 import { TestimonialsManager } from "./testimonials-manager";
 
@@ -18,7 +19,10 @@ export function TestimonialsSectionEditor({
   section: TestimonialsSectionContent;
   testimonials: Testimonial[];
 }) {
-  const [formData, setFormData] = useState(section);
+  const [formData, setFormData] = useState({
+    intro: section.intro,
+    limit: section.limit,
+  });
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = () => {
@@ -46,6 +50,7 @@ export function TestimonialsSectionEditor({
           }
         />
       </SectionCopyCard>
+      <CtaButtonsManager section="testimonials" items={section.ctas} />
       <TestimonialsManager items={testimonials} />
     </LandingSectionShell>
   );

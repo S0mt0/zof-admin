@@ -1,10 +1,16 @@
 import { updateLandingPageData, getLandingPageData } from "./core.service";
 
-export const updateLandingHero = (hero: HeroSectionContent) =>
-  updateLandingPageData({ hero: { set: hero } });
+export const updateLandingHero = (
+  values: Omit<HeroSectionContent, "ctas">
+) =>
+  getLandingPageData().then((page) =>
+    updateLandingPageData({
+      hero: { set: { ...page.hero, ...values } },
+    })
+  );
 
 export const updateLandingAboutSettings = (
-  values: Omit<AboutSectionContent, "cards">
+  values: Omit<AboutSectionContent, "cards" | "ctas">
 ) =>
   getLandingPageData().then((page) =>
     updateLandingPageData({
@@ -13,7 +19,7 @@ export const updateLandingAboutSettings = (
   );
 
 export const updateLandingValuesSettings = (
-  values: Omit<ValuesSectionContent, "cards">
+  values: Omit<ValuesSectionContent, "cards" | "ctas">
 ) =>
   getLandingPageData().then((page) =>
     updateLandingPageData({
@@ -22,11 +28,16 @@ export const updateLandingValuesSettings = (
   );
 
 export const updateLandingVolunteersSettings = (
-  values: VolunteersSectionContent
-) => updateLandingPageData({ volunteers: { set: values } });
+  values: Omit<VolunteersSectionContent, "ctas">
+) =>
+  getLandingPageData().then((page) =>
+    updateLandingPageData({
+      volunteers: { set: { ...page.volunteers, ...values } },
+    })
+  );
 
 export const updateLandingImpactSettings = (
-  values: Omit<ImpactSectionContent, "stats">
+  values: Omit<ImpactSectionContent, "stats" | "ctas">
 ) =>
   getLandingPageData().then((page) =>
     updateLandingPageData({
@@ -35,19 +46,34 @@ export const updateLandingImpactSettings = (
   );
 
 export const updateLandingTestimonialsSettings = (
-  values: TestimonialsSectionContent
-) => updateLandingPageData({ testimonials: { set: values } });
+  values: Omit<TestimonialsSectionContent, "ctas">
+) =>
+  getLandingPageData().then((page) =>
+    updateLandingPageData({
+      testimonials: { set: { ...page.testimonials, ...values } },
+    })
+  );
 
 export const updateLandingFeaturedBlogsSettings = (
-  values: FeaturedContentSectionContent
-) => updateLandingPageData({ featuredBlogs: { set: values } });
+  values: Omit<FeaturedContentSectionContent, "ctas">
+) =>
+  getLandingPageData().then((page) =>
+    updateLandingPageData({
+      featuredBlogs: { set: { ...page.featuredBlogs, ...values } },
+    })
+  );
 
 export const updateLandingFeaturedEventsSettings = (
-  values: FeaturedContentSectionContent
-) => updateLandingPageData({ featuredEvents: { set: values } });
+  values: Omit<FeaturedContentSectionContent, "ctas">
+) =>
+  getLandingPageData().then((page) =>
+    updateLandingPageData({
+      featuredEvents: { set: { ...page.featuredEvents, ...values } },
+    })
+  );
 
 export const updateLandingFaqSettings = (
-  values: Omit<FaqSectionContent, "items">
+  values: Omit<FaqSectionContent, "items" | "ctas">
 ) =>
   getLandingPageData().then((page) =>
     updateLandingPageData({

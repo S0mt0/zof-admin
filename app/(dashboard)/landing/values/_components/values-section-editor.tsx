@@ -8,10 +8,10 @@ import { showActionResult } from "@/lib/pages/landing";
 import {
   SaveButton,
   TextareaField,
-  TextField,
 } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";
+import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
 import { SectionCopyCard } from "../../_components/section-copy-card";
 
@@ -23,8 +23,6 @@ export function ValuesSectionEditor({
   const [formData, setFormData] = useState({
     intro: section.intro,
     closingText: section.closingText || "",
-    ctaLabel: section.ctaLabel || "",
-    ctaHref: section.ctaHref || "",
   });
   const [isPending, startTransition] = useTransition();
 
@@ -52,23 +50,8 @@ export function ValuesSectionEditor({
             setFormData((prev) => ({ ...prev, closingText }))
           }
         />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextField
-            label="CTA label"
-            value={formData.ctaLabel}
-            onChange={(ctaLabel) =>
-              setFormData((prev) => ({ ...prev, ctaLabel }))
-            }
-          />
-          <TextField
-            label="CTA link"
-            value={formData.ctaHref}
-            onChange={(ctaHref) =>
-              setFormData((prev) => ({ ...prev, ctaHref }))
-            }
-          />
-        </div>
       </SectionCopyCard>
+      <CtaButtonsManager section="values" items={section.ctas} />
       <CardsManager
         section="values"
         title="Principle cards"

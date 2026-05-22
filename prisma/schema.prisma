@@ -237,6 +237,7 @@ model Volunteer {
   name          String
   volunteerType String
   avatar        String?
+  featured      Boolean  @default(false)
 
   // Relations
   addedBy      String   @db.ObjectId
@@ -424,49 +425,61 @@ type HeroSection {
   title    String
   subtitle String
   image    String?
+  ctas     CtaButton[]
 }
 
 type AboutSection {
   intro      SectionIntro
   themePhoto String?
   cards      SectionCardItem[]
+  ctas       CtaButton[]
 }
 
 type ValuesSection {
   intro       SectionIntro
   cards       SectionCardItem[]
   closingText String?
-  ctaLabel    String?
-  ctaHref     String?
+  ctas        CtaButton[]
 }
 
 type VolunteersSection {
-  intro               SectionIntro
-  featuredVolunteerId String?
-  ctaHeading          String?
-  ctaLabel            String?
-  ctaHref             String?
+  intro      SectionIntro
+  ctaHeading String?
+  ctas       CtaButton[]
 }
 
 type ImpactSection {
   intro      SectionIntro
   youtubeUrl String?
   stats      LandingStatItem[]
+  ctas       CtaButton[]
 }
 
 type TestimonialsSection {
   intro SectionIntro
   limit Int
+  ctas  CtaButton[]
 }
 
 type FeaturedContentSection {
   intro SectionIntro
   limit Int
+  ctas  CtaButton[]
 }
 
 type FaqSection {
   intro SectionIntro
   items FaqItem[]
+  ctas  CtaButton[]
+}
+
+type CtaButton {
+  id        String
+  label     String
+  href      String
+  variant   String
+  order     Int
+  published Boolean
 }
 
 type SectionCardItem {

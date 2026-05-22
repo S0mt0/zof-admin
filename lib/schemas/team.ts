@@ -25,6 +25,7 @@ export const VolunteerSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "Volunteer type is required" }),
+  featured: z.boolean().default(false),
   avatar: optionalText,
   facebook: optionalText,
   x: optionalText,

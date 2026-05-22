@@ -1,5 +1,6 @@
 export * from "./about-section.actions";
 export * from "./cards.actions";
+export * from "./ctas.actions";
 export * from "./faq-section.actions";
 export * from "./faqs.actions";
 export * from "./featured-content.actions";

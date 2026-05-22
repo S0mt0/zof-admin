@@ -8,6 +8,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton } from "@/components/common/form-controls";
 
 import { FaqItemsManager } from "./faq-items-manager";
+import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
 import { SectionCopyCard } from "../../_components/section-copy-card";
 
@@ -31,6 +32,7 @@ export function FaqsSectionEditor({ section }: { section: FaqSectionContent }) {
         onIntroChange={(intro) => setFormData({ intro })}
         footer={<SaveButton onClick={onSubmit} pending={isPending} />}
       />
+      <CtaButtonsManager section="faqs" items={section.ctas} />
       <FaqItemsManager items={section.items} />
     </LandingSectionShell>
   );

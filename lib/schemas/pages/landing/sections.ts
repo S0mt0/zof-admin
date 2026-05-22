@@ -24,16 +24,11 @@ export const AboutSectionSchema = z.object({
 export const ValuesSectionSchema = z.object({
   intro: SectionIntroSchema,
   closingText: optionalText,
-  ctaLabel: optionalText,
-  ctaHref: optionalText,
 });
 
 export const VolunteersSectionSchema = z.object({
   intro: SectionIntroSchema,
-  featuredVolunteerId: optionalText,
   ctaHeading: optionalText,
-  ctaLabel: optionalText,
-  ctaHref: optionalText,
 });
 
 export const ImpactSectionSchema = z.object({

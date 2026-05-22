@@ -2,6 +2,20 @@ import { randomUUID } from "crypto";
 
 import { intro } from "./utils";
 
+const cta = (
+  label: string,
+  href: string,
+  order = 0,
+  variant: CtaVariant = "primary"
+): CtaButtonContent => ({
+  id: randomUUID(),
+  label,
+  href,
+  variant,
+  order,
+  published: true,
+});
+
 export const defaultLandingPageData = (): Omit<
   LandingPageDataContent,
   "id" | "createdAt" | "updatedAt"
@@ -11,6 +25,10 @@ export const defaultLandingPageData = (): Omit<
     subtitle:
       "We support women, young people, and families with practical programs that create dignity, opportunity, and stronger community futures.",
     image: "",
+    ctas: [
+      cta("Donate now", "/donate", 0, "primary"),
+      cta("Learn about us", "/about", 1, "secondary"),
+    ],
   },
   about: {
     intro: intro(
@@ -19,6 +37,7 @@ export const defaultLandingPageData = (): Omit<
       "Zita Onyeka Foundation works with women, young people, and underserved families through education, relief outreach, skills development, and community-centered support."
     ),
     themePhoto: "",
+    ctas: [cta("Learn more about us", "/about")],
     cards: [
       {
         id: randomUUID(),
@@ -86,8 +105,7 @@ export const defaultLandingPageData = (): Omit<
     ],
     closingText:
       "The goal is not just to respond to need, but to strengthen the systems of care around each person and community we serve.",
-    ctaLabel: "Start a partnership",
-    ctaHref: "/contact",
+    ctas: [cta("Start a partnership", "/contact")],
   },
   volunteers: {
     intro: intro(
@@ -95,10 +113,8 @@ export const defaultLandingPageData = (): Omit<
       "The hands that help care reach further.",
       "Our volunteers bring time, skill, logistics, encouragement, and presence to the work. They help turn planning into real support for families and communities."
     ),
-    featuredVolunteerId: "",
     ctaHeading: "Your time and skills can help make support feel personal.",
-    ctaLabel: "Volunteer with us",
-    ctaHref: "/contact",
+    ctas: [cta("Volunteer with us", "/contact")],
   },
   impact: {
     intro: intro(
@@ -108,6 +124,7 @@ export const defaultLandingPageData = (): Omit<
     ),
     youtubeUrl: "https://youtu.be/CEzKcqI9X6E?si=hmtLsFor7P5KMa06",
     stats: [],
+    ctas: [cta("See our work", "/about")],
   },
   testimonials: {
     intro: intro(
@@ -116,10 +133,12 @@ export const defaultLandingPageData = (): Omit<
       ""
     ),
     limit: 6,
+    ctas: [],
   },
   featuredBlogs: {
     intro: intro("Latest stories", "Stories from the work we are doing.", ""),
     limit: 4,
+    ctas: [cta("View all stories", "/blogs")],
   },
   featuredEvents: {
     intro: intro(
@@ -128,6 +147,7 @@ export const defaultLandingPageData = (): Omit<
       ""
     ),
     limit: 3,
+    ctas: [cta("View all events", "/events")],
   },
   faqs: {
     intro: intro(
@@ -136,5 +156,6 @@ export const defaultLandingPageData = (): Omit<
       "A quick guide to support, partnerships, programs, and the work we do with communities."
     ),
     items: [],
+    ctas: [],
   },
 });
