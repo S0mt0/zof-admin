@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { listLandingFaqs } from "@/lib/db/repository/pages.service";
+import { getLandingPageData } from "@/lib/db/repository/pages.service";
 
 export async function OPTIONS() {
   return new Response(null, {
@@ -13,14 +13,10 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const data = await listLandingFaqs({
-      where: { published: true },
-      select: {
-        question: true,
-        answer: true,
-        order: true,
-      },
-    });
+    const landing = await getLandingPageData();
+    const data = landing.faqs.items
+      .filter((faq) => faq.published)
+      .map(({ question, answer, order }) => ({ question, answer, order }));
 
     return Response.json(
       { message: "FAQs fetched successfully", data },

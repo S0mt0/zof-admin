@@ -5,29 +5,59 @@ import * as z from "zod";
 
 import {
   AboutPageSchema,
-  LandingExtraSchema,
-  LandingFaqSchema,
-  LandingStatSchema,
-  LandingTestimonialSchema,
+  AboutSectionSchema,
+  FaqItemSchema,
+  FaqSectionSchema,
+  FeaturedContentSectionSchema,
+  HeroSectionSchema,
+  ImpactSectionSchema,
+  LandingStatItemSchema,
+  SectionCardItemSchema,
+  TestimonialsSectionSchema,
+  TestimonialSchema,
+  ValuesSectionSchema,
+  VolunteersSectionSchema,
 } from "../schemas";
 import {
-  createLandingFaq,
-  createLandingStat,
-  createLandingTestimonial,
-  deleteLandingFaq,
-  deleteLandingStat,
-  deleteLandingTestimonial,
-  listLandingFaqs,
-  updateLandingFaq,
-  updateLandingStat,
-  updateLandingTestimonial,
+  createLandingFaqItem,
+  createLandingImpactStat,
+  createLandingSectionCard,
+  createTestimonial,
+  deleteLandingFaqItem,
+  deleteLandingImpactStat,
+  deleteLandingSectionCard,
+  deleteTestimonial,
+  getLandingPageData,
+  listTestimonials,
+  reorderLandingFaqItems,
+  reorderLandingImpactStats,
+  reorderLandingSectionCards,
+  reorderTestimonials,
+  updateLandingAboutSettings,
+  updateLandingFaqItem,
+  updateLandingFaqSettings,
+  updateLandingFeaturedBlogsSettings,
+  updateLandingFeaturedEventsSettings,
+  updateLandingHero,
+  updateLandingImpactSettings,
+  updateLandingImpactStat,
+  updateLandingSectionCard,
+  updateLandingTestimonialsSettings,
+  updateLandingValuesSettings,
+  updateLandingVolunteersSettings,
+  updateTestimonial,
   upsertAboutPage,
-  upsertLandingExtra,
 } from "../db/repository/pages.service";
 import { getUserById } from "../db/repository/user.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
 import { currentUser } from "../utils";
 import { EDITORIAL_ROLES } from "../constants";
+
+type CardSection = "about" | "values";
+
+const IdsSchema = z.array(z.string().min(1));
+const MAX_PUBLISHED_CARDS = 3;
+const MAX_PUBLISHED_STATS = 4;
 
 const getAuthorizedUser = async () => {
   const userId = (await currentUser())?.id;
@@ -39,21 +69,47 @@ const getAuthorizedUser = async () => {
   return { user };
 };
 
-const getNextLandingFaqOrder = async () => {
-  const faqs = await listLandingFaqs();
-  return faqs.reduce((max, faq) => Math.max(max, faq.order), -1) + 1;
+const sectionPath = (section: string) => `/landing/${section}`;
+
+const logActivity = (title: string, userName: string, role: string) =>
+  addAppActivity(title, `${userName} (${role}) updated landing page content`);
+
+const getPublishedCardCount = (
+  section: CardSection,
+  idToIgnore?: string
+) =>
+  getLandingPageData().then((page) => {
+    const cards = section === "about" ? page.about.cards : page.values.cards;
+    return cards.filter((card) => card.published && card.id !== idToIgnore)
+      .length;
+  });
+
+const validateCardPublishLimit = async (
+  section: CardSection,
+  published: boolean,
+  idToIgnore?: string
+) => {
+  if (!published) return null;
+  const count = await getPublishedCardCount(section, idToIgnore);
+  if (count >= MAX_PUBLISHED_CARDS) {
+    return "Only 3 cards can be published in this section at once.";
+  }
+  return null;
 };
 
-const normalizeLandingFaqOrders = async () => {
-  const faqs = await listLandingFaqs();
-
-  await Promise.all(
-    faqs.map((faq, index) =>
-      faq.order === index
-        ? Promise.resolve(faq)
-        : updateLandingFaq(faq.id, { order: index })
-    )
-  );
+const validateStatPublishLimit = async (
+  published: boolean,
+  idToIgnore?: string
+) => {
+  if (!published) return null;
+  const page = await getLandingPageData();
+  const count = page.impact.stats.filter(
+    (stat) => stat.published && stat.id !== idToIgnore
+  ).length;
+  if (count >= MAX_PUBLISHED_STATS) {
+    return "Only 4 impact stats can be published at once.";
+  }
+  return null;
 };
 
 export const updateAboutPageAction = async (
@@ -76,237 +132,318 @@ export const updateAboutPageAction = async (
 
     revalidatePath("/about");
     return { success: "About page updated" };
-  } catch (error) {
+  } catch {
     return { error: "Could not update about page" };
   }
 };
 
-export const createLandingFaqAction = async (
-  values: z.infer<typeof LandingFaqSchema>
+export const updateLandingHeroAction = async (
+  values: z.infer<typeof HeroSectionSchema>
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingFaqSchema.safeParse(values);
+  const validated = HeroSectionSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
   try {
-    const created = await createLandingFaq({
-      ...validated.data,
-      order: await getNextLandingFaqOrder(),
-    });
-    if (!created) return { error: "Could not add FAQ" };
-
-    await addAppActivity(
-      "Landing FAQ added",
-      `${auth.user.name} (${auth.user.role}) added a landing page FAQ`
-    );
-
-    revalidatePath("/landing/faqs");
-    return { success: "FAQ added" };
-  } catch (error) {
-    return { error: "Could not add FAQ" };
+    await updateLandingHero(validated.data);
+    await logActivity("Landing hero updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("hero"));
+    return { success: "Hero section updated" };
+  } catch {
+    return { error: "Could not update hero section" };
   }
 };
 
-export const updateLandingFaqAction = async (
+export const updateLandingAboutAction = async (
+  values: z.infer<typeof AboutSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = AboutSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingAboutSettings(validated.data);
+    await logActivity("Landing about updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("about"));
+    return { success: "About section updated" };
+  } catch {
+    return { error: "Could not update about section" };
+  }
+};
+
+export const updateLandingValuesAction = async (
+  values: z.infer<typeof ValuesSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = ValuesSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingValuesSettings(validated.data);
+    await logActivity("Landing values updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("values"));
+    return { success: "Values section updated" };
+  } catch {
+    return { error: "Could not update values section" };
+  }
+};
+
+export const updateLandingVolunteersAction = async (
+  values: z.infer<typeof VolunteersSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = VolunteersSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingVolunteersSettings(validated.data as VolunteersSectionContent);
+    await logActivity(
+      "Landing volunteers updated",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("volunteers"));
+    return { success: "Volunteers section updated" };
+  } catch {
+    return { error: "Could not update volunteers section" };
+  }
+};
+
+export const updateLandingImpactAction = async (
+  values: z.infer<typeof ImpactSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = ImpactSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingImpactSettings(validated.data);
+    await logActivity("Landing impact updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("impact"));
+    return { success: "Impact section updated" };
+  } catch {
+    return { error: "Could not update impact section" };
+  }
+};
+
+export const updateLandingTestimonialsSectionAction = async (
+  values: z.infer<typeof TestimonialsSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = TestimonialsSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingTestimonialsSettings(validated.data);
+    await logActivity(
+      "Landing testimonials updated",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("testimonials"));
+    return { success: "Testimonials section updated" };
+  } catch {
+    return { error: "Could not update testimonials section" };
+  }
+};
+
+export const updateLandingFeaturedBlogsAction = async (
+  values: z.infer<typeof FeaturedContentSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = FeaturedContentSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingFeaturedBlogsSettings(validated.data);
+    await logActivity(
+      "Landing featured blogs updated",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("featured-blogs"));
+    return { success: "Featured blogs section updated" };
+  } catch {
+    return { error: "Could not update featured blogs section" };
+  }
+};
+
+export const updateLandingFeaturedEventsAction = async (
+  values: z.infer<typeof FeaturedContentSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = FeaturedContentSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingFeaturedEventsSettings(validated.data);
+    await logActivity(
+      "Landing featured events updated",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("featured-events"));
+    return { success: "Featured events section updated" };
+  } catch {
+    return { error: "Could not update featured events section" };
+  }
+};
+
+export const updateLandingFaqSectionAction = async (
+  values: z.infer<typeof FaqSectionSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = FaqSectionSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    await updateLandingFaqSettings(validated.data);
+    await logActivity("Landing FAQ updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("faqs"));
+    return { success: "FAQ section updated" };
+  } catch {
+    return { error: "Could not update FAQ section" };
+  }
+};
+
+export const createLandingCardAction = async (
+  section: CardSection,
+  values: z.infer<typeof SectionCardItemSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = SectionCardItemSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  const limitError = await validateCardPublishLimit(
+    section,
+    validated.data.published
+  );
+  if (limitError) return { error: limitError };
+
+  try {
+    await createLandingSectionCard(section, validated.data);
+    await logActivity("Landing card added", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath(section === "about" ? "about" : "values"));
+    return { success: "Card added" };
+  } catch {
+    return { error: "Could not add card" };
+  }
+};
+
+export const updateLandingCardAction = async (
+  section: CardSection,
   id: string,
-  values: z.infer<typeof LandingFaqSchema>
+  values: z.infer<typeof SectionCardItemSchema>
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingFaqSchema.safeParse(values);
+  const validated = SectionCardItemSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
+  const limitError = await validateCardPublishLimit(
+    section,
+    validated.data.published,
+    id
+  );
+  if (limitError) return { error: limitError };
+
   try {
-    const updated = await updateLandingFaq(id, validated.data);
-    if (!updated) return { error: "Could not update FAQ" };
-
-    await addAppActivity(
-      "Landing FAQ updated",
-      `${auth.user.name} (${auth.user.role}) updated a landing page FAQ`
-    );
-
-    revalidatePath("/landing/faqs");
-    return { success: "FAQ updated" };
-  } catch (error) {
-    return { error: "Could not update FAQ" };
+    await updateLandingSectionCard(section, id, validated.data);
+    await logActivity("Landing card updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath(section === "about" ? "about" : "values"));
+    return { success: "Card updated" };
+  } catch {
+    return { error: "Could not update card" };
   }
 };
 
-export const deleteLandingFaqAction = async (id: string) => {
-  const auth = await getAuthorizedUser();
-  if ("error" in auth) return { error: auth.error };
-
-  try {
-    const deleted = await deleteLandingFaq(id);
-    if (!deleted) return { error: "Could not delete FAQ" };
-    await normalizeLandingFaqOrders();
-
-    await addAppActivity(
-      "Landing FAQ deleted",
-      `${auth.user.name} (${auth.user.role}) deleted a landing page FAQ`
-    );
-
-    revalidatePath("/landing/faqs");
-    return { success: "FAQ deleted" };
-  } catch (error) {
-    return { error: "Could not delete FAQ" };
-  }
-};
-
-const LandingFaqReorderSchema = z.array(
-  z.object({
-    id: z.string().min(1),
-    order: z.number().int().min(0),
-  })
-);
-
-export const reorderLandingFaqsAction = async (
-  values: z.infer<typeof LandingFaqReorderSchema>
+export const deleteLandingCardAction = async (
+  section: CardSection,
+  id: string
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
 
-  const validated = LandingFaqReorderSchema.safeParse(values);
+  try {
+    await deleteLandingSectionCard(section, id);
+    await logActivity("Landing card deleted", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath(section === "about" ? "about" : "values"));
+    return { success: "Card deleted" };
+  } catch {
+    return { error: "Could not delete card" };
+  }
+};
+
+export const reorderLandingCardsAction = async (
+  section: CardSection,
+  ids: z.infer<typeof IdsSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = IdsSchema.safeParse(ids);
   if (!validated.success) return { error: "Invalid order data" };
 
   try {
-    await Promise.all(
-      validated.data.map(({ id, order }) => updateLandingFaq(id, { order }))
-    );
-
-    await addAppActivity(
-      "Landing FAQs reordered",
-      `${auth.user.name} (${auth.user.role}) reordered landing page FAQs`
-    );
-
-    revalidatePath("/landing/faqs");
-    return { success: "FAQ order updated" };
-  } catch (error) {
-    return { error: "Could not update FAQ order" };
-  }
-};
-
-export const createLandingTestimonialAction = async (
-  values: z.infer<typeof LandingTestimonialSchema>
-) => {
-  const auth = await getAuthorizedUser();
-  if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingTestimonialSchema.safeParse(values);
-  if (!validated.success) return { error: "Invalid fields" };
-
-  try {
-    const created = await createLandingTestimonial(validated.data);
-    if (!created) return { error: "Could not add testimonial" };
-
-    await addAppActivity(
-      "Testimonial added",
-      `${auth.user.name} (${auth.user.role}) added a testimonial`
-    );
-
-    revalidatePath("/landing/testimonials");
-    return { success: "Testimonial added" };
-  } catch (error) {
-    return { error: "Could not add testimonial" };
-  }
-};
-
-export const updateLandingTestimonialAction = async (
-  id: string,
-  values: z.infer<typeof LandingTestimonialSchema>
-) => {
-  const auth = await getAuthorizedUser();
-  if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingTestimonialSchema.safeParse(values);
-  if (!validated.success) return { error: "Invalid fields" };
-
-  try {
-    const updated = await updateLandingTestimonial(id, validated.data);
-    if (!updated) return { error: "Could not update testimonial" };
-
-    await addAppActivity(
-      "Testimonial updated",
-      `${auth.user.name} (${auth.user.role}) updated a testimonial`
-    );
-
-    revalidatePath("/landing/testimonials");
-    return { success: "Testimonial updated" };
-  } catch (error) {
-    return { error: "Could not update testimonial" };
-  }
-};
-
-export const deleteLandingTestimonialAction = async (id: string) => {
-  const auth = await getAuthorizedUser();
-  if ("error" in auth) return { error: auth.error };
-
-  try {
-    const deleted = await deleteLandingTestimonial(id);
-    if (!deleted) return { error: "Could not delete testimonial" };
-
-    await addAppActivity(
-      "Testimonial deleted",
-      `${auth.user.name} (${auth.user.role}) deleted a testimonial`
-    );
-
-    revalidatePath("/landing/testimonials");
-    return { success: "Testimonial deleted" };
-  } catch (error) {
-    return { error: "Could not delete testimonial" };
+    await reorderLandingSectionCards(section, validated.data);
+    revalidatePath(sectionPath(section === "about" ? "about" : "values"));
+    return { success: "Order updated" };
+  } catch {
+    return { error: "Could not update order" };
   }
 };
 
 export const createLandingStatAction = async (
-  values: z.infer<typeof LandingStatSchema>
+  values: z.infer<typeof LandingStatItemSchema>
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingStatSchema.safeParse(values);
+  const validated = LandingStatItemSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
+  const limitError = await validateStatPublishLimit(validated.data.published);
+  if (limitError) return { error: limitError };
+
   try {
-    const created = await createLandingStat(validated.data);
-    if (!created) return { error: "Could not add stat" };
-
-    await addAppActivity(
-      "Landing stat added",
-      `${auth.user.name} (${auth.user.role}) added a landing stat`
-    );
-
-    revalidatePath("/landing/stats");
+    await createLandingImpactStat(validated.data);
+    await logActivity("Landing stat added", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("impact"));
     return { success: "Stat added" };
-  } catch (error) {
+  } catch {
     return { error: "Could not add stat" };
   }
 };
 
 export const updateLandingStatAction = async (
   id: string,
-  values: z.infer<typeof LandingStatSchema>
+  values: z.infer<typeof LandingStatItemSchema>
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
-
-  const validated = LandingStatSchema.safeParse(values);
+  const validated = LandingStatItemSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
+  const limitError = await validateStatPublishLimit(
+    validated.data.published,
+    id
+  );
+  if (limitError) return { error: limitError };
+
   try {
-    const updated = await updateLandingStat(id, validated.data);
-    if (!updated) return { error: "Could not update stat" };
-
-    await addAppActivity(
-      "Landing stat updated",
-      `${auth.user.name} (${auth.user.role}) updated a landing stat`
-    );
-
-    revalidatePath("/landing/stats");
+    await updateLandingImpactStat(id, validated.data);
+    await logActivity("Landing stat updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("impact"));
     return { success: "Stat updated" };
-  } catch (error) {
+  } catch {
     return { error: "Could not update stat" };
   }
 };
@@ -316,42 +453,177 @@ export const deleteLandingStatAction = async (id: string) => {
   if ("error" in auth) return { error: auth.error };
 
   try {
-    const deleted = await deleteLandingStat(id);
-    if (!deleted) return { error: "Could not delete stat" };
-
-    await addAppActivity(
-      "Landing stat deleted",
-      `${auth.user.name} (${auth.user.role}) deleted a landing stat`
-    );
-
-    revalidatePath("/landing/stats");
+    await deleteLandingImpactStat(id);
+    await logActivity("Landing stat deleted", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("impact"));
     return { success: "Stat deleted" };
-  } catch (error) {
+  } catch {
     return { error: "Could not delete stat" };
   }
 };
 
-export const updateLandingExtraAction = async (
-  values: z.infer<typeof LandingExtraSchema>
+export const reorderLandingStatsAction = async (
+  ids: z.infer<typeof IdsSchema>
 ) => {
   const auth = await getAuthorizedUser();
   if ("error" in auth) return { error: auth.error };
+  const validated = IdsSchema.safeParse(ids);
+  if (!validated.success) return { error: "Invalid order data" };
 
-  const validated = LandingExtraSchema.safeParse(values);
+  try {
+    await reorderLandingImpactStats(validated.data);
+    revalidatePath(sectionPath("impact"));
+    return { success: "Order updated" };
+  } catch {
+    return { error: "Could not update order" };
+  }
+};
+
+export const createLandingFaqAction = async (
+  values: z.infer<typeof FaqItemSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = FaqItemSchema.safeParse(values);
   if (!validated.success) return { error: "Invalid fields" };
 
   try {
-    const saved = await upsertLandingExtra(validated.data);
-    if (!saved) return { error: "Could not update landing extra" };
+    await createLandingFaqItem(validated.data);
+    await logActivity("Landing FAQ added", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("faqs"));
+    return { success: "FAQ added" };
+  } catch {
+    return { error: "Could not add FAQ" };
+  }
+};
 
-    await addAppActivity(
-      "Landing extra updated",
-      `${auth.user.name} (${auth.user.role}) updated landing extra assets`
-    );
+export const updateLandingFaqAction = async (
+  id: string,
+  values: z.infer<typeof FaqItemSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = FaqItemSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
 
-    revalidatePath("/landing/extra");
-    return { success: "Landing extra updated" };
-  } catch (error) {
-    return { error: "Could not update landing extra" };
+  try {
+    await updateLandingFaqItem(id, validated.data);
+    await logActivity("Landing FAQ updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("faqs"));
+    return { success: "FAQ updated" };
+  } catch {
+    return { error: "Could not update FAQ" };
+  }
+};
+
+export const deleteLandingFaqAction = async (id: string) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+
+  try {
+    await deleteLandingFaqItem(id);
+    await logActivity("Landing FAQ deleted", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("faqs"));
+    return { success: "FAQ deleted" };
+  } catch {
+    return { error: "Could not delete FAQ" };
+  }
+};
+
+export const reorderLandingFaqsAction = async (
+  ids: z.infer<typeof IdsSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = IdsSchema.safeParse(ids);
+  if (!validated.success) return { error: "Invalid order data" };
+
+  try {
+    await reorderLandingFaqItems(validated.data);
+    revalidatePath(sectionPath("faqs"));
+    return { success: "Order updated" };
+  } catch {
+    return { error: "Could not update order" };
+  }
+};
+
+export const createTestimonialAction = async (
+  values: z.infer<typeof TestimonialSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = TestimonialSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    const testimonials = await listTestimonials();
+    const created = await createTestimonial({
+      ...validated.data,
+      order:
+        testimonials.reduce((max, item) => Math.max(max, item.order), -1) + 1,
+    });
+    if (!created) return { error: "Could not add testimonial" };
+
+    await logActivity("Testimonial added", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("testimonials"));
+    return { success: "Testimonial added" };
+  } catch {
+    return { error: "Could not add testimonial" };
+  }
+};
+
+export const updateTestimonialAction = async (
+  id: string,
+  values: z.infer<typeof TestimonialSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = TestimonialSchema.safeParse(values);
+  if (!validated.success) return { error: "Invalid fields" };
+
+  try {
+    const updated = await updateTestimonial(id, validated.data);
+    if (!updated) return { error: "Could not update testimonial" };
+
+    await logActivity("Testimonial updated", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("testimonials"));
+    return { success: "Testimonial updated" };
+  } catch {
+    return { error: "Could not update testimonial" };
+  }
+};
+
+export const deleteTestimonialAction = async (id: string) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+
+  try {
+    const deleted = await deleteTestimonial(id);
+    if (!deleted) return { error: "Could not delete testimonial" };
+
+    await logActivity("Testimonial deleted", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("testimonials"));
+    return { success: "Testimonial deleted" };
+  } catch {
+    return { error: "Could not delete testimonial" };
+  }
+};
+
+export const reorderTestimonialsAction = async (
+  ids: z.infer<typeof IdsSchema>
+) => {
+  const auth = await getAuthorizedUser();
+  if ("error" in auth) return { error: auth.error };
+  const validated = IdsSchema.safeParse(ids);
+  if (!validated.success) return { error: "Invalid order data" };
+
+  try {
+    const ok = await reorderTestimonials(validated.data);
+    if (!ok) return { error: "Could not update order" };
+
+    revalidatePath(sectionPath("testimonials"));
+    return { success: "Order updated" };
+  } catch {
+    return { error: "Could not update order" };
   }
 };

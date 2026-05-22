@@ -85,6 +85,23 @@ export default async function ViewBlogPage({
             </p>
           )}
 
+          {/* Banner Image */}
+
+          <div className="my-8">
+            <div className="w-full h-auto rounded overflow-hidden bg-muted">
+              <Image
+                src={blog.bannerImage}
+                alt={blog.title}
+                className="w-full h-full object-cover object-center"
+                width={1200}
+                height={675}
+                priority={true}
+              />
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Author and Meta */}
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3 flex-wrap">
@@ -139,21 +156,6 @@ export default async function ViewBlogPage({
 
           <Separator />
         </header>
-
-        {/* Banner Image */}
-
-        <div className="mb-8">
-          <div className="w-full h-auto rounded overflow-hidden bg-muted">
-            <Image
-              src={blog.bannerImage}
-              alt={blog.title}
-              className="w-full h-full object-cover object-center"
-              width={1200}
-              height={675}
-              priority={true}
-            />
-          </div>
-        </div>
 
         {/* Blog Content */}
         <RichTextContentRenderer content={blog.content} />

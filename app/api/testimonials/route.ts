@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { listLandingTestimonials } from "@/lib/db/repository/pages.service";
+import { listTestimonials } from "@/lib/db/repository/pages.service";
 
 export async function OPTIONS() {
   return new Response(null, {
@@ -13,7 +13,7 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const data = await listLandingTestimonials({
+    const data = await listTestimonials({
       where: { published: true },
       select: {
         name: true,

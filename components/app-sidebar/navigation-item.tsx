@@ -4,10 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ElementType } from "react";
 import {
-  BarChart3,
   Calendar,
   ChevronRight,
-  CircleHelp,
   Contact,
   FileText,
   Heart,
@@ -17,8 +15,8 @@ import {
   LayoutDashboard,
   MessageSquareQuote,
   Palette,
-  PlaySquare,
   Sparkles,
+  Target,
   Users,
 } from "lucide-react";
 
@@ -44,10 +42,15 @@ const dashboardItem = {
 };
 
 const landingItems = [
-  { title: "FAQs", url: "/landing/faqs", icon: CircleHelp },
+  { title: "Hero", url: "/landing/hero", icon: Sparkles },
+  { title: "Who We Are", url: "/landing/about", icon: Info },
+  { title: "Values", url: "/landing/values", icon: Target },
+  { title: "Volunteers", url: "/landing/volunteers", icon: Heart },
+  { title: "Impact", url: "/landing/impact", icon: LayoutDashboard },
   { title: "Testimonials", url: "/landing/testimonials", icon: MessageSquareQuote },
-  { title: "Stats", url: "/landing/stats", icon: BarChart3 },
-  { title: "Extra", url: "/landing/extra", icon: Sparkles },
+  { title: "Featured Blogs", url: "/landing/featured-blogs", icon: FileText },
+  { title: "Featured Events", url: "/landing/featured-events", icon: Calendar },
+  { title: "FAQs", url: "/landing/faqs", icon: MessageSquareQuote },
 ];
 
 const aboutItems = [

@@ -385,18 +385,7 @@ model AboutPage {
   updatedAt DateTime @updatedAt
 }
 
-model LandingFaq {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  question  String
-  answer    String
-  order     Int      @default(0)
-  published Boolean  @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model LandingTestimonial {
+model Testimonial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   role      String?
@@ -409,35 +398,108 @@ model LandingTestimonial {
   updatedAt DateTime @updatedAt
 }
 
-model LandingStat {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  value     String
-  title     String
-  order     Int      @default(0)
-  published Boolean  @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model LandingExtra {
+model LandingPageData {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  heroImage   String?
-  themeVideo  String?
-  themeVideoPoster String?
-  themeVideoFile String?
-  aboutImage  String?
+  hero        HeroSection?
+  about       AboutSection?
+  values      ValuesSection?
+  volunteers  VolunteersSection?
+  impact      ImpactSection?
+  testimonials TestimonialsSection?
+  featuredBlogs FeaturedContentSection?
+  featuredEvents FeaturedContentSection?
+  faqs        FaqSection?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+type SectionIntro {
+  eyebrow     String
+  heading     String
+  description String
+}
+
+type HeroSection {
+  title    String
+  subtitle String
+  image    String?
+}
+
+type AboutSection {
+  intro      SectionIntro
+  themePhoto String?
+  cards      SectionCardItem[]
+}
+
+type ValuesSection {
+  intro       SectionIntro
+  cards       SectionCardItem[]
+  closingText String?
+  ctaLabel    String?
+  ctaHref     String?
+}
+
+type VolunteersSection {
+  intro               SectionIntro
+  featuredVolunteerId String?
+  ctaHeading          String?
+  ctaLabel            String?
+  ctaHref             String?
+}
+
+type ImpactSection {
+  intro      SectionIntro
+  youtubeUrl String?
+  stats      LandingStatItem[]
+}
+
+type TestimonialsSection {
+  intro SectionIntro
+  limit Int
+}
+
+type FeaturedContentSection {
+  intro SectionIntro
+  limit Int
+}
+
+type FaqSection {
+  intro SectionIntro
+  items FaqItem[]
+}
+
+type SectionCardItem {
+  id          String
+  subject     String
+  kicker      String?
+  description String
+  order       Int
+  published   Boolean
+}
+
+type LandingStatItem {
+  id        String
+  value     String
+  title     String
+  order     Int
+  published Boolean
+}
+
+type FaqItem {
+  id        String
+  question  String
+  answer    String
+  order     Int
+  published Boolean
 }
 
 model WebsiteSettings {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
   maintenanceMode     Boolean  @default(false)
   blogComments        Boolean  @default(true)
-  eventComments        Boolean  @default(true)
-  eventRegistration  Boolean  @default(false)
+  eventComments       Boolean  @default(true)
+  eventRegistration   Boolean  @default(false)
   
   // Timestamps
   createdAt           DateTime @default(now())

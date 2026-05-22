@@ -1,9 +1,15 @@
 import { DashboardHeader } from "@/components/dashboard-header";
-import { listLandingTestimonials } from "@/lib/db/repository/pages.service";
-import { TestimonialsManager } from "../_components/testimonials-manager";
+import {
+  getLandingPageData,
+  listTestimonials,
+} from "@/lib/db/repository/pages.service";
+import { LandingSectionEditor } from "../_components/landing-section-editor";
 
 export default async function LandingTestimonialsPage() {
-  const testimonials = await listLandingTestimonials();
+  const [data, testimonials] = await Promise.all([
+    getLandingPageData(),
+    listTestimonials(),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -14,7 +20,11 @@ export default async function LandingTestimonialsPage() {
           { label: "Testimonials" },
         ]}
       />
-      <TestimonialsManager testimonials={testimonials} />
+      <LandingSectionEditor
+        section="testimonials"
+        data={data}
+        testimonials={testimonials}
+      />
     </div>
   );
 }
