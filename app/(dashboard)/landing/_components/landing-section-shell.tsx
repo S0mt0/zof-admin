@@ -75,9 +75,9 @@ export function LandingSectionShell({
   const meta = sectionMeta[section];
 
   return (
-    <div className="grid gap-5">
+    <div className="grid min-w-0 gap-5 overflow-hidden">
       <div
-        className={`overflow-hidden rounded-xl bg-gradient-to-br ${meta.accent} p-6 text-white shadow-sm`}
+        className={`min-w-0 overflow-hidden rounded-xl bg-gradient-to-br ${meta.accent} p-6 text-white shadow-sm`}
       >
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/70">
           {meta.eyebrow}

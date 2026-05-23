@@ -24,9 +24,9 @@ export function ItemManagerShell({
   children: ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="min-w-0 overflow-hidden">
       <CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
@@ -35,7 +35,7 @@ export function ItemManagerShell({
           {addLabel}
         </Button>
       </CardHeader>
-      <CardContent>{children}</CardContent>
+      <CardContent className="min-w-0">{children}</CardContent>
     </Card>
   );
 }

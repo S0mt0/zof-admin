@@ -6,6 +6,7 @@ import {
   DndContext,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -36,7 +37,17 @@ export function SortableList<T extends SortableItem>({
   const router = useRouter();
   const [localItems, setLocalItems] = useState(items);
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 6,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 6,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -78,7 +89,7 @@ export function SortableList<T extends SortableItem>({
         items={localItems.map((item) => item.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="grid gap-3">
+        <div className="grid min-w-0 gap-3">
           {localItems.map((item) => (
             <SortableRow key={item.id} id={item.id}>
               {(dragHandle) => renderItem(item, dragHandle)}
@@ -114,7 +125,7 @@ function SortableRow({
   const dragHandle = (
     <button
       type="button"
-      className="flex h-10 w-10 items-center justify-center rounded-lg border bg-background text-muted-foreground transition-colors hover:text-primary"
+      className="flex h-11 w-11 touch-none select-none items-center justify-center rounded-lg border bg-background text-muted-foreground transition-colors hover:text-primary active:cursor-grabbing sm:h-10 sm:w-10"
       {...attributes}
       {...listeners}
     >

@@ -26,7 +26,7 @@ export function ItemCard({
   onDelete: () => void;
 }) {
   return (
-    <div className="group flex gap-3 rounded-xl border bg-background p-3 shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
+    <div className="group flex min-w-0 gap-3 rounded-xl border bg-background p-3 shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
       {dragHandle}
       {avatar ? (
         <Avatar className="h-12 w-12 rounded-lg">
@@ -36,10 +36,10 @@ export function ItemCard({
           </AvatarFallback>
         </Avatar>
       ) : null}
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 overflow-hidden">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="font-bold leading-tight">{title}</h3>
+          <div className="min-w-0">
+            <h3 className="break-words font-bold leading-tight">{title}</h3>
             <p className="mt-1 text-xs font-semibold text-muted-foreground">
               {meta}
             </p>
@@ -48,11 +48,11 @@ export function ItemCard({
             {published ? "Published" : "Draft"}
           </Badge>
         </div>
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
+        <p className="mt-3 line-clamp-2 break-all text-sm leading-6 text-muted-foreground">
           {description}
         </p>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex shrink-0 flex-col gap-1">
         <Button variant="ghost" size="sm" onClick={onEdit}>
           <Edit className="h-4 w-4" />
         </Button>

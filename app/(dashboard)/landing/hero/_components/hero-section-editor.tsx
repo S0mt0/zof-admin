@@ -46,9 +46,9 @@ export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
 
   return (
     <LandingSectionShell section="hero">
-      <Card className="overflow-hidden">
+      <Card className="min-w-0 overflow-hidden">
         <CardHeader className="gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
+          <div className="min-w-0">
             <CardTitle>Hero copy and image</CardTitle>
             <CardDescription>
               This is the first message visitors see on the landing page.
@@ -56,8 +56,8 @@ export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
           </div>
           <SaveButton onClick={onSubmit} pending={isPending} />
         </CardHeader>
-        <CardContent className="grid items-start gap-5 lg:grid-cols-[1fr_380px]">
-          <div className="grid content-start gap-4">
+        <CardContent className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
+          <div className="grid min-w-0 content-start gap-4">
             <TextField
               label="Hero title"
               value={formData.title}

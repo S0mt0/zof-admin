@@ -40,13 +40,8 @@ export function uploadLandingImage(
       if (!url) return toast.error("Upload failed");
       onComplete(url);
       toast.success("Image uploaded");
-      console.log("url: ", url);
     })
-    .catch((error) => {
-      console.error("error: ", error);
-
-      toast.error("Upload failed");
-    })
+    .catch(() => toast.error("Upload failed"))
     .finally(() => {
       toast.dismiss(dismiss);
       event.target.value = "";

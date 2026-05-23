@@ -24,7 +24,7 @@ export function TextField({
   type?: string;
 }) {
   return (
-    <div className="grid content-start gap-2">
+    <div className="grid min-w-0 content-start gap-2">
       <Label>{label}</Label>
       <Input
         type={type}
@@ -53,7 +53,7 @@ export function TextareaField({
   maxLength?: number;
 }) {
   return (
-    <div className="grid content-start gap-2">
+    <div className="grid min-w-0 content-start gap-2">
       <Label>{label}</Label>
       <Textarea
         value={value}
@@ -102,7 +102,7 @@ export function ImagePicker({
   onUpload: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="grid content-start gap-3">
+    <div className="grid min-w-0 content-start gap-3">
       <Label>{label}</Label>
       <div className="overflow-hidden rounded-xl border bg-muted">
         {value ? (
