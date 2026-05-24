@@ -27,8 +27,8 @@ import {
 } from "@/components/common/form-controls";
 import { SortableList } from "@/components/common/sortable-list";
 
-import { ItemCard } from "../../_components/item-card";
-import { ItemManagerShell } from "../../_components/item-manager-shell";
+import { ItemCard } from "@/components/common/item-card";
+import { ItemManagerShell } from "@/components/common/item-manager-shell";
 
 const emptyFaqForm = {
   question: "",
