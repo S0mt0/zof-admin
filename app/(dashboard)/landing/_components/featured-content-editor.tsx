@@ -7,7 +7,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { ResourcePanel } from "./resource-panel";
-import { CtaButtonsManager } from "./landing-cta-buttons-manager";
+import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { SectionCopyCard } from "../../../../components/common/section-copy-card";
 
 export function FeaturedContentEditor({

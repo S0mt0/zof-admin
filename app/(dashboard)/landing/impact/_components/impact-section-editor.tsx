@@ -8,7 +8,7 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { LandingSectionShell } from "../../_components/landing-section-shell";
-import { CtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
+import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
 import { StatsManager } from "./stats-manager";
 
