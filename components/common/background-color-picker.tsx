@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { SwatchesPicker, type ColorResult } from "react-color";
+import { ChromePicker, type ColorResult } from "react-color";
 
-const DEFAULT_PRESETS = ["#F8F9F7", "#00AE88", "#f87171", "#224CA0", "#224CA0"];
+const DEFAULT_PRESETS = [
+  "#F8F9F7",
+  "#00AE88",
+  "#F36A3D",
+  "#224CA0",
+  "#026630",
+  "#020618",
+];
 
 interface BackgroundColorPickerProps {
   value: string;
@@ -9,6 +16,7 @@ interface BackgroundColorPickerProps {
   presets?: string[];
   label?: string;
   name?: string;
+  className?: string;
 }
 
 export function BackgroundColorPicker({
@@ -17,16 +25,19 @@ export function BackgroundColorPicker({
   presets = DEFAULT_PRESETS,
   label = "Background Color",
   name,
+  className,
 }: BackgroundColorPickerProps) {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <div className="space-y-3">
+    <div className={`space-y-3 ${className}`}>
       {name && <input type="hidden" name={name} value={value} />}
 
       <label className="block text-sm font-medium text-foreground">
         {label}
       </label>
+
+      <p className="text-xs my-2">Presets:</p>
 
       <div className="flex flex-wrap gap-3">
         {presets.map((preset) => {
@@ -52,6 +63,17 @@ export function BackgroundColorPicker({
         })}
       </div>
 
+      <p className="text-xs my-2">Preview:</p>
+      <div className="flex items-center gap-3">
+        <div
+          className="h-10 w-52 border border-border"
+          style={{ backgroundColor: value }}
+        />
+        <span className="text-sm font-mono text-muted-foreground uppercase">
+          {value}
+        </span>
+      </div>
+
       <div className="flex items-center gap-3">
         <button
           type="button"
@@ -60,14 +82,11 @@ export function BackgroundColorPicker({
         >
           {showPicker ? "Close picker" : "Custom color"}
         </button>
-        <span className="text-sm font-mono text-muted-foreground uppercase">
-          {value}
-        </span>
       </div>
 
       {showPicker && (
         <div className="inline-block">
-          <SwatchesPicker
+          <ChromePicker
             color={value}
             onChange={(c: ColorResult) => onChange(c.hex)}
           />

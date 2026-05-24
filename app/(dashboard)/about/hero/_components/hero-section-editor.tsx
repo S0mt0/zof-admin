@@ -22,6 +22,7 @@ import {
 
 import { AboutSectionShell } from "../../_components/about-section-shell";
 import { BackgroundColorPicker } from "@/components/common/background-color-picker";
+import { Separator } from "@/components/ui/separator";
 
 export function HeroSectionEditor({
   section,
@@ -49,7 +50,6 @@ export function HeroSectionEditor({
 
   return (
     <AboutSectionShell section="hero">
-      {/* =========================== */}
       <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle>Hero copy</CardTitle>
@@ -58,7 +58,7 @@ export function HeroSectionEditor({
             frontend.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid items-start gap-5 lg:grid-cols-[1fr_0.8fr]">
+        <CardContent className="grid items-start gap-x-6 gap-y-20 lg:grid-cols-[1fr_0.8fr]">
           <div className="grid content-start gap-4">
             <TextField
               label="Small theme title"
@@ -93,6 +93,7 @@ export function HeroSectionEditor({
               }
             />
             {/* Mission and vission */}
+            <Separator className="mt-8" />
             <CardTitle className="my-4">Mission and vission</CardTitle>
 
             <TextareaField
@@ -112,15 +113,21 @@ export function HeroSectionEditor({
               }
             />
 
+            <Separator className="mt-8" />
+
             {/* Background color picker */}
             <BackgroundColorPicker
               value={formData.heroBackgroundColor}
               onChange={(heroBackgroundColor) =>
                 setFormData((prev) => ({ ...prev, heroBackgroundColor }))
               }
+              label="Hero background color"
+              className="mt-4"
             />
           </div>
+
           <div className="grid content-start gap-4">
+            <Separator className="my-8 md:hidden" />
             <ImagePicker
               label="Hero image"
               value={formData.image || ""}
@@ -148,8 +155,20 @@ export function HeroSectionEditor({
                 setFormData((prev) => ({ ...prev, calloutText }))
               }
             />
+
+            {/* Hero image callout background color picker */}
+            <Separator className="mt-8" />
+            <BackgroundColorPicker
+              value={formData.calloutBackgroundColor}
+              onChange={(calloutBackgroundColor) =>
+                setFormData((prev) => ({ ...prev, calloutBackgroundColor }))
+              }
+              label="Hero image callout background color"
+              className="mt-4"
+            />
           </div>
         </CardContent>
+
         <CardFooter className="justify-end border-t bg-muted/20 px-6 py-4">
           <SaveButton onClick={onSubmit} pending={isPending} />
         </CardFooter>
