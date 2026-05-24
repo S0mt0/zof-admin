@@ -390,7 +390,7 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
                   {formData.name ? getInitials(formData.name) : ""}
                 </AvatarFallback>
               </Avatar>
-              <div className="space-y-2">
+              <div className="space-y-2 space-x-2">
                 <Label>Profile Photo</Label>
                 <input
                   ref={avatarInputRef}

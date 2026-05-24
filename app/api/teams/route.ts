@@ -13,7 +13,7 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const data = await listTeamMembers({
+    const teamMembers = await listTeamMembers({
       where: { status: "active" },
       select: {
         name: true,
@@ -21,8 +21,14 @@ export async function GET() {
         email: true,
         bio: true,
         avatar: true,
+        linkedin: true,
+        twitter: true,
       },
     });
+    const data = teamMembers.map((member) => ({
+      ...member,
+      x: member.twitter,
+    }));
 
     return Response.json(
       { message: "Team members fetched successfully", data },

@@ -14,14 +14,3 @@ interface CtaButtonContent {
   order: number;
   published: boolean;
 }
-
-type LandingSection =
-  | "hero"
-  | "about"
-  | "values"
-  | "volunteers"
-  | "impact"
-  | "testimonials"
-  | "featuredBlogs"
-  | "featuredEvents"
-  | "faqs";

@@ -145,7 +145,7 @@ export function TestimonialsManager({ items }: { items: Testimonial[] }) {
                   {formData.name ? getInitials(formData.name) : ""}
                 </AvatarFallback>
               </Avatar>
-              <div>
+              <div className="space-y-2 space-x-2">
                 <Label>Photo</Label>
                 <input
                   ref={avatarRef}

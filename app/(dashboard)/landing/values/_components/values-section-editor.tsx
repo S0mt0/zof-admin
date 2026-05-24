@@ -5,15 +5,12 @@ import { toast } from "sonner";
 
 import { updateLandingValuesAction } from "@/lib/actions/pages/landing/values.actions";
 import { showActionResult } from "@/lib/pages/landing";
-import {
-  SaveButton,
-  TextareaField,
-} from "@/components/common/form-controls";
+import { SaveButton, TextareaField } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";
-import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
+import { CtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
-import { SectionCopyCard } from "../../_components/section-copy-card";
+import { SectionCopyCard } from "@/components/common/section-copy-card";
 
 export function ValuesSectionEditor({
   section,

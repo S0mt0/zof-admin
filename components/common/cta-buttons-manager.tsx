@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AlertDialog } from "@/components/common/alert-dialog";
-import {
-  PublishSwitch,
-  TextField,
-} from "@/components/common/form-controls";
+import { PublishSwitch, TextField } from "@/components/common/form-controls";
 import { SortableList } from "@/components/common/sortable-list";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,12 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  createLandingCtaAction,
-  deleteLandingCtaAction,
-  reorderLandingCtasAction,
-  updateLandingCtaAction,
-} from "@/lib/actions/pages/landing/ctas.actions";
 
 import { ItemCard } from "./item-card";
 import { ItemManagerShell } from "./item-manager-shell";
@@ -44,12 +35,34 @@ const emptyCtaForm = {
   published: true,
 };
 
-export function CtaButtonsManager({
+type CtaActionSet<TSection extends string> = {
+  create: (
+    section: TSection,
+    values: typeof emptyCtaForm
+  ) => Promise<{ error?: string; success?: string }>;
+  update: (
+    section: TSection,
+    id: string,
+    values: typeof emptyCtaForm
+  ) => Promise<{ error?: string; success?: string }>;
+  delete: (
+    section: TSection,
+    id: string
+  ) => Promise<{ error?: string; success?: string }>;
+  reorder: (
+    section: TSection,
+    ids: string[]
+  ) => Promise<{ error?: string; success?: string }>;
+};
+
+export function CtaButtonsManager<TSection extends string>({
   section,
   items,
+  actions,
 }: {
-  section: LandingSection;
+  section: TSection;
   items: CtaButtonContent[];
+  actions?: CtaActionSet<TSection>;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -79,12 +92,12 @@ export function CtaButtonsManager({
 
   const onSubmit = () => {
     const action = target
-      ? updateLandingCtaAction(section, target.id, formData)
-      : createLandingCtaAction(section, formData);
+      ? actions?.update(section, target.id, formData)
+      : actions?.create(section, formData);
 
     startTransition(() => {
       action
-        .then((res) => {
+        ?.then((res) => {
           if (res?.error) return toast.error(res.error);
           toast.success(res?.success || "CTA saved");
           setOpen(false);
@@ -98,7 +111,8 @@ export function CtaButtonsManager({
     if (!deleteTarget) return;
 
     startTransition(() => {
-      deleteLandingCtaAction(section, deleteTarget.id)
+      actions
+        ?.delete(section, deleteTarget.id)
         .then((res) => {
           if (res?.error) return toast.error(res.error);
           toast.success(res?.success || "CTA deleted");
@@ -118,7 +132,7 @@ export function CtaButtonsManager({
     >
       <SortableList
         items={items}
-        onReorder={(ids) => reorderLandingCtasAction(section, ids)}
+        onReorder={(ids) => actions?.reorder(section, ids) as any}
         renderItem={(item, dragHandle) => (
           <ItemCard
             key={item.id}
@@ -146,9 +160,7 @@ export function CtaButtonsManager({
               label="Button label"
               value={formData.label}
               maxLength={42}
-              onChange={(label) =>
-                setFormData((prev) => ({ ...prev, label }))
-              }
+              onChange={(label) => setFormData((prev) => ({ ...prev, label }))}
             />
             <TextField
               label="Button link"

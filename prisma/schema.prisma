@@ -381,6 +381,11 @@ model AboutPage {
   aboutUs   String   @default("")
   vision    String   @default("")
   mission   String   @default("")
+  hero      AboutHeroSection?
+  story     AboutStorySection?
+  team      AboutTeamSection?
+  foundersMessage AboutFoundersMessageSection?
+  cta       AboutCtaSection?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -505,6 +510,44 @@ type FaqItem {
   answer    String
   order     Int
   published Boolean
+}
+
+type AboutHeroSection {
+  intro        SectionIntro
+  image        String?
+  mission      String
+  vision       String
+  calloutTitle String?
+  calloutText  String?
+  heroBackgroundColor  String?
+  calloutBackgroundColor  String?
+}
+
+type AboutStorySection {
+  intro        SectionIntro
+  body         String
+  image        String?
+  captionTitle String?
+  captionText  String?
+  trustPoints  String[]
+}
+
+type AboutTeamSection {
+  intro SectionIntro
+}
+
+type AboutFoundersMessageSection {
+  intro      SectionIntro
+  quote      String
+  body       String
+  image      String?
+  ctas       CtaButton[]
+}
+
+type AboutCtaSection {
+  intro           SectionIntro
+  backgroundImage String?
+  ctas            CtaButton[]
 }
 
 model WebsiteSettings {

@@ -19,7 +19,7 @@ import {
   TextareaField,
   TextField,
 } from "@/components/common/form-controls";
-import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
+import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
 
 export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {

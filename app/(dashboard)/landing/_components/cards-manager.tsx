@@ -28,8 +28,8 @@ import {
 } from "@/components/common/form-controls";
 import { SortableList } from "@/components/common/sortable-list";
 
-import { ItemCard } from "./item-card";
-import { ItemManagerShell } from "./item-manager-shell";
+import { ItemCard } from "@/components/common/item-card";
+import { ItemManagerShell } from "@/components/common/item-manager-shell";
 
 type CardSection = "about" | "values";
 

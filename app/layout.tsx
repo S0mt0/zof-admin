@@ -40,7 +40,7 @@ export default async function RootLayout({
       <body className={`${quicksand.className} ${inter.variable}`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

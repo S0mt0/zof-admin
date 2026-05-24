@@ -41,6 +41,10 @@ const dashboardItem = {
   gradient: "from-blue-400 to-blue-600",
 };
 
+type SidebarNestedItem =
+  | { title: string; url: string; icon: ElementType; type?: never }
+  | { title: string; type: "separator"; url?: never; icon?: never };
+
 const landingItems = [
   { title: "Hero", url: "/landing/hero", icon: Sparkles },
   { title: "Who We Are", url: "/landing/about", icon: Info },
@@ -54,10 +58,15 @@ const landingItems = [
 ];
 
 const aboutItems = [
-  { title: "About Us", url: "/about", icon: Info },
-  { title: "Team", url: "/team", icon: Users },
+  { title: "Hero", url: "/about/hero", icon: Sparkles },
+  { title: "Story", url: "/about/story", icon: Info },
+  { title: "Team Section", url: "/about/team", icon: Users },
+  { title: "Founder’s Message", url: "/about/founder-message", icon: MessageSquareQuote },
+  { title: "CTA", url: "/about/cta", icon: Target },
+  { type: "separator", title: "People" },
+  { title: "Team Members", url: "/team", icon: Users },
   { title: "Volunteers", url: "/volunteers", icon: Heart },
-];
+] satisfies SidebarNestedItem[];
 
 const contactItems = [
   { title: "Info", url: "/contact/info", icon: Contact },
@@ -77,6 +86,9 @@ const isPathActive = (pathname: string, url: string) => {
   return pathname === cleanUrl || pathname.startsWith(`${cleanUrl}/`);
 };
 
+const isNestedItemActive = (pathname: string, item: SidebarNestedItem) =>
+  item.type === "separator" ? false : isPathActive(pathname, item.url);
+
 export const NavigationItems = () => {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
@@ -87,14 +99,16 @@ export const NavigationItems = () => {
 
   const pagesOpen =
     landingItems.some((item) => isPathActive(pathname, item.url)) ||
-    aboutItems.some((item) => isPathActive(pathname, item.url)) ||
+    aboutItems.some((item) => isNestedItemActive(pathname, item)) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
     pageItems.some((item) => isPathActive(pathname, item.url));
 
   const landingOpen = landingItems.some((item) =>
     isPathActive(pathname, item.url)
   );
-  const aboutOpen = aboutItems.some((item) => isPathActive(pathname, item.url));
+  const aboutOpen = aboutItems.some((item) =>
+    isNestedItemActive(pathname, item)
+  );
   const contactOpen = contactItems.some((item) =>
     isPathActive(pathname, item.url)
   );
@@ -193,7 +207,7 @@ function SidebarNestedSection({
   title: string;
   icon: ElementType;
   defaultOpen: boolean;
-  items: { title: string; url: string; icon: ElementType }[];
+  items: SidebarNestedItem[];
   pathname: string;
   onNavigate: () => void;
 }) {
@@ -207,20 +221,33 @@ function SidebarNestedSection({
         </CollapsibleTrigger>
         <CollapsibleContent>
           <ul className="ml-4 mt-1 flex flex-col gap-1 border-l border-sidebar-border pl-2">
-            {items.map((item) => (
-              <SidebarMenuSubItem key={item.title}>
-                <SidebarMenuSubButton
-                  asChild
-                  size="sm"
-                  isActive={isPathActive(pathname, item.url)}
-                >
-                  <Link href={item.url} onClick={onNavigate}>
-                    <item.icon className="h-3.5 w-3.5" />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
+            {items.map((item) => {
+              if (item.type === "separator") {
+                return (
+                  <li
+                    key={item.title}
+                    className="px-2 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-sidebar-foreground/45"
+                  >
+                    {item.title}
+                  </li>
+                );
+              }
+
+              return (
+                <SidebarMenuSubItem key={item.title}>
+                  <SidebarMenuSubButton
+                    asChild
+                    size="sm"
+                    isActive={isPathActive(pathname, item.url)}
+                  >
+                    <Link href={item.url} onClick={onNavigate}>
+                      <item.icon className="h-3.5 w-3.5" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              );
+            })}
           </ul>
         </CollapsibleContent>
       </Collapsible>

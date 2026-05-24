@@ -8,9 +8,9 @@ import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton } from "@/components/common/form-controls";
 
 import { FaqItemsManager } from "./faq-items-manager";
-import { CtaButtonsManager } from "../../_components/cta-buttons-manager";
+import { CtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
-import { SectionCopyCard } from "../../_components/section-copy-card";
+import { SectionCopyCard } from "@/components/common/section-copy-card";
 
 export function FaqsSectionEditor({ section }: { section: FaqSectionContent }) {
   const [formData, setFormData] = useState({ intro: section.intro });
