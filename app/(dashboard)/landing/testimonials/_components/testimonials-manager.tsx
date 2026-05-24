@@ -33,8 +33,8 @@ import {
 import { uploadLandingImage } from "@/lib/pages/landing";
 import { getInitials } from "@/lib/utils";
 
-import { ItemCard } from "../../_components/item-card";
-import { ItemManagerShell } from "../../_components/item-manager-shell";
+import { ItemCard } from "@/components/common/item-card";
+import { ItemManagerShell } from "@/components/common/item-manager-shell";
 
 const emptyTestimonialForm = {
   name: "",
