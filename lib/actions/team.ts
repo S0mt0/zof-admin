@@ -42,6 +42,7 @@ export const createTeamMemberAction = async (
       addedBy: user.id,
       joinDate: new Date(data.joinDate),
       name: capitalize(validated.data.name),
+      twitter: data.twitter || data.x,
     };
 
     const created = await createTeamMember(payload);
@@ -51,6 +52,7 @@ export const createTeamMemberAction = async (
         `${user.name} (${user.role}) added ${created.name} to the team as "${created.role}"`
       );
       revalidatePath("/");
+      revalidatePath("/team");
     }
 
     return { success: "Team member added" };
@@ -81,6 +83,7 @@ export const updateTeamMemberAction = async (
     const updated = await updateTeamMember(id, {
       ...data,
       joinDate: new Date(data.joinDate),
+      twitter: data.twitter || data.x,
     });
 
     if (updated) {
@@ -89,6 +92,7 @@ export const updateTeamMemberAction = async (
         `${user.name} (${user.role}) made some changes to ${updated.name}'s details.`
       );
       revalidatePath("/");
+      revalidatePath("/team");
     }
 
     return { success: "Team member updated" };
@@ -112,6 +116,7 @@ export const deleteTeamMemberAction = async (id: string) => {
         `${user.name} (${user.role}) removed ${deleted.name} from the team`
       );
       revalidatePath("/");
+      revalidatePath("/team");
     }
 
     return { success: "Team member removed" };

@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { TeamMemberSchema } from "../schemas";
+import { teamSocialFields } from "../team-social-fields";
 import { handleFileUpload } from "../utils";
 import {
   createTeamMemberAction,
@@ -22,9 +24,11 @@ import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 export const useWriteTeam = ({
   initialData,
   mode,
+  onSuccess,
 }: {
   initialData?: TeamMember | null;
   mode: "create" | "edit";
+  onSuccess?: () => void;
 }) => {
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -46,7 +50,18 @@ export const useWriteTeam = ({
       department: initialData?.department || "",
       location: initialData?.location || "",
       skills: initialData?.skills || [],
+      facebook: initialData?.facebook || "",
+      x: initialData?.x || initialData?.twitter || "",
+      instagram: initialData?.instagram || "",
+      youtube: initialData?.youtube || "",
       linkedin: initialData?.linkedin || "",
+      tiktok: initialData?.tiktok || "",
+      threads: initialData?.threads || "",
+      whatsapp: initialData?.whatsapp || "",
+      telegram: initialData?.telegram || "",
+      snapchat: initialData?.snapchat || "",
+      pinterest: initialData?.pinterest || "",
+      medium: initialData?.medium || "",
       twitter: initialData?.twitter || "",
       github: initialData?.github || "",
     }),
@@ -57,6 +72,10 @@ export const useWriteTeam = ({
     resolver: zodResolver(TeamMemberSchema),
     defaultValues: initialValues,
   });
+
+  useEffect(() => {
+    form.reset(initialValues);
+  }, [form, initialValues]);
 
   const addSkill = () => {
     const skill = skillsInput.trim();
@@ -125,7 +144,7 @@ export const useWriteTeam = ({
           if (res?.success) {
             toast.success(res.success);
             form.reset();
-            router.push("/team");
+            onSuccess?.() || router.push("/team");
           }
         });
       } else if (mode === "edit" && initialData?.id) {
@@ -133,7 +152,7 @@ export const useWriteTeam = ({
           if (res?.error) toast.error(res.error);
           if (res?.success) {
             toast.success(res.success);
-            router.push("/team");
+            onSuccess?.() || router.push("/team");
           }
         });
       }
@@ -155,7 +174,9 @@ export const useWriteTeam = ({
     values.department !== initialValues.department ||
     values.location !== initialValues.location ||
     !arraysEqual(values.skills || [], initialValues.skills || []) ||
-    (values.linkedin || "") !== (initialValues.linkedin || "") ||
+    teamSocialFields.some(
+      (field) => (values[field.name] || "") !== (initialValues[field.name] || "")
+    ) ||
     (values.twitter || "") !== (initialValues.twitter || "") ||
     (values.github || "") !== (initialValues.github || "");
 

@@ -11,18 +11,17 @@ import {
   TextareaField,
   TextField,
 } from "@/components/common/form-controls";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-
-import { SectionCopyCard } from "@/components/common/section-copy-card";
+import { Separator } from "@/components/ui/separator";
 import { AboutSectionShell } from "../../_components/about-section-shell";
+import { AboutTrustPointsManager } from "./about-trust-points-manager";
 
 export function StorySectionEditor({
   section,
@@ -34,11 +33,11 @@ export function StorySectionEditor({
     image: section.image || "",
     captionTitle: section.captionTitle || "",
     captionText: section.captionText || "",
-    trustPoints: section.trustPoints || [],
+    body: section.body || "",
   });
-  const [trustPoint, setTrustPoint] = useState("");
   const [isPending, startTransition] = useTransition();
   const imageRef = useRef<HTMLInputElement | null>(null);
+  const trustPoints = section.trustPoints || [];
 
   const onSubmit = () => {
     startTransition(() => {
@@ -48,63 +47,52 @@ export function StorySectionEditor({
     });
   };
 
-  const addTrustPoint = () => {
-    const value = trustPoint.trim();
-    if (!value || formData.trustPoints.includes(value)) return;
-    setFormData((prev) => ({
-      ...prev,
-      trustPoints: [...prev.trustPoints, value],
-    }));
-    setTrustPoint("");
-  };
-
-  const removeTrustPoint = (point: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      trustPoints: prev.trustPoints.filter((item) => item !== point),
-    }));
-  };
-
   return (
     <AboutSectionShell section="story">
-      <SectionCopyCard
-        title="Story section copy"
-        intro={formData.intro}
-        onIntroChange={(intro) => setFormData((prev) => ({ ...prev, intro }))}
-        footer={<SaveButton onClick={onSubmit} pending={isPending} />}
-      >
-        <ImagePicker
-          label="Story image"
-          value={formData.image || ""}
-          inputRef={imageRef}
-          onUpload={(event) =>
-            uploadLandingImage(event, (image) =>
-              setFormData((prev) => ({ ...prev, image }))
-            )
-          }
-        />
-      </SectionCopyCard>
-
-      <Card>
-        <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle>Story body and details</CardTitle>
-            <CardDescription>
-              Edit the paragraph, image caption, and trust points.
-            </CardDescription>
-          </div>
-          <SaveButton onClick={onSubmit} pending={isPending} />
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle>Story section</CardTitle>
+          <CardDescription>Edit the story, image, and caption.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-5 lg:grid-cols-[1fr_0.8fr]">
-          <TextareaField
-            label="Story body"
-            value={formData.body}
-            maxLength={600}
-            onChange={(body) => setFormData((prev) => ({ ...prev, body }))}
-          />
+        <CardContent className="grid items-start gap-x-6 gap-y-20 lg:grid-cols-[1fr_0.8fr]">
+          {/* Left column: Story body and trust points */}
           <div className="grid content-start gap-4">
             <TextField
-              label="Caption title"
+              label="Heading"
+              value={formData.intro?.heading || ""}
+              maxLength={120}
+              onChange={(heading) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  intro: { ...prev.intro, heading },
+                }))
+              }
+            />
+            <TextareaField
+              label="Story"
+              value={formData.body}
+              maxLength={600}
+              onChange={(body) => setFormData((prev) => ({ ...prev, body }))}
+            />
+
+            <AboutTrustPointsManager items={trustPoints} />
+          </div>
+
+          {/* Right column: Image and captions */}
+          <div className="grid content-start gap-4">
+            <Separator className="my-8 md:hidden" />
+            <ImagePicker
+              label="Story image"
+              value={formData.image || ""}
+              inputRef={imageRef}
+              onUpload={(event) =>
+                uploadLandingImage(event, (image) =>
+                  setFormData((prev) => ({ ...prev, image }))
+                )
+              }
+            />
+            <TextField
+              label="Image caption title"
               value={formData.captionTitle || ""}
               maxLength={48}
               onChange={(captionTitle) =>
@@ -112,45 +100,18 @@ export function StorySectionEditor({
               }
             />
             <TextareaField
-              label="Caption text"
+              label="Image caption text"
               value={formData.captionText || ""}
               maxLength={180}
               onChange={(captionText) =>
                 setFormData((prev) => ({ ...prev, captionText }))
               }
             />
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Trust points</label>
-              <div className="flex gap-2">
-                <Input
-                  value={trustPoint}
-                  onChange={(event) => setTrustPoint(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      addTrustPoint();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" onClick={addTrustPoint}>
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.trustPoints.map((point) => (
-                  <button
-                    key={point}
-                    type="button"
-                    onClick={() => removeTrustPoint(point)}
-                    className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    {point} ×
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         </CardContent>
+        <CardFooter className="justify-end border-t bg-muted/20 px-6 py-4">
+          <SaveButton onClick={onSubmit} pending={isPending} />
+        </CardFooter>
       </Card>
     </AboutSectionShell>
   );

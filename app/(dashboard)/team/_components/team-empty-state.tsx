@@ -3,10 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserRoundPlus } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function TeamEmptyState() {
-  const router = useRouter();
+export default function TeamEmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <Card className="border-dashed">
       <CardContent className="flex flex-col items-center justify-center gap-3 py-14 text-center">
@@ -19,9 +17,7 @@ export default function TeamEmptyState() {
             Add your first team member to get started.
           </p>
         </div>
-        <Button onClick={() => router.push("/team/new")}>
-          Add Team Member
-        </Button>
+        <Button onClick={onAdd}>Add Team Member</Button>
       </CardContent>
     </Card>
   );

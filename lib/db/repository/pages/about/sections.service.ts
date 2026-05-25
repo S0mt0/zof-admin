@@ -1,4 +1,5 @@
 import { getAboutPageData, updateAboutPageData } from "./core.service";
+import { normalizeAboutTrustPoints } from "./utils";
 
 export const updateAboutHeroSettings = (
   values: AboutHeroSectionContent
@@ -18,7 +19,13 @@ export const updateAboutStorySettings = (
   getAboutPageData().then((page) =>
     updateAboutPageData({
       aboutUs: values.body,
-      story: { set: { ...page.story, ...values } },
+      story: {
+        set: {
+          ...page.story,
+          ...values,
+          trustPoints: normalizeAboutTrustPoints(page.story.trustPoints),
+        },
+      },
     })
   );
 

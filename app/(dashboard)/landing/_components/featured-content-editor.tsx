@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
-import { ResourcePanel } from "./resource-panel";
+import { ResourcePanel } from "../../../../components/common/resource-panel";
 import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { SectionCopyCard } from "../../../../components/common/section-copy-card";
 

@@ -8,7 +8,7 @@ import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
 import { ImagePicker, SaveButton } from "@/components/common/form-controls";
 
 import { SectionCopyCard } from "@/components/common/section-copy-card";
-import { AboutCtaButtonsManager } from "../../_components/about-cta-buttons-manager";
+import { AboutCtaButtonsManager } from "./about-cta-buttons-manager";
 import { AboutSectionShell } from "../../_components/about-section-shell";
 
 export function CtaSectionEditor({

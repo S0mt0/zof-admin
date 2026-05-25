@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AddedByCard } from "./added-by";
 import { getInitials } from "@/lib/utils";
+import { teamSocialFields } from "@/lib/team-social-fields";
 
 type Props = {
   member: TeamMember;
@@ -42,6 +43,10 @@ export default function TeamMemberCard({
   onDelete,
   getStatusColor,
 }: Props) {
+  const visibleSocials = teamSocialFields.filter((field) =>
+    Boolean(member[field.name])
+  );
+
   return (
     <Card>
       <CardHeader className="pb-4">
@@ -126,6 +131,17 @@ export default function TeamMemberCard({
             </div>
           )}
         </div>
+
+        {visibleSocials.length > 0 || member.github ? (
+          <div className="flex flex-wrap gap-2">
+            {visibleSocials.map((field) => (
+              <Badge key={field.name} variant="outline">
+                {field.label}
+              </Badge>
+            ))}
+            {member.github ? <Badge variant="outline">GitHub</Badge> : null}
+          </div>
+        ) : null}
         <AddedByCard admin={member.addedByUser} />
       </CardContent>
     </Card>

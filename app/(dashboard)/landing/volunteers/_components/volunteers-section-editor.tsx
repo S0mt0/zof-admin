@@ -5,13 +5,12 @@ import { toast } from "sonner";
 
 import { updateLandingVolunteersAction } from "@/lib/actions/pages/landing/volunteers.actions";
 import { showActionResult } from "@/lib/pages/landing";
-
-import { SaveButton, TextareaField } from "@/components/common/form-controls";
-
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
-import { LandingSectionShell } from "../../_components/landing-section-shell";
-import { ResourcePanel } from "../../_components/resource-panel";
+import { ResourcePanel } from "@/components/common/resource-panel";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
+import { SaveButton, TextareaField } from "@/components/common/form-controls";
+import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
+
+import { LandingSectionShell } from "../../_components/landing-section-shell";
 
 export function VolunteersSectionEditor({
   section,

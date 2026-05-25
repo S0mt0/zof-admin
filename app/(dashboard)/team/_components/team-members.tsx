@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -6,11 +7,14 @@ import { Input } from "@/components/ui/input";
 import EmailModal from "@/components/common/email-modal";
 import TeamMemberCard from "./team-member-card";
 import TeamEmptyState from "./team-empty-state";
+import { TeamMemberFormDialog } from "./team-member-form-dialog";
 
 import { useReadTeam } from "@/lib/hooks";
 import { AlertDialog } from "@/components/common/alert-dialog";
 
 export function TeamMembers({ members }: { members: TeamMember[] }) {
+  const [formOpen, setFormOpen] = useState(false);
+  const [formTarget, setFormTarget] = useState<TeamMember | null>(null);
   const {
     emailMessage,
     emailOpen,
@@ -34,6 +38,22 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     setTarget,
   } = useReadTeam(members);
 
+  const openCreateForm = () => {
+    setFormTarget(null);
+    setFormOpen(true);
+  };
+
+  const openEditForm = (member: TeamMember) => {
+    setFormTarget(member);
+    setFormOpen(true);
+  };
+
+  const onSaved = () => {
+    setFormOpen(false);
+    setFormTarget(null);
+    router.refresh();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -46,21 +66,21 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
             className="pl-10"
           />
         </div>
-        <Button onClick={() => router.push("/team/new")}>
+        <Button onClick={openCreateForm}>
           <Plus className="h-4 w-4 mr-2" />
           Add Team Member
         </Button>
       </div>
 
       {filteredMembers.length === 0 ? (
-        <TeamEmptyState />
+        <TeamEmptyState onAdd={openCreateForm} />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredMembers.map((member) => (
             <TeamMemberCard
               key={member.id}
               member={member}
-              onEdit={() => router.push(`/team/${member.id}/edit`)}
+              onEdit={() => openEditForm(member)}
               onEmail={() => openEmailModal(member)}
               onDelete={() => {
                 setTarget(member);
@@ -84,6 +104,17 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
         disabled={isPending}
         pending={isPending}
       />
+
+      {formOpen ? (
+        <TeamMemberFormDialog
+          key={formTarget?.id || "create"}
+          open={formOpen}
+          mode={formTarget ? "edit" : "create"}
+          initialData={formTarget}
+          onOpenChange={setFormOpen}
+          onSaved={onSaved}
+        />
+      ) : null}
 
       <AlertDialog
         isOpen={openDialog}

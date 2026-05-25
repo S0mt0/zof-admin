@@ -13,13 +13,25 @@ export const AboutHeroSectionSchema = z.object({
   calloutBackgroundColor: optionalText,
 });
 
+export const trustPointSchema = z.object({
+  id: z.string(),
+  point: z.string().trim().min(1, { message: "Trust point is required" }),
+  order: z.number(),
+  published: z.boolean(),
+});
+
+export const AboutTrustPointSchema = trustPointSchema.omit({
+  id: true,
+  order: true,
+});
+
 export const AboutStorySectionSchema = z.object({
   intro: SectionIntroSchema,
   body: z.string().trim().min(1, { message: "Story body is required" }),
   image: optionalText,
   captionTitle: optionalText,
   captionText: optionalText,
-  trustPoints: z.array(z.string().trim().min(1)).default([]),
+  trustPoints: z.array(trustPointSchema).default([]),
 });
 
 export const AboutTeamSectionSchema = z.object({

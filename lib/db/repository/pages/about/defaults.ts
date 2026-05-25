@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { aboutCta, aboutIntro } from "./utils";
 
 export const defaultAboutPageData = (
@@ -42,10 +43,30 @@ export const defaultAboutPageData = (
       captionText:
         "A group photo with some of the team members and volunteers during a community outreach event.",
       trustPoints: [
-        "Education support",
-        "Relief outreach",
-        "Women empowerment",
-        "Youth development",
+        {
+          id: randomUUID(),
+          point: "Education support",
+          published: true,
+          order: 0,
+        },
+        {
+          id: randomUUID(),
+          point: "Relief outreach",
+          published: true,
+          order: 1,
+        },
+        {
+          id: randomUUID(),
+          point: "Women empowerment",
+          published: true,
+          order: 2,
+        },
+        {
+          id: randomUUID(),
+          point: "Youth development",
+          published: true,
+          order: 3,
+        },
       ],
     },
     team: {
@@ -59,8 +80,7 @@ export const defaultAboutPageData = (
       intro: aboutIntro("Founder's message", "A note from the founder.", ""),
       quote:
         "We started this foundation because care should not feel far away from the people who need it most.",
-      body:
-        "Every outreach begins with listening. We pay attention to what families are carrying, what children need to keep learning, and what women and young people need to move with more confidence.\n\nMy hope is that every person who meets this work feels seen, respected, and supported in a practical way. The goal is not noise. The goal is useful help, delivered with dignity and followed through with care.",
+      body: "Every outreach begins with listening. We pay attention to what families are carrying, what children need to keep learning, and what women and young people need to move with more confidence.\n\nMy hope is that every person who meets this work feels seen, respected, and supported in a practical way. The goal is not noise. The goal is useful help, delivered with dignity and followed through with care.",
       image: "",
       ctas: [aboutCta("Reach out", "/contact")],
     },

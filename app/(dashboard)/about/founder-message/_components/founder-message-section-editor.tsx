@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/card";
 
 import { SectionCopyCard } from "@/components/common/section-copy-card";
-import { AboutCtaButtonsManager } from "../../_components/about-cta-buttons-manager";
+import { AboutCtaButtonsManager } from "../../cta/_components/about-cta-buttons-manager";
 import { AboutSectionShell } from "../../_components/about-section-shell";
 
 export function FounderMessageSectionEditor({

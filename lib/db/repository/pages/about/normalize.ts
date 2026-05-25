@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 
 import { defaultAboutPageData } from "./defaults";
-import { sortAboutItems } from "./utils";
+import { normalizeAboutTrustPoints, sortAboutItems } from "./utils";
 
 const normalizeIntro = (
   current: Partial<SectionIntroContent> | undefined,
@@ -30,6 +30,22 @@ const normalizeCtas = (
   );
 };
 
+const normalizeTrustPoints = (
+  current: any,
+  fallback: AboutPageTrustPoint[]
+): AboutPageTrustPoint[] => {
+  if (!Array.isArray(current)) return fallback;
+
+  return normalizeAboutTrustPoints(
+    current.map((trustPoint: Partial<AboutPageTrustPoint>, index: number) => ({
+      id: trustPoint.id || randomUUID(),
+      point: trustPoint.point || "",
+      order: typeof trustPoint.order === "number" ? trustPoint.order : index,
+      published: trustPoint.published !== false,
+    }))
+  );
+};
+
 export const normalizeAboutPageData = (data: any): AboutPageContent => {
   const fallback = defaultAboutPageData({
     aboutUs: data.aboutUs,
@@ -52,9 +68,10 @@ export const normalizeAboutPageData = (data: any): AboutPageContent => {
       ...(data.story || {}),
       intro: normalizeIntro(data.story?.intro, fallback.story.intro),
       body: data.story?.body || data.aboutUs || fallback.story.body,
-      trustPoints: Array.isArray(data.story?.trustPoints)
-        ? data.story.trustPoints
-        : fallback.story.trustPoints,
+      trustPoints: normalizeTrustPoints(
+        data.story?.trustPoints,
+        fallback.story.trustPoints
+      ),
     },
     team: {
       ...fallback.team,

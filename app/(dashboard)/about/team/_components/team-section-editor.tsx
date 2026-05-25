@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { updateAboutTeamAction } from "@/lib/actions/pages/about";
 import { showActionResult } from "@/lib/pages/landing";
 import { SaveButton } from "@/components/common/form-controls";
-
+import { ResourcePanel } from "@/components/common/resource-panel";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
+
 import { AboutSectionShell } from "../../_components/about-section-shell";
 
 export function TeamSectionEditor({
@@ -33,6 +34,13 @@ export function TeamSectionEditor({
         intro={formData.intro}
         onIntroChange={(intro) => setFormData((prev) => ({ ...prev, intro }))}
         footer={<SaveButton onClick={onSubmit} pending={isPending} />}
+      />
+
+      <ResourcePanel
+        title="Team roster"
+        description={"You can manage team members here."}
+        href="/team"
+        label="Manage team"
       />
     </AboutSectionShell>
   );

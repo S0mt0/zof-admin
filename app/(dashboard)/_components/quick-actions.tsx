@@ -30,7 +30,7 @@ const quickActions = [
     icon: Users,
     gradient: "from-purple-400 to-purple-600",
     hoverBg: "hover:bg-purple-50/40",
-    href: "/team/new",
+    href: "/team",
   },
   {
     title: "View Messages",

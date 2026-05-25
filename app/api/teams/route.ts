@@ -21,13 +21,25 @@ export async function GET() {
         email: true,
         bio: true,
         avatar: true,
+        facebook: true,
+        x: true,
+        instagram: true,
+        youtube: true,
         linkedin: true,
+        tiktok: true,
+        threads: true,
+        whatsapp: true,
+        telegram: true,
+        snapchat: true,
+        pinterest: true,
+        medium: true,
         twitter: true,
+        github: true,
       },
     });
     const data = teamMembers.map((member) => ({
       ...member,
-      x: member.twitter,
+      x: member.x || member.twitter,
     }));
 
     return Response.json(

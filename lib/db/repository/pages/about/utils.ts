@@ -22,3 +22,20 @@ export const aboutCta = (
 
 export const sortAboutItems = <T extends { order: number }>(items: T[]) =>
   [...items].sort((a, b) => a.order - b.order);
+
+export const normalizeAboutTrustPoints = (
+  items: AboutPageTrustPoint[] = []
+): AboutPageTrustPoint[] => {
+  let publishedCount = 0;
+
+  return sortAboutItems(items).map((item, order) => {
+    const published = item.published && publishedCount < 4;
+    if (published) publishedCount += 1;
+
+    return {
+      ...item,
+      order,
+      published,
+    };
+  });
+};

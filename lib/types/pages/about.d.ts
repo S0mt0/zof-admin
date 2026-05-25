@@ -27,13 +27,20 @@ interface AboutHeroSectionContent {
   calloutBackgroundColor?: string | null;
 }
 
+interface AboutPageTrustPoint {
+  id: string;
+  point: string;
+  published: boolean;
+  order: number;
+}
+
 interface AboutStorySectionContent {
   intro: SectionIntroContent;
   body: string;
   image?: string | null;
   captionTitle?: string | null;
   captionText?: string | null;
-  trustPoints: string[];
+  trustPoints: AboutPageTrustPoint[];
 }
 
 interface AboutTeamSectionContent {

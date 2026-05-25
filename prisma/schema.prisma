@@ -221,7 +221,18 @@ model TeamMember {
 
   
   // Social links
+  facebook     String?
+  x            String?
+  instagram    String?
+  youtube      String?
   linkedin     String?
+  tiktok       String?
+  threads      String?
+  whatsapp     String?
+  telegram     String?
+  snapchat     String?
+  pinterest    String?
+  medium       String?
   twitter      String?
   github       String?
   
@@ -487,6 +498,13 @@ type CtaButton {
   published Boolean
 }
 
+type AboutPageTrustPoint {
+  id        String
+  point     String
+  order     Int
+  published Boolean
+}
+
 type SectionCardItem {
   id          String
   subject     String
@@ -529,7 +547,7 @@ type AboutStorySection {
   image        String?
   captionTitle String?
   captionText  String?
-  trustPoints  String[]
+  trustPoints  AboutPageTrustPoint[]
 }
 
 type AboutTeamSection {

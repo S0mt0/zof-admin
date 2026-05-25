@@ -23,7 +23,7 @@ export function ResourcePanel({
   return (
     <Card className="overflow-hidden border-primary/20 bg-primary/5">
       <CardHeader className="gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="space-y-2">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>

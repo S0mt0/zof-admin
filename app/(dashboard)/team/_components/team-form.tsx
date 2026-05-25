@@ -29,6 +29,7 @@ import {
 
 import { getInitials } from "@/lib/utils";
 import { useWriteTeam } from "@/lib/hooks";
+import { teamSocialFields } from "@/lib/team-social-fields";
 
 interface TeamFormProps {
   initialData?: TeamMember | null;
@@ -228,36 +229,21 @@ export default function TeamForm({ mode, initialData }: TeamFormProps) {
                 <div className="space-y-2">
                   <FormLabel>Social Links</FormLabel>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="linkedin"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>LinkedIn</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="https://linkedin.com/in/username"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="twitter"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Twitter</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="https://twitter.com/username"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    {teamSocialFields.map((social) => (
+                      <FormField
+                        key={social.name}
+                        control={form.control}
+                        name={social.name}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{social.label}</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder={social.placeholder} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    ))}
                     <FormField
                       control={form.control}
                       name="github"

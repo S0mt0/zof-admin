@@ -55,7 +55,10 @@ export const useReadTeam = (members: TeamMember[]) => {
       deleteTeamMemberAction(mmemberId)
         .then((res) => {
           if (res?.error) toast.error(res.error);
-          if (res?.success) toast.success(res.success);
+          if (res?.success) {
+            toast.success(res.success);
+            router.refresh();
+          }
         })
         .catch((e) => {
           toast.error("Something went wrong");
