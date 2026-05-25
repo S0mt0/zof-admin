@@ -148,9 +148,7 @@ export function AboutTrustPointsManager({
               label="Trust point"
               value={formData.point}
               maxLength={48}
-              onChange={(point) =>
-                setFormData((prev) => ({ ...prev, point }))
-              }
+              onChange={(point) => setFormData((prev) => ({ ...prev, point }))}
             />
             <PublishSwitch
               checked={formData.published}

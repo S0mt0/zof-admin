@@ -13,6 +13,12 @@ const publishedCtas = (items: CtaButtonContent[] = []) =>
     .sort((a, b) => a.order - b.order)
     .slice(0, 2);
 
+const publishedTrustPoints = (items: AboutPageTrustPoint[] = []) =>
+  items
+    .filter((item) => item.published)
+    .sort((a, b) => a.order - b.order)
+    .slice(0, 4);
+
 export async function OPTIONS() {
   return new Response(null, { headers: corsHeaders });
 }
@@ -22,7 +28,10 @@ export async function GET() {
     const about = await getAboutPageData();
     const data = {
       hero: about.hero,
-      story: about.story,
+      story: {
+        ...about.story,
+        trustPoints: publishedTrustPoints(about.story.trustPoints),
+      },
       team: about.team,
       foundersMessage: {
         ...about.foundersMessage,
