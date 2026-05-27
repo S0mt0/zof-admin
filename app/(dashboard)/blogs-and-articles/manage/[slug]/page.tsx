@@ -54,10 +54,9 @@ export default async function ViewBlogPage({
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
-        title="View Blog Post"
         breadcrumbs={[
           { label: "Blog Posts", href: "/blogs-and-articles/manage" },
-          { label: `${capitalize(blog.title.slice(0, 20))}...` },
+          { label: `${blog.title}` },
         ]}
       />
 
