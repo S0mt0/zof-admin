@@ -2,7 +2,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { bulkDeleteBlogsAction, deleteBlogAction } from "../actions/blogs";
+import {
+  bulkDeleteBlogsAction,
+  deleteBlogAction,
+} from "../actions/pages/blogs";
 import { EDITORIAL_ROLES } from "../constants";
 import { useCurrentUser } from "./use-current-user";
 
@@ -109,11 +112,11 @@ export const useReadBlogs = (blogs: Omit<Blog, "comments">[]) => {
   );
 
   const handleViewBlog = (blog: Blog) => {
-    router.push(`/blogs/${blog.slug}`);
+    router.push(`/blogs-and-articles/manage/${blog.slug}`);
   };
 
   const handleEditBlog = (blog: Blog) => {
-    router.push(`/blogs/${blog.slug}/edit`);
+    router.push(`/blogs-and-articles/manage/${blog.slug}/edit`);
   };
 
   return {

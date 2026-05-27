@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateAboutFoundersMessageAction } from "@/lib/actions/pages/about";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import {
   ImagePicker,
   SaveButton,
@@ -57,7 +57,7 @@ export function FounderMessageSectionEditor({
           value={formData.image || ""}
           inputRef={imageRef}
           onUpload={(event) =>
-            uploadLandingImage(event, (image) =>
+            uploadSectionImage(event, (image) =>
               setFormData((prev) => ({ ...prev, image }))
             )
           }

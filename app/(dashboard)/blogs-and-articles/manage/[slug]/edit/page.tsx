@@ -1,0 +1,37 @@
+import { DashboardHeader } from "@/components/common/dashboard-header";
+import { getBlogBySlug } from "@/lib/db/repository/pages/blogs";
+import { Unauthorized } from "@/components/common/unauthorized";
+import { currentUser } from "@/lib/utils";
+import { EDITORIAL_ROLES } from "@/lib/constants";
+import { BlogNotFound } from "../../_components/not-found";
+import BlogForm from "../../_components/blog-form/form";
+
+interface EditBlogPostPageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export default async function EditBlogPostPage({
+  params,
+}: EditBlogPostPageProps) {
+  const user = await currentUser();
+  if (!user || !EDITORIAL_ROLES.includes(user.role)) return <Unauthorized />;
+
+  const blog = await getBlogBySlug(params.slug);
+
+  if (!blog) return <BlogNotFound />;
+
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <DashboardHeader
+        title={`Edit: ${blog.title}`}
+        breadcrumbs={[
+          { label: "Blog Posts", href: "/blogs" },
+          { label: "Edit Post" },
+        ]}
+      />
+      <BlogForm mode="edit" initialData={blog} />
+    </div>
+  );
+}

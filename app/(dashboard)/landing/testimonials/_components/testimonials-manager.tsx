@@ -30,7 +30,7 @@ import {
   reorderTestimonialsAction,
   updateTestimonialAction,
 } from "@/lib/actions/pages/landing/testimonials.actions";
-import { uploadLandingImage } from "@/lib/pages/landing";
+import { uploadSectionImage } from "@/lib/utils/pages";
 import { getInitials } from "@/lib/utils";
 
 import { ItemCard } from "@/components/common/item-card";
@@ -153,7 +153,7 @@ export function TestimonialsManager({ items }: { items: Testimonial[] }) {
                   accept="image/jpeg,image/jpg,image/png,image/gif,image/heic"
                   className="hidden"
                   onChange={(event) =>
-                    uploadLandingImage(event, (url) =>
+                    uploadSectionImage(event, (url) =>
                       setFormData((prev) => ({ ...prev, avatar: url }))
                     )
                   }

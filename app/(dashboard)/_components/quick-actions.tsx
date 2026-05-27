@@ -16,7 +16,7 @@ const quickActions = [
     icon: FileText,
     gradient: "from-blue-400 to-blue-600",
     hoverBg: "hover:bg-blue-50/40",
-    href: "/blogs/new",
+    href: "/blogs-and-articles/new",
   },
   {
     title: "Add New Event",

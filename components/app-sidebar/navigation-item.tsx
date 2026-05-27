@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ElementType } from "react";
 import {
+  BookOpen,
   Calendar,
   ChevronRight,
   Contact,
@@ -13,6 +14,7 @@ import {
   ImageIcon,
   Info,
   LayoutDashboard,
+  Library,
   MessageSquareQuote,
   Palette,
   Sparkles,
@@ -51,7 +53,11 @@ const landingItems = [
   { title: "Values", url: "/landing/values", icon: Target },
   { title: "Volunteers", url: "/landing/volunteers", icon: Heart },
   { title: "Impact", url: "/landing/impact", icon: LayoutDashboard },
-  { title: "Testimonials", url: "/landing/testimonials", icon: MessageSquareQuote },
+  {
+    title: "Testimonials",
+    url: "/landing/testimonials",
+    icon: MessageSquareQuote,
+  },
   { title: "Featured Blogs", url: "/landing/featured-blogs", icon: FileText },
   { title: "Featured Events", url: "/landing/featured-events", icon: Calendar },
   { title: "FAQs", url: "/landing/faqs", icon: MessageSquareQuote },
@@ -60,12 +66,22 @@ const landingItems = [
 const aboutItems = [
   { title: "Hero", url: "/about/hero", icon: Sparkles },
   { title: "Story", url: "/about/story", icon: Info },
-  { title: "Team Section", url: "/about/team", icon: Users },
-  { title: "Founder’s Message", url: "/about/founder-message", icon: MessageSquareQuote },
+  { title: "Team Section", url: "/about/team-section-copy", icon: Users },
+  {
+    title: "Founder’s Message",
+    url: "/about/founder-message",
+    icon: MessageSquareQuote,
+  },
   { title: "CTA", url: "/about/cta", icon: Target },
   { type: "separator", title: "People" },
-  { title: "Team Members", url: "/team", icon: Users },
-  { title: "Volunteers", url: "/volunteers", icon: Heart },
+  { title: "Team Members", url: "/about/team", icon: Users },
+  { title: "Volunteers", url: "/about/volunteers", icon: Heart },
+] satisfies SidebarNestedItem[];
+
+const blogsItems = [
+  { title: "Hero", url: "/blogs-and-articles/hero", icon: Sparkles },
+  { type: "separator", title: "Manage Blogs" },
+  { title: "Blogs", url: "/blogs-and-articles/manage", icon: Library },
 ] satisfies SidebarNestedItem[];
 
 const contactItems = [
@@ -74,7 +90,6 @@ const contactItems = [
 ];
 
 const pageItems = [
-  { title: "Blogs", url: "/blogs", icon: FileText },
   { title: "Events", url: "/events", icon: Calendar },
   { title: "Photo Gallery", url: "/media", icon: ImageIcon },
   { title: "Donations", url: "/donations", icon: Heart },
@@ -100,6 +115,7 @@ export const NavigationItems = () => {
   const pagesOpen =
     landingItems.some((item) => isPathActive(pathname, item.url)) ||
     aboutItems.some((item) => isNestedItemActive(pathname, item)) ||
+    blogsItems.some((item) => isNestedItemActive(pathname, item)) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
     pageItems.some((item) => isPathActive(pathname, item.url));
 
@@ -107,6 +123,9 @@ export const NavigationItems = () => {
     isPathActive(pathname, item.url)
   );
   const aboutOpen = aboutItems.some((item) =>
+    isNestedItemActive(pathname, item)
+  );
+  const blogsOpen = blogsItems.some((item) =>
     isNestedItemActive(pathname, item)
   );
   const contactOpen = contactItems.some((item) =>
@@ -163,6 +182,14 @@ export const NavigationItems = () => {
                 icon={Info}
                 defaultOpen={aboutOpen}
                 items={aboutItems}
+                pathname={pathname}
+                onNavigate={handleClick}
+              />
+              <SidebarNestedSection
+                title="Blogs & Articles"
+                icon={BookOpen}
+                defaultOpen={blogsOpen}
+                items={blogsItems}
                 pathname={pathname}
                 onNavigate={handleClick}
               />

@@ -1,4 +1,4 @@
-// ABout Page
+// About Page
 interface AboutPageContent {
   id: string;
   aboutUs: string;

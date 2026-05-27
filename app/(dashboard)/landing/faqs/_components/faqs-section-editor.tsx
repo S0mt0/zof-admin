@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateLandingFaqSectionAction } from "@/lib/actions/pages/landing/faq-section.actions";
-import { showActionResult } from "@/lib/pages/landing";
+import { showActionResult } from "@/lib/utils/pages";
 import { SaveButton } from "@/components/common/form-controls";
 
 import { FaqItemsManager } from "./faq-items-manager";

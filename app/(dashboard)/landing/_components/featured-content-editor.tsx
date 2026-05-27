@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { showActionResult } from "@/lib/pages/landing";
+import { showActionResult } from "@/lib/utils/pages";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { ResourcePanel } from "../../../../components/common/resource-panel";
 import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { SectionCopyCard } from "../../../../components/common/section-copy-card";
+import { BackgroundColorPicker } from "@/components/common/background-color-picker";
 
 export function FeaturedContentEditor({
   type,
@@ -24,6 +25,7 @@ export function FeaturedContentEditor({
   const [formData, setFormData] = useState({
     intro: section.intro,
     limit: section.limit,
+    heroBackgroundColor: section.heroBackgroundColor || "#173f35",
   });
   const [isPending, startTransition] = useTransition();
   const href = type === "blogs" ? "/blogs" : "/events";
@@ -53,6 +55,15 @@ export function FeaturedContentEditor({
             setFormData((prev) => ({ ...prev, limit: Number(limit) }))
           }
         />
+        {type === "blogs" ? (
+          <BackgroundColorPicker
+            value={formData.heroBackgroundColor}
+            onChange={(heroBackgroundColor) =>
+              setFormData((prev) => ({ ...prev, heroBackgroundColor }))
+            }
+            label="Blogs hero background color"
+          />
+        ) : null}
       </SectionCopyCard>
       <CtaButtonsManager section={sectionKey} items={section.ctas} />
       <ResourcePanel

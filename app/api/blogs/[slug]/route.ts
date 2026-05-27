@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getBlogBySlug } from "@/lib/db/repository/blog.service";
+import { getBlogBySlug } from "@/lib/db/repository/pages/blogs/blog.service";
 
 export async function OPTIONS() {
   return new Response(null, {

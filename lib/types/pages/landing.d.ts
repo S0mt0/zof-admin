@@ -70,6 +70,7 @@ interface TestimonialsSectionContent {
 interface FeaturedContentSectionContent {
   intro: SectionIntroContent;
   limit: number;
+  heroBackgroundColor?: string;
   ctas: CtaButtonContent[];
 }
 

@@ -5,7 +5,7 @@ export * from "./reset-password";
 export * from "./profile";
 export * from "./settings";
 export * from "./team";
-export * from "./blogs";
+export * from "./pages/blogs";
 export * from "./events";
 export * from "./messages";
 export * from "./media";

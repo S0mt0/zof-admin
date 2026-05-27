@@ -14,3 +14,8 @@ interface CtaButtonContent {
   order: number;
   published: boolean;
 }
+
+type SectionActionResult = {
+  error?: string;
+  success?: string;
+};

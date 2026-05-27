@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateLandingAboutAction } from "@/lib/actions/pages/landing/about-section.actions";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import { ImagePicker, SaveButton } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";
@@ -51,7 +51,7 @@ export function AboutSectionEditor({
           value={formData.themePhoto}
           inputRef={imageRef}
           onUpload={(event) =>
-            uploadLandingImage(event, (url) =>
+            uploadSectionImage(event, (url) =>
               setFormData((prev) => ({ ...prev, themePhoto: url }))
             )
           }

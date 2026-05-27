@@ -12,7 +12,7 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 
 import { BlogFormSchema } from "@/lib/schemas";
-import { createBlogAction, updateBlogAction } from "@/lib/actions/blogs";
+import { createBlogAction, updateBlogAction } from "@/lib/actions/pages/blogs";
 import { generateSlug, handleFileUpload } from "@/lib/utils";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 
@@ -198,7 +198,7 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs/${res.data.blog.slug}`);
+                router.push(`/blogs-and-articles/${res.data.blog.slug}`);
               }
             })
             .catch(() => {
@@ -214,7 +214,7 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs/${res.data.blog?.slug}`);
+                router.push(`/blogs-and-articles/${res.data.blog?.slug}`);
               }
             })
             .catch(() => {
@@ -245,7 +245,7 @@ export const useWriteBlogs = ({
     );
   }, [formData, initialFormData]);
 
-  const handleBackButton = () => router.push("/blogs");
+  const handleBackButton = () => router.push("/blogs-and-articles");
 
   return {
     formRef,

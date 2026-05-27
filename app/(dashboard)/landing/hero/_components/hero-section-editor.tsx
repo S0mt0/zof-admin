@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { updateLandingHeroAction } from "@/lib/actions/pages/landing/hero.actions";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 
 import {
   ImagePicker,
@@ -31,7 +31,7 @@ export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
   const imageRef = useRef<HTMLInputElement | null>(null);
 
   const onUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    uploadLandingImage(event, (url) =>
+    uploadSectionImage(event, (url) =>
       setFormData((prev) => ({ ...prev, image: url }))
     );
   };

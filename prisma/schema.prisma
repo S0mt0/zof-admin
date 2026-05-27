@@ -402,6 +402,14 @@ model AboutPage {
   updatedAt DateTime @updatedAt
 }
 
+model BlogsPage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  hero      BlogsHeroSection?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Testimonial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -478,9 +486,10 @@ type TestimonialsSection {
 }
 
 type FeaturedContentSection {
-  intro SectionIntro
-  limit Int
-  ctas  CtaButton[]
+  intro               SectionIntro
+  limit               Int
+  heroBackgroundColor String?
+  ctas                CtaButton[]
 }
 
 type FaqSection {
@@ -539,6 +548,11 @@ type AboutHeroSection {
   calloutText  String?
   heroBackgroundColor  String?
   calloutBackgroundColor  String?
+}
+
+type BlogsHeroSection {
+  intro        SectionIntro
+  heroBackgroundColor  String?
 }
 
 type AboutStorySection {

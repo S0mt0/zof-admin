@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateAboutHeroAction } from "@/lib/actions/pages/about";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import {
   ImagePicker,
   SaveButton,
@@ -133,7 +133,7 @@ export function HeroSectionEditor({
               value={formData.image || ""}
               inputRef={imageRef}
               onUpload={(event) =>
-                uploadLandingImage(event, (image) =>
+                uploadSectionImage(event, (image) =>
                   setFormData((prev) => ({ ...prev, image }))
                 )
               }

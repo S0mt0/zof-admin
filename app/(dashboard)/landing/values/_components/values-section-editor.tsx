@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateLandingValuesAction } from "@/lib/actions/pages/landing/values.actions";
-import { showActionResult } from "@/lib/pages/landing";
+import { showActionResult } from "@/lib/utils/pages";
 import { SaveButton, TextareaField } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";

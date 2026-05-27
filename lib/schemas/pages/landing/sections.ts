@@ -44,6 +44,7 @@ export const TestimonialsSectionSchema = z.object({
 export const FeaturedContentSectionSchema = z.object({
   intro: SectionIntroSchema,
   limit: z.coerce.number().int().min(1).max(12).default(4),
+  heroBackgroundColor: optionalText,
 });
 
 export const FaqSectionSchema = z.object({

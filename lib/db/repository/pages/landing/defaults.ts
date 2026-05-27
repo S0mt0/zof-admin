@@ -138,6 +138,7 @@ export const defaultLandingPageData = (): Omit<
   featuredBlogs: {
     intro: intro("Latest stories", "Stories from the work we are doing.", ""),
     limit: 4,
+    heroBackgroundColor: "#173f35",
     ctas: [cta("View all stories", "/blogs")],
   },
   featuredEvents: {

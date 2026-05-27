@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateLandingVolunteersAction } from "@/lib/actions/pages/landing/volunteers.actions";
-import { showActionResult } from "@/lib/pages/landing";
+import { showActionResult } from "@/lib/utils/pages";
 import { ResourcePanel } from "@/components/common/resource-panel";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
 import { SaveButton, TextareaField } from "@/components/common/form-controls";

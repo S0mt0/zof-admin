@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateAboutCtaAction } from "@/lib/actions/pages/about";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import { ImagePicker, SaveButton } from "@/components/common/form-controls";
 
 import { SectionCopyCard } from "@/components/common/section-copy-card";
@@ -44,7 +44,7 @@ export function CtaSectionEditor({
           value={formData.backgroundImage || ""}
           inputRef={imageRef}
           onUpload={(event) =>
-            uploadLandingImage(event, (backgroundImage) =>
+            uploadSectionImage(event, (backgroundImage) =>
               setFormData((prev) => ({ ...prev, backgroundImage }))
             )
           }

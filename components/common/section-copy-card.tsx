@@ -33,7 +33,7 @@ export function SectionCopyCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="grid items-start gap-5 lg:grid-cols-[1fr_0.8fr]">
-        <div className="grid content-start gap-4">
+        <div className="grid content-start gap-6">
           <TextField
             label="Small theme title"
             value={intro.eyebrow}

@@ -1,5 +1,5 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getAllBlogs } from "@/lib/db/repository/blog.service";
+import { getAllBlogs } from "@/lib/db/repository/pages/blogs/blog.service";
 import { getAllEvents } from "@/lib/db/repository/event.service";
 import {
   getLandingPageData,

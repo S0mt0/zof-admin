@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateAboutStoryAction } from "@/lib/actions/pages/about";
-import { showActionResult, uploadLandingImage } from "@/lib/pages/landing";
+import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import {
   ImagePicker,
   SaveButton,
@@ -56,7 +56,7 @@ export function StorySectionEditor({
         </CardHeader>
         <CardContent className="grid items-start gap-x-6 gap-y-20 lg:grid-cols-[1fr_0.8fr]">
           {/* Left column: Story body and trust points */}
-          <div className="grid content-start gap-4">
+          <div className="grid content-start gap-8">
             <TextField
               label="Heading"
               value={formData.intro?.heading || ""}
@@ -75,18 +75,22 @@ export function StorySectionEditor({
               onChange={(body) => setFormData((prev) => ({ ...prev, body }))}
             />
 
-            <AboutTrustPointsManager items={trustPoints} />
+            <Separator className="mt-3 sm:block hidden" />
+            <div className="text-sm">Trust points</div>
+            <div className="hidden sm:block">
+              <AboutTrustPointsManager items={trustPoints} />
+            </div>
           </div>
 
           {/* Right column: Image and captions */}
-          <div className="grid content-start gap-4">
+          <div className="grid content-start gap-8">
             <Separator className="my-8 md:hidden" />
             <ImagePicker
               label="Story image"
               value={formData.image || ""}
               inputRef={imageRef}
               onUpload={(event) =>
-                uploadLandingImage(event, (image) =>
+                uploadSectionImage(event, (image) =>
                   setFormData((prev) => ({ ...prev, image }))
                 )
               }
@@ -107,6 +111,12 @@ export function StorySectionEditor({
                 setFormData((prev) => ({ ...prev, captionText }))
               }
             />
+
+            <Separator className="mt-10 mb-7 sm:hidden" />
+            <div className="sm:hidden space-y-4">
+              <CardTitle>Trust points</CardTitle>
+              <AboutTrustPointsManager items={trustPoints} />
+            </div>
           </div>
         </CardContent>
         <CardFooter className="justify-end border-t bg-muted/20 px-6 py-4">
