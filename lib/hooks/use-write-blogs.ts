@@ -198,7 +198,7 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs-and-articles/${res.data.blog.slug}`);
+                router.push(`/blogs-and-articles/manage/${res.data.blog.slug}`);
               }
             })
             .catch(() => {
@@ -214,7 +214,9 @@ export const useWriteBlogs = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/blogs-and-articles/${res.data.blog?.slug}`);
+                router.push(
+                  `/blogs-and-articles/manage/${res.data.blog?.slug}`
+                );
               }
             })
             .catch(() => {
