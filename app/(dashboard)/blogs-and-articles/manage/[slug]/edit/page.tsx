@@ -25,10 +25,9 @@ export default async function EditBlogPostPage({
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
-        title={`Edit: ${blog.title}`}
         breadcrumbs={[
-          { label: "Blog Posts", href: "/blogs" },
-          { label: "Edit Post" },
+          { label: "Blog Posts", href: "/blogs-and-articles/manage" },
+          { label: `Edit: ${blog.title}` },
         ]}
       />
       <BlogForm mode="edit" initialData={blog} />

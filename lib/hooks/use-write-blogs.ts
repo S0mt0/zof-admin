@@ -245,7 +245,7 @@ export const useWriteBlogs = ({
     );
   }, [formData, initialFormData]);
 
-  const handleBackButton = () => router.push("/blogs-and-articles");
+  const handleBackButton = () => router.push("/blogs-and-articles/manage");
 
   return {
     formRef,
