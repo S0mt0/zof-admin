@@ -58,8 +58,9 @@ export function TextareaField({
       <Textarea
         value={value}
         maxLength={maxLength}
-        rows={4}
+        rows={6}
         onChange={(event) => onChange(event.target.value)}
+        className="scrollbar-none"
       />
       {maxLength ? (
         <p className="text-xs text-muted-foreground">

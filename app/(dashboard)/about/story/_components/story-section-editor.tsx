@@ -75,9 +75,9 @@ export function StorySectionEditor({
               onChange={(body) => setFormData((prev) => ({ ...prev, body }))}
             />
 
-            <Separator className="mt-3 sm:block hidden" />
-            <div className="text-sm">Trust points</div>
             <div className="hidden sm:block">
+              <Separator className="mt-3" />
+              <div className="text-sm">Trust points</div>
               <AboutTrustPointsManager items={trustPoints} />
             </div>
           </div>
