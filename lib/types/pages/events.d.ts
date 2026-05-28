@@ -2,16 +2,21 @@
 interface EventsPageContent {
   id: string;
   hero: EventsHeroSectionContent;
+  archive: EventsArchiveSectionContent;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Section types
-type EventsSection = "hero";
+type EventsSection = "hero" | "archive";
 
 interface EventsHeroSectionContent {
   intro: SectionIntroContent;
   heroBackgroundColor?: string | null;
+}
+
+interface EventsArchiveSectionContent {
+  intro: SectionIntroContent;
 }
 
 type EventStatus =

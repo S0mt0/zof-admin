@@ -12,5 +12,13 @@ export const defaultEventsPageData = (): Omit<
       },
       heroBackgroundColor: "#183F35",
     },
+    archive: {
+      intro: {
+        eyebrow: "Events and programmes",
+        heading: "Gatherings built around practical care.",
+        description:
+          "Outreaches, community programs, learning sessions, and volunteer moments organized around support people can use.",
+      },
+    },
   };
 };

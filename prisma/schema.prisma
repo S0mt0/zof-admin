@@ -413,6 +413,7 @@ model BlogsPage {
 model EventsPage {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   hero      EventsHeroSection?
+  archive   EventsArchiveSection?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -566,6 +567,7 @@ type BlogsHeroSection {
 type EventsHeroSection {
   intro        SectionIntro
   heroBackgroundColor  String?
+
 }
 
 type AboutStorySection {
@@ -578,6 +580,10 @@ type AboutStorySection {
 }
 
 type AboutTeamSection {
+  intro SectionIntro
+}
+
+type EventsArchiveSection {
   intro SectionIntro
 }
 

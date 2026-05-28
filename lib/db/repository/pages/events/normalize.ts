@@ -19,6 +19,11 @@ export const normalizeEventsPageData = (data: any): EventsPageContent => {
       ...(data.hero || {}),
       intro: normalizeIntro(data.hero?.intro, fallback.hero.intro),
     },
+    archive: {
+      ...fallback.archive,
+      ...(data.archive || {}),
+      intro: normalizeIntro(data.archive?.intro, fallback.archive.intro),
+    },
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
   };

@@ -19,6 +19,9 @@ export async function GET() {
       hero: {
         ...events.hero,
       },
+      archive: {
+        ...events.archive,
+      },
     };
 
     return Response.json(

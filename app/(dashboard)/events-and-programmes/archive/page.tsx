@@ -1,9 +1,8 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getEventsPageData } from "@/lib/db/repository/pages/events";
+import { ArchiveSectionEditor } from "./_components/archive-section-editor";
 
-import { HeroSectionEditor } from "./_components/hero-section-editor";
-
-export default async function EventsHeroSection() {
+export default async function ArchivePage() {
   const data = await getEventsPageData();
 
   return (
@@ -11,11 +10,11 @@ export default async function EventsHeroSection() {
       <DashboardHeader
         breadcrumbs={[
           { label: "Pages" },
-          { label: "Events & Articles", href: "/events-and-programmes/manage" },
-          { label: "Hero" },
+          { label: "Events", href: "/events-and-programmes/manage" },
+          { label: "Events Archive" },
         ]}
       />
-      <HeroSectionEditor section={data.hero} />
+      <ArchiveSectionEditor section={data.archive} />
     </div>
   );
 }

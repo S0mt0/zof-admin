@@ -21,7 +21,7 @@ import {
 
 import { BackgroundColorPicker } from "@/components/common/background-color-picker";
 import { Separator } from "@/components/ui/separator";
-import { EventsSectionShell } from "./events-section-shell";
+import { EventsSectionShell } from "../../_components/events-section-shell";
 import { ResourcePanel } from "@/components/common/resource-panel";
 
 export function HeroSectionEditor({

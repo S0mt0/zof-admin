@@ -15,6 +15,13 @@ const sectionMeta: Record<
     description: "Control the opening copy of the hero section.",
     accent: "from-slate-800 to-slate-950",
   },
+
+  archive: {
+    eyebrow: "First impression",
+    title: "Events Archive Section",
+    description: "Control the opening copy of the archive section.",
+    accent: "from-cyan-500 to-blue-700",
+  },
 };
 
 export function EventsSectionShell({

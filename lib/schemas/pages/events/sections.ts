@@ -6,3 +6,7 @@ export const EventsHeroSectionSchema = z.object({
   intro: SectionIntroSchema,
   heroBackgroundColor: optionalText,
 });
+
+export const EventsArchiveSectionSchema = z.object({
+  intro: SectionIntroSchema,
+});

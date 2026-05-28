@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Contact,
   FileText,
+  Grid,
   Heart,
   Home,
   ImageIcon,
@@ -87,6 +88,7 @@ const blogsItems = [
 
 const eventsItems = [
   { title: "Hero", url: "/events-and-programmes/hero", icon: Sparkles },
+  { title: "Archive", url: "/events-and-programmes/archive", icon: Grid },
   { type: "separator", title: "Manage Events" },
   { title: "Events", url: "/events-and-programmes/manage", icon: Calendar },
 ] satisfies SidebarNestedItem[];
