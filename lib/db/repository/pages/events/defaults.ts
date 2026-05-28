@@ -14,10 +14,10 @@ export const defaultEventsPageData = (): Omit<
     },
     archive: {
       intro: {
-        eyebrow: "Events and programmes",
-        heading: "Gatherings built around practical care.",
+        eyebrow: "Event calendar",
+        heading: "More events and field moments",
         description:
-          "Outreaches, community programs, learning sessions, and volunteer moments organized around support people can use.",
+          "Browse the wider event list. Each item includes the essentials: date, time, location, status, and what the gathering is about.",
       },
     },
   };
