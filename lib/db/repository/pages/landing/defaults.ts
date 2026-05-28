@@ -148,7 +148,7 @@ export const defaultLandingPageData = (): Omit<
       ""
     ),
     limit: 3,
-    ctas: [cta("View all events", "/events")],
+    ctas: [cta("View all events", "/events-and-programmes/manage")],
   },
   faqs: {
     intro: intro(

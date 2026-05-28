@@ -1,5 +1,5 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
-import { getEventBySlug } from "@/lib/db/repository/event.service";
+import { getEventBySlug } from "@/lib/db/repository/pages/events";
 import { EventForm } from "../../_components/event-form/form";
 import { EventNotFound } from "../../_components/not-found";
 import { Unauthorized } from "@/components/common/unauthorized";
@@ -25,7 +25,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
       <DashboardHeader
         title={`Edit: ${event.name}`}
         breadcrumbs={[
-          { label: "Events", href: "/events" },
+          { label: "Events", href: "/events-and-programmes/manage" },
           { label: "Edit Event" },
         ]}
       />

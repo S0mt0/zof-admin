@@ -28,7 +28,10 @@ export function FeaturedContentEditor({
     heroBackgroundColor: section.heroBackgroundColor || "#173f35",
   });
   const [isPending, startTransition] = useTransition();
-  const href = type === "blogs" ? "/blogs" : "/events";
+  const href =
+    type === "blogs"
+      ? "/blogs-and-articles/manage"
+      : "/events-and-programmes/manage";
   const sectionKey = type === "blogs" ? "featuredBlogs" : "featuredEvents";
 
   const onSubmit = () => {

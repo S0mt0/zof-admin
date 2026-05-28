@@ -12,7 +12,7 @@ export default async function NewBlogPostPage() {
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         breadcrumbs={[
-          { label: "Blog Posts", href: "/blogs-and-articles/manage" },
+          { label: "Blog & Articles", href: "/blogs-and-articles/manage" },
           { label: "New Post" },
         ]}
       />

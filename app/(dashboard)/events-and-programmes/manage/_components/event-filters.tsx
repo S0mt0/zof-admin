@@ -39,7 +39,7 @@ export function EventFilters({
     // Reset to page 1 when filters change
     params.delete("page");
 
-    router.push(`/events?${params.toString()}`);
+    router.push(`/events-and-programmes/manage?${params.toString()}`);
   };
 
   const handleSearch = (value: string) => {

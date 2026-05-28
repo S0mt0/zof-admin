@@ -8,13 +8,13 @@ import {
   updateEvent,
   deleteEvent,
   deleteManyEvents,
-} from "../db/repository/event.service";
-import { getUserById } from "../db/repository/user.service";
-import { addAppActivity } from "../db/repository/app-activity.service";
-import { capitalize, currentUser } from "../utils";
-import { MailService } from "../utils/mail.service";
-import { EventFormSchema } from "../schemas";
-import { EDITORIAL_ROLES } from "../constants";
+} from "@/lib/db/repository/pages/events";
+import { getUserById } from "../../../db/repository/user.service";
+import { addAppActivity } from "../../../db/repository/app-activity.service";
+import { capitalize, currentUser } from "../../../utils";
+import { MailService } from "../../../utils/mail.service";
+import { EventFormSchema } from "../../../schemas";
+import { EDITORIAL_ROLES } from "../../../constants";
 
 export const createEventAction = async (
   data: z.infer<typeof EventFormSchema>
@@ -28,7 +28,7 @@ export const createEventAction = async (
     const existingEvent = await (async () => {
       try {
         const event = await (
-          await import("../db/repository/event.service")
+          await import("@/lib/db/repository/pages/events")
         ).getEventByName(data.name);
 
         return event;
@@ -76,7 +76,7 @@ export const updateEventAction = async (
     const event = await (async () => {
       try {
         const event = await (
-          await import("../db/repository/event.service")
+          await import("@/lib/db/repository/pages/events")
         ).getEventById(eventId);
 
         return event;
@@ -123,7 +123,7 @@ export const deleteEventAction = async (eventId: string) => {
     const event = await (async () => {
       try {
         const event = await (
-          await import("../db/repository/event.service")
+          await import("@/lib/db/repository/pages/events")
         ).getEventById(eventId);
 
         return event;

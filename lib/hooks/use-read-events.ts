@@ -2,7 +2,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { bulkDeleteEventsAction, deleteEventAction } from "../actions/events";
+import {
+  bulkDeleteEventsAction,
+  deleteEventAction,
+} from "../actions/pages/events";
 import { EDITORIAL_ROLES } from "../constants";
 import { useCurrentUser } from "./use-current-user";
 
@@ -109,11 +112,11 @@ export const useReadEvents = (events: IEvent[]) => {
   );
 
   const handleViewEvent = (event: IEvent) => {
-    router.push(`/events/${event.slug}`);
+    router.push(`/events-and-programmes/manage/${event.slug}`);
   };
 
   const handleEditEvent = (event: IEvent) => {
-    router.push(`/events/${event.slug}/edit`);
+    router.push(`/events-and-programmes/manage/${event.slug}/edit`);
   };
 
   return {

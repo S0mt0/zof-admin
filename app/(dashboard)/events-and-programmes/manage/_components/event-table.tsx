@@ -71,7 +71,7 @@ export function EventTable({
         </Table>
 
         <Pagination
-          pathname="/events"
+          pathname="/events-and-programmes/manage"
           searchParams={searchParams}
           currentPage={pagination.page}
           totalPages={pagination.totalPages}

@@ -26,7 +26,7 @@ export default async function EditBlogPostPage({
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         breadcrumbs={[
-          { label: "Blog Posts", href: "/blogs-and-articles/manage" },
+          { label: "Blog & Articles", href: "/blogs-and-articles/manage" },
           { label: `Edit: ${blog.title}` },
         ]}
       />

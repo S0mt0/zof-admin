@@ -2,7 +2,7 @@ import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getAllEvents } from "@/lib/db/repository/event.service";
+import { getAllEvents } from "@/lib/db/repository/pages/events";
 import {
   AllowedEventSelectField,
   allowedPublicEventSelectFields,

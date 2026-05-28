@@ -13,7 +13,7 @@ export default async function NewEventPage() {
       <DashboardHeader
         title="Create New Event"
         breadcrumbs={[
-          { label: "Events", href: "/events" },
+          { label: "Events", href: "/events-and-programmes/manage" },
           { label: "New Post" },
         ]}
       />

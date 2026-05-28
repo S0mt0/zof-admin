@@ -16,7 +16,7 @@ export const EventNotFound = () => {
           </p>
           <Button asChild>
             <Link
-              href="/events"
+              href="/events-and-programmes/manage"
               className="flex items-center justify-center gap-2"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

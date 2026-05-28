@@ -1,4 +1,4 @@
-import { getAllEvents } from "@/lib/db/repository/event.service";
+import { getAllEvents } from "@/lib/db/repository/pages/events";
 import { EventPage } from "./_components/event-page";
 import { EventStats } from "./_components/event-stats";
 import { DashboardHeader } from "@/components/common/dashboard-header";

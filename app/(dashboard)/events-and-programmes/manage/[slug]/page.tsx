@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "@/components/common/share-button";
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { RichTextContentRenderer } from "@/components/common/render-richtext";
-import { getEventBySlug } from "@/lib/db/repository/event.service";
+import { getEventBySlug } from "@/lib/db/repository/pages/events";
 import { capitalize, cn, formatTime, getStatusColor } from "@/lib/utils";
 import { EventNotFound } from "../_components/not-found";
 
@@ -45,7 +45,7 @@ export default async function ViewEventPage({
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         breadcrumbs={[
-          { label: "Events", href: "/events" },
+          { label: "Events", href: "/events-and-programmes/manage" },
           { label: `${capitalize(event.name.slice(0, 20))}...` },
         ]}
       />
@@ -60,7 +60,7 @@ export default async function ViewEventPage({
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/events/${event.slug}/edit`}>
+              <Link href={`/events-and-programmes/manage/${event.slug}/edit`}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Link>

@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { emptyPaginatedData } from "@/lib/constants";
-import { db } from "../config";
+import { db } from "@/lib/db/config";
 import { prismaPaginate } from "@/lib/utils/db.utils";
 
 interface ListEventsOptions {

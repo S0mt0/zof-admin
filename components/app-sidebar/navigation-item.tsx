@@ -15,6 +15,7 @@ import {
   Info,
   LayoutDashboard,
   Library,
+  MapPin,
   MessageSquareQuote,
   Palette,
   Sparkles,
@@ -84,13 +85,18 @@ const blogsItems = [
   { title: "Blogs", url: "/blogs-and-articles/manage", icon: Library },
 ] satisfies SidebarNestedItem[];
 
+const eventsItems = [
+  { title: "Hero", url: "/events-and-programmes/hero", icon: Sparkles },
+  { type: "separator", title: "Manage Events" },
+  { title: "Events", url: "/events-and-programmes/manage", icon: Calendar },
+] satisfies SidebarNestedItem[];
+
 const contactItems = [
   { title: "Info", url: "/contact/info", icon: Contact },
   { title: "Messages", url: "/contact/messages", icon: MessageSquareQuote },
 ];
 
 const pageItems = [
-  { title: "Events", url: "/events", icon: Calendar },
   { title: "Photo Gallery", url: "/media", icon: ImageIcon },
   { title: "Donations", url: "/donations", icon: Heart },
 ];
@@ -116,6 +122,7 @@ export const NavigationItems = () => {
     landingItems.some((item) => isPathActive(pathname, item.url)) ||
     aboutItems.some((item) => isNestedItemActive(pathname, item)) ||
     blogsItems.some((item) => isNestedItemActive(pathname, item)) ||
+    eventsItems.some((item) => isNestedItemActive(pathname, item)) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
     pageItems.some((item) => isPathActive(pathname, item.url));
 
@@ -126,6 +133,9 @@ export const NavigationItems = () => {
     isNestedItemActive(pathname, item)
   );
   const blogsOpen = blogsItems.some((item) =>
+    isNestedItemActive(pathname, item)
+  );
+  const eventsOpen = eventsItems.some((item) =>
     isNestedItemActive(pathname, item)
   );
   const contactOpen = contactItems.some((item) =>
@@ -190,6 +200,14 @@ export const NavigationItems = () => {
                 icon={BookOpen}
                 defaultOpen={blogsOpen}
                 items={blogsItems}
+                pathname={pathname}
+                onNavigate={handleClick}
+              />
+              <SidebarNestedSection
+                title="Events"
+                icon={MapPin}
+                defaultOpen={eventsOpen}
+                items={eventsItems}
                 pathname={pathname}
                 onNavigate={handleClick}
               />

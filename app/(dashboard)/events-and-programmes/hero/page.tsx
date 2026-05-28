@@ -1,17 +1,17 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
-import { getBlogsPageData } from "@/lib/db/repository/pages/blogs";
+import { getEventsPageData } from "@/lib/db/repository/pages/events";
 
 import { HeroSectionEditor } from "./_components/hero-section-editor";
 
-export default async function BlogsHeroSection() {
-  const data = await getBlogsPageData();
+export default async function EventsHeroSection() {
+  const data = await getEventsPageData();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <DashboardHeader
         breadcrumbs={[
           { label: "Pages" },
-          { label: "Blogs & Articles" },
+          { label: "Events & Articles" },
           { label: "Hero" },
         ]}
       />

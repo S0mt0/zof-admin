@@ -12,7 +12,10 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 
 import { EventFormSchema } from "@/lib/schemas";
-import { createEventAction, updateEventAction } from "@/lib/actions/events";
+import {
+  createEventAction,
+  updateEventAction,
+} from "@/lib/actions/pages/events";
 import { generateSlug, handleFileUpload } from "@/lib/utils";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 
@@ -259,7 +262,9 @@ export const useWriteEvents = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/events/${res.data.event?.slug}`);
+                router.push(
+                  `/events-and-programmes/manage/${res.data.event?.slug}`
+                );
               }
             })
             .catch(() => {
@@ -275,7 +280,9 @@ export const useWriteEvents = ({
                 toast.error(res.error);
               } else if (res?.success) {
                 toast.success(res.success);
-                router.push(`/events/${res.data.event?.slug}`);
+                router.push(
+                  `/events-and-programmes/manage/${res.data.event?.slug}`
+                );
               }
             })
             .catch(() => {
@@ -316,7 +323,7 @@ export const useWriteEvents = ({
     );
   }, [formData, initialFormData]);
 
-  const handleBackButton = () => router.push("/events");
+  const handleBackButton = () => router.push("/events-and-programmes/manage");
 
   return {
     formRef,

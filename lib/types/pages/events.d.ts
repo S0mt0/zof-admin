@@ -1,3 +1,19 @@
+// Events Page
+interface EventsPageContent {
+  id: string;
+  hero: EventsHeroSectionContent;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Section types
+type EventsSection = "hero";
+
+interface EventsHeroSectionContent {
+  intro: SectionIntroContent;
+  heroBackgroundColor?: string | null;
+}
+
 type EventStatus =
   | "upcoming"
   | "completed"
