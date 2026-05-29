@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 import { format } from "date-fns";
 
-const LOGO_URL = "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
+const LOGO_URL =
+  "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
 const LOCAL_LOGO_PATH = path.join(process.cwd(), "public", "zof-logo.png");
 
 const money = (amount: number, currency = "NGN") =>
@@ -12,17 +13,35 @@ const money = (amount: number, currency = "NGN") =>
     maximumFractionDigits: 0,
   }).format(amount);
 
+const pdfMoney = (amount: number, currency = "NGN") =>
+  `${currency.toUpperCase()} ${new Intl.NumberFormat("en-NG", {
+    maximumFractionDigits: 0,
+  }).format(amount)}`;
+
 const csvEscape = (value: unknown) => {
   const text = value == null ? "" : String(value);
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 
-const getLogoDataUrl = () => {
+const bufferToDataUrl = (buffer: Buffer, mime = "image/png") =>
+  `data:${mime};base64,${buffer.toString("base64")}`;
+
+const getLogoDataUrl = async () => {
   try {
-    if (!fs.existsSync(LOCAL_LOGO_PATH)) return null;
-    const base64 = fs.readFileSync(LOCAL_LOGO_PATH).toString("base64");
-    return `data:image/png;base64,${base64}`;
-  } catch {
+    if (fs.existsSync(LOCAL_LOGO_PATH)) {
+      return bufferToDataUrl(fs.readFileSync(LOCAL_LOGO_PATH));
+    }
+  } catch (error) {
+    console.error("Could not load local PDF logo:", error);
+  }
+
+  try {
+    const response = await fetch(LOGO_URL);
+    if (!response.ok) return null;
+    const arrayBuffer = await response.arrayBuffer();
+    return bufferToDataUrl(Buffer.from(arrayBuffer), response.headers.get("content-type") || "image/png");
+  } catch (error) {
+    console.error("Could not fetch remote PDF logo:", error);
     return null;
   }
 };
@@ -42,7 +61,24 @@ export const formatDonationDateTime = (value?: Date | string | null) => {
   const get = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value || "";
 
-  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")} ${get("dayPeriod").toUpperCase()}`;
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get(
+    "minute"
+  )} ${get("dayPeriod").toUpperCase()}`;
+};
+
+export const formatFullDateTime = (value?: Date | string | null) => {
+  const date = new Date(value || Date.now());
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "Africa/Lagos",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
 };
 
 export const getDonationMethod = (payload: any) =>
@@ -89,7 +125,7 @@ const getDonationPdfRows = (donations: Donation[]) =>
     donation.anonymous ? "Anonymous" : donation.donor || "-",
     donation.email || "-",
     donation.phone || "-",
-    money(donation.amount, donation.currency),
+    pdfMoney(donation.amount, donation.currency),
     donation.status,
     donation.frequency,
     donation.campaign?.topic || "Where needed most",
@@ -109,19 +145,35 @@ export const createDonationsPdfBuffer = async (donations: Donation[]) => {
   ]);
 
   const doc = new jsPDF({ orientation: "landscape" });
-  const logo = getLogoDataUrl();
+  const logo = await getLogoDataUrl();
 
   doc.setFillColor(23, 63, 53);
   doc.rect(0, 0, 297, 34, "F");
-  if (logo) doc.addImage(logo, "PNG", 14, 7, 20, 20);
+  let hasLogo = false;
+  if (logo) {
+    try {
+      doc.addImage(logo, "PNG", 14, 7, 20, 20);
+      hasLogo = true;
+    } catch (error) {
+      console.error("Could not add logo to donations PDF:", error);
+    }
+  }
+  if (!hasLogo) {
+    doc.setFillColor(255, 255, 255);
+    doc.circle(24, 17, 10, "F");
+    doc.setTextColor(23, 63, 53);
+    doc.setFontSize(8);
+    doc.text("ZOF", 24, 19, { align: "center" });
+  }
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(17);
-  doc.text("Donation Records", logo ? 40 : 14, 16);
+  doc.text("Donation Records", 40, 16);
   doc.setFontSize(9);
-  doc.text("Zita-Onyeka Foundation", logo ? 40 : 14, 23);
-  doc.setTextColor(247, 200, 123);
-  doc.text(`Generated: ${formatDonationDateTime(new Date())}`, 210, 17);
-  doc.text(`${donations.length} donation${donations.length === 1 ? "" : "s"}`, 210, 24);
+  doc.text("Zita-Onyeka Foundation", 40, 23);
+  doc.setTextColor(255, 255, 255);
+  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 200, 17, {
+    align: "right",
+  });
 
   autoTable(doc, {
     startY: 42,
@@ -146,21 +198,38 @@ export const createDonationsPdfBuffer = async (donations: Donation[]) => {
 export const createDonationReceiptPdfBuffer = async (donation: Donation) => {
   const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF();
-  const logo = getLogoDataUrl();
-  const amount = money(donation.amount, donation.currency);
+  const logo = await getLogoDataUrl();
+  const amount = pdfMoney(donation.amount, donation.currency);
   const date = formatDonationDateTime(donation.paidAt || donation.createdAt);
-  const donor = donation.anonymous ? "Anonymous donor" : donation.donor || "Donor";
+  const donor = donation.anonymous
+    ? "Anonymous donor"
+    : donation.donor || "Donor";
 
   doc.setFillColor(246, 251, 247);
   doc.rect(0, 0, 210, 297, "F");
   doc.setFillColor(23, 63, 53);
   doc.rect(0, 0, 210, 46, "F");
-  if (logo) doc.addImage(logo, "PNG", 18, 12, 22, 22);
+  let hasLogo = false;
+  if (logo) {
+    try {
+      doc.addImage(logo, "PNG", 18, 12, 22, 22);
+      hasLogo = true;
+    } catch (error) {
+      console.error("Could not add logo to receipt PDF:", error);
+    }
+  }
+  if (!hasLogo) {
+    doc.setFillColor(255, 255, 255);
+    doc.circle(29, 23, 11, "F");
+    doc.setTextColor(23, 63, 53);
+    doc.setFontSize(8);
+    doc.text("ZOF", 29, 25, { align: "center" });
+  }
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
-  doc.text("Donation Receipt", logo ? 48 : 18, 22);
+  doc.text("Donation Receipt", 48, 22);
   doc.setFontSize(10);
-  doc.text("Zita-Onyeka Foundation", logo ? 48 : 18, 30);
+  doc.text("Zita-Onyeka Foundation", 48, 30);
 
   doc.setTextColor(15, 23, 42);
   doc.setFillColor(255, 255, 255);
@@ -196,11 +265,19 @@ export const createDonationReceiptPdfBuffer = async (donation: Donation) => {
   doc.roundedRect(18, 224, 174, 28, 3, 3, "F");
   doc.setTextColor(31, 93, 64);
   doc.setFontSize(10);
-  doc.text("Thank you. Your gift helps keep practical care moving through communities.", 30, 240, { maxWidth: 150 });
+  doc.text(
+    "Thank you. Your gift helps keep practical care moving through communities.",
+    30,
+    240,
+    { maxWidth: 150 }
+  );
 
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(8);
-  doc.text(`Logo: ${LOGO_URL}`, 18, 280, { maxWidth: 174 });
+  doc.text("https://zitaonyekafoundation.org", 18, 274, { maxWidth: 174 });
+  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 18, 282, {
+    maxWidth: 174,
+  });
 
   return Buffer.from(doc.output("arraybuffer"));
 };
