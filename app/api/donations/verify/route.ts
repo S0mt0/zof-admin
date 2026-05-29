@@ -1,5 +1,8 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
-import { getDonationByReference, updateDonationByReference } from "@/lib/db/repository/pages/donations";
+import {
+  getDonationByReference,
+  updateDonationByReference,
+} from "@/lib/db/repository/pages/donations";
 import { MailService } from "@/lib/utils/mail.service";
 import { verifyPaystackTransaction } from "@/lib/utils/paystack";
 
@@ -15,6 +18,8 @@ export async function OPTIONS() {
 
 async function verify(reference: string) {
   const existing = await getDonationByReference(reference);
+  console.log({ existing });
+
   if (!existing) throw new Error("Donation not found");
 
   const tx = await verifyPaystackTransaction(reference);
@@ -29,8 +34,10 @@ async function verify(reference: string) {
 
   if (completed && donation.email) {
     const mailer = new MailService();
-    if (donation.sendReceipt) await mailer.sendDonationReceiptEmail(donation as any);
-    if (donation.sendThankYou) await mailer.sendDonationThankYouEmail(donation as any);
+    if (donation.sendReceipt)
+      await mailer.sendDonationReceiptEmail(donation as any);
+    if (donation.sendThankYou)
+      await mailer.sendDonationThankYouEmail(donation as any);
   }
 
   return donation;
@@ -39,23 +46,48 @@ async function verify(reference: string) {
 export async function GET(request: Request) {
   try {
     const reference = new URL(request.url).searchParams.get("reference");
-    if (!reference) return Response.json({ message: "Reference is required" }, { headers: corsHeaders, status: 400 });
+    if (!reference)
+      return Response.json(
+        { message: "Reference is required" },
+        { headers: corsHeaders, status: 400 }
+      );
+    console.log("Verifying donation with reference:", reference);
     const donation = await verify(reference);
-    return Response.json({ message: "Donation verified", data: donation }, { headers: corsHeaders, status: 200 });
+    return Response.json(
+      { message: "Donation verified", data: donation },
+      { headers: corsHeaders, status: 200 }
+    );
   } catch (error) {
     console.error("Donation verify error:", error);
-    return Response.json({ message: "Could not verify donation" }, { headers: corsHeaders, status: 500 });
+    console.error(
+      "Donation verify error:",
+      error instanceof Error ? error.message : error
+    );
+    return Response.json(
+      { message: "Could not verify donation" },
+      { headers: corsHeaders, status: 500 }
+    );
   }
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (!body.reference) return Response.json({ message: "Reference is required" }, { headers: corsHeaders, status: 400 });
+    if (!body.reference)
+      return Response.json(
+        { message: "Reference is required" },
+        { headers: corsHeaders, status: 400 }
+      );
     const donation = await verify(body.reference);
-    return Response.json({ message: "Donation verified", data: donation }, { headers: corsHeaders, status: 200 });
+    return Response.json(
+      { message: "Donation verified", data: donation },
+      { headers: corsHeaders, status: 200 }
+    );
   } catch (error) {
     console.error("Donation verify error:", error);
-    return Response.json({ message: "Could not verify donation" }, { headers: corsHeaders, status: 500 });
+    return Response.json(
+      { message: "Could not verify donation" },
+      { headers: corsHeaders, status: 500 }
+    );
   }
 }

@@ -1,6 +1,9 @@
 import crypto from "crypto";
 
-import { getDonationByReference, updateDonationByReference } from "@/lib/db/repository/pages/donations";
+import {
+  getDonationByReference,
+  updateDonationByReference,
+} from "@/lib/db/repository/pages/donations";
 import { MailService } from "@/lib/utils/mail.service";
 
 export async function POST(request: Request) {
@@ -18,6 +21,13 @@ export async function POST(request: Request) {
     const reference = event.data?.reference;
     const existing = reference ? await getDonationByReference(reference) : null;
 
+    console.log(
+      "Paystack webhook received for reference:",
+      reference,
+      "existing donation:",
+      !!existing
+    );
+
     if (existing) {
       const donation = await updateDonationByReference(reference, {
         status: "completed",
@@ -29,8 +39,10 @@ export async function POST(request: Request) {
 
       if (donation.email) {
         const mailer = new MailService();
-        if (donation.sendReceipt) await mailer.sendDonationReceiptEmail(donation as any);
-        if (donation.sendThankYou) await mailer.sendDonationThankYouEmail(donation as any);
+        if (donation.sendReceipt)
+          await mailer.sendDonationReceiptEmail(donation as any);
+        if (donation.sendThankYou)
+          await mailer.sendDonationThankYouEmail(donation as any);
       }
     }
   }
