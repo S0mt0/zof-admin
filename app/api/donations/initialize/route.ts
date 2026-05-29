@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
 
     const data = validated.data;
-    const reference = `zof_${nanoid(7)}`;
+    const reference = `zof_${nanoid(10)}`;
     const callbackUrl = `${FRONTEND_BASE_URL}/donate/callback?reference=${reference}`;
 
     const donation = await createDonation({

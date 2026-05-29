@@ -19,17 +19,41 @@ export async function POST(request: Request) {
   const event = JSON.parse(body);
   if (event.event === "charge.success") {
     const reference = event.data?.reference;
-    const existing = reference ? await getDonationByReference(reference) : null;
+
+    let cleanReference = reference;
+
+    try {
+      cleanReference = JSON.parse(reference);
+    } catch (error) {
+      console.error("Error parsing verification reference:", error);
+    }
+
+    if (Array.isArray(cleanReference)) {
+      cleanReference = cleanReference[0];
+    }
+
+    if (reference.includes("=")) {
+      cleanReference = reference.split("=")[0];
+    }
+    if (reference.includes(",")) {
+      cleanReference = reference.split(",")[0];
+    }
+
+    const existing = cleanReference
+      ? await getDonationByReference(cleanReference)
+      : null;
 
     console.log(
       "Paystack webhook received for reference:",
-      reference,
+      cleanReference,
       "existing donation:",
       !!existing
     );
 
+    console.log("Event data:", event.data);
+
     if (existing) {
-      const donation = await updateDonationByReference(reference, {
+      const donation = await updateDonationByReference(cleanReference, {
         status: "completed",
         paystackStatus: event.data?.status || "success",
         method: event.data?.channel || "paystack",

@@ -17,14 +17,33 @@ export async function OPTIONS() {
 }
 
 async function verify(reference: string) {
-  const existing = await getDonationByReference(reference);
+  let cleanReference = reference;
+
+  try {
+    cleanReference = JSON.parse(reference);
+  } catch (error) {
+    console.error("Error parsing verification reference:", error);
+  }
+
+  if (Array.isArray(cleanReference)) {
+    cleanReference = cleanReference[0];
+  }
+
+  if (reference.includes("=")) {
+    cleanReference = reference.split("=")[0];
+  }
+  if (reference.includes(",")) {
+    cleanReference = reference.split(",")[0];
+  }
+
+  const existing = await getDonationByReference(cleanReference);
   console.log({ existing });
 
   if (!existing) throw new Error("Donation not found");
 
-  const tx = await verifyPaystackTransaction(reference);
+  const tx = await verifyPaystackTransaction(cleanReference);
   const completed = tx.status === "success";
-  const donation = await updateDonationByReference(reference, {
+  const donation = await updateDonationByReference(cleanReference, {
     status: completed ? "completed" : "failed",
     paystackStatus: tx.status,
     method: tx.channel || "paystack",
