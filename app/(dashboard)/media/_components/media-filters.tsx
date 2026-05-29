@@ -44,7 +44,7 @@ export function MediaFilters({
     params.delete("page");
 
     const query = params.toString();
-    router.push(query ? `/media?${query}` : "/media");
+    router.push(query ? `/media/manage?${query}` : "/media/manage");
   };
 
   useEffect(() => {

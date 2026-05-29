@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition, type ChangeEvent } from "react";
 import Image from "next/image";
-import { Loader2, UploadCloud } from "lucide-react";
+import { ExternalLink, Loader2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -46,6 +46,8 @@ type UploadState =
     }
   | {
       type: "video";
+      sourceMode: "upload" | "youtube";
+      youtubeUrl: string;
       src: string;
       srcKey: string;
       poster: string;
@@ -73,6 +75,8 @@ const initialPhotoState: UploadState = {
 
 const initialVideoState: UploadState = {
   type: "video",
+  sourceMode: "upload",
+  youtubeUrl: "",
   src: "",
   srcKey: "",
   poster: "",
@@ -80,6 +84,23 @@ const initialVideoState: UploadState = {
   title: "",
   caption: "",
   description: "",
+};
+
+const getYoutubeVideoId = (value: string) => {
+  try {
+    const url = new URL(value.trim());
+    if (url.hostname.includes("youtu.be")) return url.pathname.split("/")[1] || "";
+    if (url.pathname.startsWith("/embed/")) return url.pathname.split("/")[2] || "";
+    if (url.pathname.startsWith("/shorts/")) return url.pathname.split("/")[2] || "";
+    return url.searchParams.get("v") || "";
+  } catch {
+    return "";
+  }
+};
+
+const getYoutubeThumbnail = (value: string) => {
+  const id = getYoutubeVideoId(value);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
 };
 
 export function UploadMediaForm({
@@ -208,10 +229,33 @@ export function UploadMediaForm({
     }
   };
 
+  const handleYoutubeUrlChange = (youtubeUrl: string) => {
+    setFormData((prev) => {
+      if (prev.type !== "video") return prev;
+      const poster = getYoutubeThumbnail(youtubeUrl);
+      return {
+        ...prev,
+        sourceMode: "youtube",
+        youtubeUrl,
+        src: youtubeUrl,
+        srcKey: youtubeUrl ? `external:${youtubeUrl}` : "",
+        poster,
+        posterKey: poster ? `external:${poster}` : "",
+      };
+    });
+  };
+
   const onSubmit = () => {
     if (!canManage) {
       toast.error("Unauthorized");
       return;
+    }
+
+    if (formData.type === "video" && formData.sourceMode === "youtube") {
+      if (!getYoutubeVideoId(formData.youtubeUrl)) {
+        toast.error("Enter a valid YouTube URL.");
+        return;
+      }
     }
 
     const loading = toast.loading("Saving media...");
@@ -252,6 +296,7 @@ export function UploadMediaForm({
   };
 
   const isDisabled = isPending || isUploading || !canManage;
+  const isYoutubeVideo = formData.type === "video" && formData.sourceMode === "youtube";
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
@@ -259,7 +304,7 @@ export function UploadMediaForm({
         <DialogHeader>
           <DialogTitle>Upload media</DialogTitle>
           <DialogDescription>
-            Add photos and videos to the admin media library.
+            Add photos, uploaded videos, or YouTube videos to the media library.
           </DialogDescription>
         </DialogHeader>
 
@@ -285,64 +330,118 @@ export function UploadMediaForm({
             </Select>
           </div>
 
-          <div className="grid gap-2">
-            <Label>{formData.type === "photo" ? "Photo file" : "Video file"}</Label>
-            <input
-              ref={mediaInputRef}
-              type="file"
-              accept={formData.type === "photo" ? "image/*" : "video/*"}
-              multiple={formData.type === "photo"}
-              className="hidden"
-              onChange={(e) => handleFileUpload(e, "src")}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => mediaInputRef.current?.click()}
-              disabled={isDisabled}
-              className="justify-start"
-            >
-              {isUploading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <UploadCloud className="mr-2 h-4 w-4" />
-              )}
-              {formData.type === "photo"
-                ? formData.files.length > 0
-                  ? "Replace photos"
-                  : "Choose up to 10 photos"
-                : formData.src
-                  ? "Replace file"
-                  : "Choose file"}
-            </Button>
-            {formData.src ? (
-              <div className="overflow-hidden rounded-lg border bg-muted">
-                {formData.type === "photo" ? (
-                  <div className="grid max-h-80 gap-2 overflow-y-auto p-2 sm:grid-cols-2">
-                    {formData.files.map((file) => (
-                      <div
-                        key={file.srcKey}
-                        className="relative aspect-video overflow-hidden rounded-md bg-background"
-                      >
-                        <Image
-                          src={file.src}
-                          alt={formData.alt || file.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <video
-                    src={formData.src}
-                    controls
-                    className="max-h-64 w-full bg-black"
-                  />
-                )}
+          {formData.type === "video" ? (
+            <div className="grid gap-2">
+              <Label>Video source</Label>
+              <div className="grid grid-cols-2 gap-2 rounded-lg border bg-muted/30 p-1">
+                {(["upload", "youtube"] as const).map((mode) => (
+                  <Button
+                    key={mode}
+                    type="button"
+                    variant={formData.sourceMode === mode ? "default" : "ghost"}
+                    onClick={() =>
+                      setFormData({
+                        ...initialVideoState,
+                        sourceMode: mode,
+                      } as UploadState)
+                    }
+                    disabled={isDisabled}
+                    className="capitalize"
+                  >
+                    {mode === "upload" ? "Upload video" : "YouTube link"}
+                  </Button>
+                ))}
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
+
+          {isYoutubeVideo ? (
+            <div className="grid gap-2">
+              <Label htmlFor="youtubeUrl">YouTube URL</Label>
+              <Input
+                id="youtubeUrl"
+                value={formData.youtubeUrl}
+                onChange={(event) => handleYoutubeUrlChange(event.target.value)}
+                placeholder="https://youtu.be/..."
+                disabled={isDisabled}
+              />
+              {formData.poster ? (
+                <div className="relative aspect-video overflow-hidden rounded-lg border bg-muted">
+                  <Image
+                    src={formData.poster}
+                    alt="YouTube thumbnail preview"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-red-600 shadow-sm">
+                      <ExternalLink className="h-4 w-4" />
+                      YouTube video
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="grid gap-2">
+              <Label>{formData.type === "photo" ? "Photo file" : "Video file"}</Label>
+              <input
+                ref={mediaInputRef}
+                type="file"
+                accept={formData.type === "photo" ? "image/*" : "video/*"}
+                multiple={formData.type === "photo"}
+                className="hidden"
+                onChange={(e) => handleFileUpload(e, "src")}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => mediaInputRef.current?.click()}
+                disabled={isDisabled}
+                className="justify-start"
+              >
+                {isUploading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="mr-2 h-4 w-4" />
+                )}
+                {formData.type === "photo"
+                  ? formData.files.length > 0
+                    ? "Replace photos"
+                    : "Choose up to 10 photos"
+                  : formData.src
+                    ? "Replace file"
+                    : "Choose file"}
+              </Button>
+              {formData.src ? (
+                <div className="overflow-hidden rounded-lg border bg-muted">
+                  {formData.type === "photo" ? (
+                    <div className="grid max-h-80 gap-2 overflow-y-auto p-2 sm:grid-cols-2">
+                      {formData.files.map((file) => (
+                        <div
+                          key={file.srcKey}
+                          className="relative aspect-video overflow-hidden rounded-md bg-background"
+                        >
+                          <Image
+                            src={file.src}
+                            alt={formData.alt || file.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <video
+                      src={formData.src}
+                      controls
+                      className="max-h-64 w-full bg-black"
+                    />
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
 
           {formData.type === "photo" ? (
             <div className="grid gap-2">
@@ -378,36 +477,38 @@ export function UploadMediaForm({
                 />
               </div>
 
-              <div className="grid gap-2">
-                <Label>Poster image</Label>
-                <input
-                  ref={posterInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, "poster")}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => posterInputRef.current?.click()}
-                  disabled={isDisabled}
-                  className="justify-start"
-                >
-                  <UploadCloud className="mr-2 h-4 w-4" />
-                  {formData.poster ? "Replace poster" : "Upload poster"}
-                </Button>
-                {formData.poster ? (
-                  <div className="relative aspect-video overflow-hidden rounded-lg border bg-muted">
-                    <Image
-                      src={formData.poster}
-                      alt={formData.title || "Poster preview"}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : null}
-              </div>
+              {!isYoutubeVideo ? (
+                <div className="grid gap-2">
+                  <Label>Poster image</Label>
+                  <input
+                    ref={posterInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleFileUpload(e, "poster")}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => posterInputRef.current?.click()}
+                    disabled={isDisabled}
+                    className="justify-start"
+                  >
+                    <UploadCloud className="mr-2 h-4 w-4" />
+                    {formData.poster ? "Replace poster" : "Upload poster"}
+                  </Button>
+                  {formData.poster ? (
+                    <div className="relative aspect-video overflow-hidden rounded-lg border bg-muted">
+                      <Image
+                        src={formData.poster}
+                        alt={formData.title || "Poster preview"}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </>
           )}
 

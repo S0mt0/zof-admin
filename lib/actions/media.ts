@@ -23,12 +23,15 @@ type S3DeleteTarget = {
   posterKey?: string | null;
 };
 
+const isExternalKey = (key?: string | null) => !key || key.startsWith("external:");
+
 const deleteMediaFilesFromS3 = async (items: S3DeleteTarget[]) => {
+  const deleteTargets = items.flatMap((item) => [item.srcKey, item.posterKey]).filter(
+    (key): key is string => !isExternalKey(key)
+  );
+
   const results = await Promise.allSettled(
-    items.flatMap((item) => [
-      deleteS3Object(item.srcKey),
-      item.posterKey ? deleteS3Object(item.posterKey) : Promise.resolve(),
-    ])
+    deleteTargets.map((key) => deleteS3Object(key))
   );
 
   const failed = results.filter((result) => result.status === "rejected");
@@ -73,6 +76,7 @@ export const createMediaAction = async (
       }, "${capitalize(label)}"`
     );
 
+    revalidatePath("/media/manage");
     revalidatePath("/media");
     return { success: "Media uploaded successfully", data: { media: created } };
   } catch (error) {
@@ -117,6 +121,7 @@ export const createManyMediaAction = async (
       `${user.name} (${user.role}) uploaded ${created.length} photo(s) to the media library`
     );
 
+    revalidatePath("/media/manage");
     revalidatePath("/media");
     return {
       success: `${created.length} photo(s) uploaded successfully`,
@@ -161,6 +166,7 @@ export const updateMediaAction = async (
       `${user.name} (${user.role}) updated ${updated.type}, "${capitalize(label)}"`
     );
 
+    revalidatePath("/media/manage");
     revalidatePath("/media");
     return { success: "Media updated successfully", data: { media: updated } };
   } catch (error) {
@@ -189,6 +195,7 @@ export const deleteMediaAction = async (id: string) => {
       `${user.name} (${user.role}) deleted a ${media.type} from the media library`
     );
 
+    revalidatePath("/media/manage");
     revalidatePath("/media");
     return { success: "Media item deleted successfully" };
   } catch (error) {
@@ -218,6 +225,7 @@ export const bulkDeleteMediaAction = async (ids: string[]) => {
       `${user.name} (${user.role}) deleted ${deleted.items.length} media item(s) from the library`
     );
 
+    revalidatePath("/media/manage");
     revalidatePath("/media");
     return {
       success: `${deleted.items.length} media item(s) deleted successfully`,

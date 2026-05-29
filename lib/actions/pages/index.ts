@@ -3,3 +3,4 @@ export * from "./landing";
 export * from "./blogs";
 export * from "./events";
 export * from "./donations";
+export * from "./gallery";

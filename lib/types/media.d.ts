@@ -1,3 +1,24 @@
+interface GalleryPageContent {
+  id: string;
+  hero: GalleryHeroSectionContent;
+  archive: GalleryArchiveSectionContent;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+type GallerySection = "hero" | "archive";
+
+interface GalleryHeroSectionContent {
+  intro: SectionIntroContent;
+  primaryImage?: string | null;
+  secondaryImage?: string | null;
+  heroBackgroundColor?: string | null;
+}
+
+interface GalleryArchiveSectionContent {
+  intro: SectionIntroContent;
+}
+
 type MediaKind = "photo" | "video";
 
 type PhotoItem = {
@@ -40,7 +61,7 @@ type MediaRecord = {
   | {
       type: "video";
       src: string;
-      poster: string;
+      poster?: string | null;
       title: string;
       caption?: string | null;
       description?: string | null;

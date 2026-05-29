@@ -109,7 +109,12 @@ const donationItems = [
   { title: "Donations", url: "/donations/manage", icon: BiSolidDonateHeart },
 ] satisfies SidebarNestedItem[];
 
-const pageItems = [{ title: "Photo Gallery", url: "/media", icon: ImageIcon }];
+const galleryItems = [
+  { title: "Hero", url: "/media/hero", icon: Sparkles },
+  { title: "Archive", url: "/media/archive", icon: Grid },
+  { type: "separator", title: "Manage Gallery" },
+  { title: "Media", url: "/media/manage", icon: ImageIcon },
+] satisfies SidebarNestedItem[];
 
 const isPathActive = (pathname: string, url: string) => {
   if (url === "/") return pathname === "/";
@@ -136,7 +141,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
     eventsItems.some((item) => isNestedItemActive(pathname, item)) ||
     (canManageDonations && donationItems.some((item) => isNestedItemActive(pathname, item))) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
-    pageItems.some((item) => isPathActive(pathname, item.url));
+    galleryItems.some((item) => isNestedItemActive(pathname, item));
 
   const landingOpen = landingItems.some((item) =>
     isPathActive(pathname, item.url)
@@ -154,6 +159,9 @@ export const NavigationItems = ({ role }: { role?: string }) => {
     isPathActive(pathname, item.url)
   );
   const donationOpen = canManageDonations && donationItems.some((item) =>
+    isNestedItemActive(pathname, item)
+  );
+  const galleryOpen = galleryItems.some((item) =>
     isNestedItemActive(pathname, item)
   );
 
@@ -245,19 +253,14 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 onNavigate={handleClick}
               />
 
-              {pageItems.map((item) => (
-                <SidebarMenuSubItem key={item.title}>
-                  <SidebarMenuSubButton
-                    asChild
-                    isActive={isPathActive(pathname, item.url)}
-                  >
-                    <Link href={item.url} onClick={handleClick}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
+              <SidebarNestedSection
+                title="Photo Gallery"
+                icon={ImageIcon}
+                defaultOpen={galleryOpen}
+                items={galleryItems}
+                pathname={pathname}
+                onNavigate={handleClick}
+              />
             </SidebarMenuSub>
           </CollapsibleContent>
         </Collapsible>

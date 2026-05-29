@@ -82,7 +82,7 @@ export function MediaPage({ data, pagination, searchParams }: MediaPageProps) {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="overflow-hidden rounded-xl border bg-card">
               {data.map((item) => (
                 <MediaCard
                   key={item.id}
@@ -101,7 +101,7 @@ export function MediaPage({ data, pagination, searchParams }: MediaPageProps) {
             </div>
 
             <Pagination
-              pathname="/media"
+              pathname="/media/manage"
               searchParams={searchParams}
               currentPage={pagination.page}
               totalPages={pagination.totalPages}

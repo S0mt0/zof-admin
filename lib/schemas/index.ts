@@ -7,6 +7,7 @@ export * from "./settings";
 export * from "./team";
 export * from "./pages/blogs";
 export * from "./pages/events";
+export * from "./pages/gallery";
 export * from "./messages";
 export * from "./media";
 export * from "./pages/about";

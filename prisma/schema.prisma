@@ -451,6 +451,15 @@ model EventsPage {
   updatedAt DateTime @updatedAt
 }
 
+model GalleryPage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  hero      GalleryHeroSection?
+  archive   GalleryArchiveSection?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Testimonial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -620,6 +629,17 @@ type AboutTeamSection {
 }
 
 type EventsArchiveSection {
+  intro SectionIntro
+}
+
+type GalleryHeroSection {
+  intro                SectionIntro
+  primaryImage         String?
+  secondaryImage       String?
+  heroBackgroundColor  String?
+}
+
+type GalleryArchiveSection {
   intro SectionIntro
 }
 

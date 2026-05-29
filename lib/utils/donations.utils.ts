@@ -39,7 +39,10 @@ const getLogoDataUrl = async () => {
     const response = await fetch(LOGO_URL);
     if (!response.ok) return null;
     const arrayBuffer = await response.arrayBuffer();
-    return bufferToDataUrl(Buffer.from(arrayBuffer), response.headers.get("content-type") || "image/png");
+    return bufferToDataUrl(
+      Buffer.from(arrayBuffer),
+      response.headers.get("content-type") || "image/png"
+    );
   } catch (error) {
     console.error("Could not fetch remote PDF logo:", error);
     return null;
@@ -171,9 +174,7 @@ export const createDonationsPdfBuffer = async (donations: Donation[]) => {
   doc.setFontSize(9);
   doc.text("Zita-Onyeka Foundation", 40, 23);
   doc.setTextColor(255, 255, 255);
-  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 200, 17, {
-    align: "right",
-  });
+  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 210, 17);
 
   autoTable(doc, {
     startY: 42,
@@ -275,7 +276,7 @@ export const createDonationReceiptPdfBuffer = async (donation: Donation) => {
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(8);
   doc.text("https://zitaonyekafoundation.org", 18, 274, { maxWidth: 174 });
-  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 18, 282, {
+  doc.text(`Generated: ${formatFullDateTime(new Date())}`, 18, 280, {
     maxWidth: 174,
   });
 
