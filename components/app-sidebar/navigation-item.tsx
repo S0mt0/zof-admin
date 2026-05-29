@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Contact,
   FileText,
+  Gift,
   Grid,
   Heart,
   Home,
@@ -16,6 +17,8 @@ import {
   Info,
   LayoutDashboard,
   Library,
+  List,
+  LucideLayoutPanelLeft,
   MapPin,
   MessageSquareQuote,
   Palette,
@@ -23,6 +26,7 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import { BiSolidDonateHeart } from "react-icons/bi";
 
 import {
   Collapsible,
@@ -98,10 +102,14 @@ const contactItems = [
   { title: "Messages", url: "/contact/messages", icon: MessageSquareQuote },
 ];
 
-const pageItems = [
-  { title: "Photo Gallery", url: "/media", icon: ImageIcon },
-  { title: "Donations", url: "/donations", icon: Heart },
-];
+const donationItems = [
+  { title: "Aside", url: "/donations/aside", icon: LucideLayoutPanelLeft },
+  { type: "separator", title: "Manage Donations" },
+  { title: "Campaigns", url: "/donations/campaigns", icon: List },
+  { title: "Donations", url: "/donations/manage", icon: BiSolidDonateHeart },
+] satisfies SidebarNestedItem[];
+
+const pageItems = [{ title: "Photo Gallery", url: "/media", icon: ImageIcon }];
 
 const isPathActive = (pathname: string, url: string) => {
   if (url === "/") return pathname === "/";
@@ -112,7 +120,8 @@ const isPathActive = (pathname: string, url: string) => {
 const isNestedItemActive = (pathname: string, item: SidebarNestedItem) =>
   item.type === "separator" ? false : isPathActive(pathname, item.url);
 
-export const NavigationItems = () => {
+export const NavigationItems = ({ role }: { role?: string }) => {
+  const canManageDonations = role === "admin";
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -125,6 +134,7 @@ export const NavigationItems = () => {
     aboutItems.some((item) => isNestedItemActive(pathname, item)) ||
     blogsItems.some((item) => isNestedItemActive(pathname, item)) ||
     eventsItems.some((item) => isNestedItemActive(pathname, item)) ||
+    (canManageDonations && donationItems.some((item) => isNestedItemActive(pathname, item))) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
     pageItems.some((item) => isPathActive(pathname, item.url));
 
@@ -142,6 +152,9 @@ export const NavigationItems = () => {
   );
   const contactOpen = contactItems.some((item) =>
     isPathActive(pathname, item.url)
+  );
+  const donationOpen = canManageDonations && donationItems.some((item) =>
+    isNestedItemActive(pathname, item)
   );
 
   return (
@@ -213,6 +226,16 @@ export const NavigationItems = () => {
                 pathname={pathname}
                 onNavigate={handleClick}
               />
+              {canManageDonations ? (
+                <SidebarNestedSection
+                  title="Donations"
+                  icon={Gift}
+                  defaultOpen={donationOpen}
+                  items={donationItems}
+                  pathname={pathname}
+                  onNavigate={handleClick}
+                />
+              ) : null}
               <SidebarNestedSection
                 title="Contact"
                 icon={Contact}

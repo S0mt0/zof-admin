@@ -12,3 +12,4 @@ export * from "./media";
 export * from "./pages/about";
 export * from "./pages/landing";
 export * from "./pages/shared";
+export * from "./pages/donations";

@@ -204,4 +204,66 @@ export class MailService {
       console.error("[error_sending_event_update_email]: ", error);
     }
   }
+
+  private donationEmailShell(content: string) {
+    return `
+      <div style="margin:0;padding:0;background:#f6fbf7;font-family:Arial,sans-serif;color:#10231d;">
+        <div style="max-width:640px;margin:0 auto;padding:32px 18px;">
+          <div style="background:#173f35;color:#fff;padding:24px;border-radius:16px 16px 0 0;">
+            <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#f7c87b;font-weight:700;">Zita-Onyeka Foundation</div>
+            <h1 style="margin:10px 0 0;font-size:26px;line-height:1.25;">Thank you for supporting the work</h1>
+          </div>
+          <div style="background:#fff;border:1px solid #dfe8e2;border-top:0;padding:26px;border-radius:0 0 16px 16px;">
+            ${content}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async sendDonationReceiptEmail(donation: Donation) {
+    if (!donation.email) return;
+    const amount = new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: donation.currency || "NGN",
+      maximumFractionDigits: 0,
+    }).format(donation.amount);
+
+    const html = this.donationEmailShell(`
+      <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">Hello ${donation.anonymous ? "there" : donation.donor || "there"},</p>
+      <p style="font-size:15px;line-height:1.8;margin:0 0 22px;">We have received your donation. Please keep this receipt for your records.</p>
+      <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:12px;padding:18px;margin:20px 0;">
+        <p style="margin:0 0 8px;"><strong>Amount:</strong> ${amount}</p>
+        <p style="margin:0 0 8px;"><strong>Status:</strong> ${donation.status}</p>
+        <p style="margin:0 0 8px;"><strong>Reference:</strong> ${donation.reference}</p>
+        <p style="margin:0;"><strong>Date:</strong> ${format(new Date(donation.paidAt || donation.createdAt), "MMMM d, yyyy")}</p>
+      </div>
+      <p style="font-size:14px;line-height:1.7;color:#64748b;margin:0;">Your support helps us keep practical care moving through education, relief outreach, and community programs.</p>
+    `);
+
+    await this.sendMail({
+      to: donation.email,
+      subject: "Your donation receipt",
+      html,
+      text: `Thank you. Donation receipt: ${amount}, reference ${donation.reference}.`,
+    });
+  }
+
+  async sendDonationThankYouEmail(donation: Donation) {
+    if (!donation.email) return;
+    const html = this.donationEmailShell(`
+      <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">Hello ${donation.anonymous ? "there" : donation.donor || "there"},</p>
+      <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">Thank you for giving to Zita-Onyeka Foundation. We do not take your support lightly.</p>
+      <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">Your gift helps the team respond with support people can actually use.</p>
+      <p style="font-size:15px;line-height:1.8;margin:0;">With gratitude,<br/><strong>The Zita-Onyeka Foundation Team</strong></p>
+    `);
+
+    await this.sendMail({
+      to: donation.email,
+      subject: "Thank you for your donation",
+      html,
+      text: "Thank you for giving to Zita-Onyeka Foundation.",
+    });
+  }
+
 }

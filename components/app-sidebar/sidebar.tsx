@@ -59,7 +59,7 @@ export async function AppSidebar({
           <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-2">
-              <NavigationItems />
+              <NavigationItems role={user?.role} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

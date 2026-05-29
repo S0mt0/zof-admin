@@ -33,6 +33,12 @@ enum DonationStatus {
   pending
   failed
   refunded
+  cancelled
+}
+
+enum DonationFrequency {
+  once
+  monthly
 }
 
 enum TeamMemberStatus {
@@ -83,7 +89,6 @@ model User {
   // Relations
   blogs Blog[]
   createdEvents Event[]
-  donations Donation[]
   messages Message[]
   media Media[]
   accounts      Account[]
@@ -177,25 +182,52 @@ model Event {
   updatedAt            DateTime    @updatedAt
 }
 
+
+model DonationsPage {
+  id        String                 @id @default(auto()) @map("_id") @db.ObjectId
+  aside     DonationAsideSection?
+
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+}
+
 model Donation {
-  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  id                String                @id @default(auto()) @map("_id") @db.ObjectId
   donor             String?
   email             String?
   phone             String?
   amount            Float
-  method            String
-  campaign          String
+  currency          String                @default("NGN")
+  method            String                @default("paystack")
   notes             String?
-  recurring         Boolean        @default(false)
-  anonymous         Boolean        @default(false)
-  sendReceipt       Boolean        @default(true)
-  sendThankYou      Boolean        @default(true)
-  status            DonationStatus @default(completed)
+  recurring         Boolean               @default(false)
+  frequency         DonationFrequency     @default(once)
+  anonymous         Boolean               @default(false)
+  sendReceipt       Boolean               @default(true)
+  sendThankYou      Boolean               @default(true)
+  status            DonationStatus        @default(pending)
+  reference         String                @unique
+  paystackStatus    String?
+  accessCode        String?
+  authorizationUrl  String?
+  paidAt            DateTime?
+  metadata          Json?
+  campaignId        String?               @db.ObjectId
+  campaign          DonationCampaign?     @relation(fields: [campaignId], references: [id])
   
-  // Relations
-  donorId           String?        @db.ObjectId
-  donorUser         User?          @relation(fields: [donorId], references: [id])
-  
+  // Timestamps
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model DonationCampaign {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  topic             String         @unique
+  description       String?
+  published         Boolean        @default(false)
+  order             Int            @default(0)
+  donation          Donation[]
+
   // Timestamps
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
@@ -333,8 +365,8 @@ model EventComment {
   comment         String
   authorName      String
   authorEmail     String
-  event            Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId          String @db.ObjectId
+  event           Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId         String @db.ObjectId
   status          CommentStatus @default(pending)
   
   // Timestamps
@@ -505,6 +537,10 @@ type FaqSection {
   intro SectionIntro
   items FaqItem[]
   ctas  CtaButton[]
+}
+
+type DonationAsideSection {
+  intro SectionIntro
 }
 
 type CtaButton {

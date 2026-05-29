@@ -30,10 +30,12 @@ export function ItemManagerShell({
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        <Button onClick={onAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          {addLabel}
-        </Button>
+        {addLabel ? (
+          <Button onClick={onAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            {addLabel}
+          </Button>
+        ) : null}
       </CardHeader>
       <CardContent className="min-w-0">{children}</CardContent>
     </Card>
