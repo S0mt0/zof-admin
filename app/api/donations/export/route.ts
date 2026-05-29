@@ -1,6 +1,9 @@
 import { listAllDonations } from "@/lib/db/repository/pages/donations";
 import { getUserById } from "@/lib/db/repository/user.service";
-import { createDonationsPdfBuffer, donationsToCsv } from "@/lib/utils/donations-export";
+import {
+  createDonationsPdfBuffer,
+  donationsToCsv,
+} from "@/lib/utils/donations.utils";
 import { currentUser } from "@/lib/utils";
 
 const getFileName = (format: "pdf" | "csv") =>

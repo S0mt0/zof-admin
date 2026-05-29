@@ -3,6 +3,7 @@ import {
   getDonationByReference,
   updateDonationByReference,
 } from "@/lib/db/repository/pages/donations";
+import { cleanDonationReference, getDonationMethod } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
 import { verifyPaystackTransaction } from "@/lib/utils/paystack";
 
@@ -17,36 +18,20 @@ export async function OPTIONS() {
 }
 
 async function verify(reference: string) {
-  let cleanReference = reference;
-
-  try {
-    cleanReference = JSON.parse(reference);
-  } catch (error) {
-    console.error("Error parsing verification reference:", error);
-  }
-
-  if (Array.isArray(cleanReference)) {
-    cleanReference = cleanReference[0];
-  }
-
-  if (reference.includes("=")) {
-    cleanReference = reference.split("=")[0];
-  }
-  if (reference.includes(",")) {
-    cleanReference = reference.split(",")[0];
-  }
+  let cleanReference = cleanDonationReference(reference);
 
   const existing = await getDonationByReference(cleanReference);
-  console.log({ existing });
 
   if (!existing) throw new Error("Donation not found");
 
   const tx = await verifyPaystackTransaction(cleanReference);
+
   const completed = tx.status === "success";
+
   const donation = await updateDonationByReference(cleanReference, {
     status: completed ? "completed" : "failed",
     paystackStatus: tx.status,
-    method: tx.channel || "paystack",
+    method: getDonationMethod(tx),
     paidAt: completed ? new Date(tx.paid_at || Date.now()) : null,
     metadata: tx,
   });
@@ -70,14 +55,14 @@ export async function GET(request: Request) {
         { message: "Reference is required" },
         { headers: corsHeaders, status: 400 }
       );
-    console.log("Verifying donation with reference:", reference);
+
     const donation = await verify(reference);
+
     return Response.json(
       { message: "Donation verified", data: donation },
       { headers: corsHeaders, status: 200 }
     );
   } catch (error) {
-    console.error("Donation verify error:", error);
     console.error(
       "Donation verify error:",
       error instanceof Error ? error.message : error
@@ -92,12 +77,15 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
     if (!body.reference)
       return Response.json(
         { message: "Reference is required" },
         { headers: corsHeaders, status: 400 }
       );
+
     const donation = await verify(body.reference);
+
     return Response.json(
       { message: "Donation verified", data: donation },
       { headers: corsHeaders, status: 200 }

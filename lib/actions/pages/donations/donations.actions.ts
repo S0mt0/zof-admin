@@ -2,11 +2,23 @@
 
 import { revalidatePath } from "next/cache";
 
-import { deleteDonation, getDonationById, listAllDonations } from "@/lib/db/repository/pages/donations";
-import { createDonationsPdfBuffer, donationsToCsv } from "@/lib/utils/donations-export";
+import {
+  deleteDonation,
+  deleteDonations,
+  getDonationById,
+  listAllDonations,
+} from "@/lib/db/repository/pages/donations";
+import {
+  createDonationsPdfBuffer,
+  donationsToCsv,
+} from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
 
-import { getAuthorizedDonationAdmin, logDonationActivity, sectionPath } from "./shared";
+import {
+  getAuthorizedDonationAdmin,
+  logDonationActivity,
+  sectionPath,
+} from "./shared";
 
 export const deleteDonationAction = async (id: string) => {
   const auth = await getAuthorizedDonationAdmin();
@@ -14,11 +26,31 @@ export const deleteDonationAction = async (id: string) => {
 
   try {
     await deleteDonation(id);
-    await logDonationActivity("Donation deleted", auth.user.name, auth.user.role);
+    await logDonationActivity(
+      "Donation deleted",
+      auth.user.name,
+      auth.user.role
+    );
     revalidatePath(sectionPath("manage"));
     return { success: "Donation deleted" };
   } catch {
     return { error: "Could not delete donation" };
+  }
+};
+
+export const deleteDonationsAction = async (ids: string[]) => {
+  const auth = await getAuthorizedDonationAdmin();
+  if ("error" in auth) return { error: auth.error };
+  const validIds = ids.filter(Boolean);
+  if (!validIds.length) return { error: "Select at least one donation." };
+
+  try {
+    await deleteDonations(validIds);
+    await logDonationActivity("Donations deleted", auth.user.name, auth.user.role);
+    revalidatePath(sectionPath("manage"));
+    return { success: `${validIds.length} donation${validIds.length === 1 ? "" : "s"} deleted` };
+  } catch {
+    return { error: "Could not delete donations" };
   }
 };
 
@@ -31,7 +63,11 @@ export const sendDonationReceiptAction = async (id: string) => {
 
   try {
     await new MailService().sendDonationReceiptEmail(donation as any);
-    await logDonationActivity("Donation receipt sent", auth.user.name, auth.user.role);
+    await logDonationActivity(
+      "Donation receipt sent",
+      auth.user.name,
+      auth.user.role
+    );
     return { success: "Receipt sent" };
   } catch {
     return { error: "Could not send receipt" };
@@ -47,22 +83,27 @@ export const sendDonationThankYouAction = async (id: string) => {
 
   try {
     await new MailService().sendDonationThankYouEmail(donation as any);
-    await logDonationActivity("Donation thank-you sent", auth.user.name, auth.user.role);
+    await logDonationActivity(
+      "Donation thank-you sent",
+      auth.user.name,
+      auth.user.role
+    );
     return { success: "Thank-you message sent" };
   } catch {
     return { error: "Could not send thank-you message" };
   }
 };
 
-
 export const sendDonationsExportAction = async (format: "pdf" | "csv") => {
   const auth = await getAuthorizedDonationAdmin();
   if ("error" in auth) return { error: auth.error };
-  if (!auth.user.email) return { error: "Your admin account has no email address." };
+  if (!auth.user.email)
+    return { error: "Your admin account has no email address." };
 
   try {
     const donations = (await listAllDonations()) as Donation[];
-    if (!donations.length) return { error: "There are no donations to export yet." };
+    if (!donations.length)
+      return { error: "There are no donations to export yet." };
 
     const now = new Date().toISOString().slice(0, 10);
     const isPdf = format === "pdf";
@@ -89,7 +130,11 @@ export const sendDonationsExportAction = async (format: "pdf" | "csv") => {
       ],
     } as any);
 
-    await logDonationActivity(`Donation ${format.toUpperCase()} export emailed`, auth.user.name, auth.user.role);
+    await logDonationActivity(
+      `Donation ${format.toUpperCase()} export emailed`,
+      auth.user.name,
+      auth.user.role
+    );
     return { success: `${format.toUpperCase()} export sent to your email.` };
   } catch (error) {
     console.error("Donation export email error:", error);

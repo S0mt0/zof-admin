@@ -5,6 +5,7 @@ import {
   updateDonationByReference,
 } from "@/lib/db/repository/pages/donations";
 import { MailService } from "@/lib/utils/mail.service";
+import { cleanDonationReference, getDonationMethod } from "@/lib/utils/donations.utils";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -18,45 +19,15 @@ export async function POST(request: Request) {
 
   const event = JSON.parse(body);
   if (event.event === "charge.success") {
-    const reference = event.data?.reference;
+    const reference = cleanDonationReference(event.data?.reference);
 
-    let cleanReference = reference;
-
-    try {
-      cleanReference = JSON.parse(reference);
-    } catch (error) {
-      console.error("Error parsing verification reference:", error);
-    }
-
-    if (Array.isArray(cleanReference)) {
-      cleanReference = cleanReference[0];
-    }
-
-    if (reference.includes("=")) {
-      cleanReference = reference.split("=")[0];
-    }
-    if (reference.includes(",")) {
-      cleanReference = reference.split(",")[0];
-    }
-
-    const existing = cleanReference
-      ? await getDonationByReference(cleanReference)
-      : null;
-
-    console.log(
-      "Paystack webhook received for reference:",
-      cleanReference,
-      "existing donation:",
-      !!existing
-    );
-
-    console.log("Event data:", event.data);
+    const existing = reference ? await getDonationByReference(reference) : null;
 
     if (existing) {
-      const donation = await updateDonationByReference(cleanReference, {
+      const donation = await updateDonationByReference(reference, {
         status: "completed",
         paystackStatus: event.data?.status || "success",
-        method: event.data?.channel || "paystack",
+        method: getDonationMethod(event.data),
         paidAt: new Date(event.data?.paid_at || Date.now()),
         metadata: event.data,
       });

@@ -49,3 +49,6 @@ export const updateDonation = (id: string, data: any) =>
 
 export const deleteDonation = (id: string) =>
   db.donation.delete({ where: { id }, include: { campaign: true } });
+
+export const deleteDonations = (ids: string[]) =>
+  db.donation.deleteMany({ where: { id: { in: ids } } });
