@@ -94,6 +94,7 @@ export async function POST(request: Request) {
       status: "failed",
     });
 
+    console.log("error type:", typeof error);
     console.error("Donation initialize error:", error);
     let message = "Could not initialize donation";
 

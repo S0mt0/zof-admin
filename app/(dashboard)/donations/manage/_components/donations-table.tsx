@@ -71,10 +71,7 @@ interface DonationsTableProps extends Paginated<Donation> {
   searchParams?: Record<string, string>;
 }
 
-type DeleteTarget =
-  | { type: "single"; id: string }
-  | { type: "bulk" }
-  | null;
+type DeleteTarget = { type: "single"; id: string } | { type: "bulk" } | null;
 
 export function DonationsTable({
   data: donations,
@@ -87,13 +84,18 @@ export function DonationsTable({
 
   const selectedCount = selectedIds.length;
   const allCurrentSelected =
-    donations.length > 0 && donations.every((donation) => selectedIds.includes(donation.id));
-  const someCurrentSelected = donations.some((donation) => selectedIds.includes(donation.id));
+    donations.length > 0 &&
+    donations.every((donation) => selectedIds.includes(donation.id));
+  const someCurrentSelected = donations.some((donation) =>
+    selectedIds.includes(donation.id)
+  );
 
   const dialogMessage = useMemo(() => {
     if (!deleteTarget) return "";
     if (deleteTarget.type === "bulk") {
-      return `Delete ${selectedCount} selected donation${selectedCount === 1 ? "" : "s"}? This action cannot be undone.`;
+      return `Delete ${selectedCount} selected donation${
+        selectedCount === 1 ? "" : "s"
+      }? This action cannot be undone.`;
     }
     return "Delete this donation record? This action cannot be undone.";
   }, [deleteTarget, selectedCount]);
@@ -132,7 +134,9 @@ export function DonationsTable({
 
     if (deleteTarget.type === "single") {
       run(deleteDonationAction(deleteTarget.id), "Donation deleted", () => {
-        setSelectedIds((current) => current.filter((id) => id !== deleteTarget.id));
+        setSelectedIds((current) =>
+          current.filter((id) => id !== deleteTarget.id)
+        );
         setDeleteTarget(null);
       });
       return;
@@ -174,7 +178,10 @@ export function DonationsTable({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" disabled={!pagination.total || isPending}>
+                <Button
+                  variant="outline"
+                  disabled={!pagination.total || isPending}
+                >
                   <Download className="mr-2 h-4 w-4" />
                   Export
                   <ChevronDown className="ml-2 h-4 w-4" />
@@ -218,7 +225,10 @@ export function DonationsTable({
               <TableRow>
                 <TableHead className="w-10">
                   <Checkbox
-                    checked={allCurrentSelected || (someCurrentSelected ? "indeterminate" : false)}
+                    checked={
+                      allCurrentSelected ||
+                      (someCurrentSelected ? "indeterminate" : false)
+                    }
                     onCheckedChange={toggleCurrentPage}
                     aria-label="Select current page donations"
                   />
@@ -266,12 +276,18 @@ export function DonationsTable({
                     <TableCell className="whitespace-nowrap font-medium">
                       {money(donation.amount, donation.currency)}
                     </TableCell>
-                    <TableCell className="capitalize">{donation.frequency}</TableCell>
+                    <TableCell className="capitalize">
+                      {donation.frequency}
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={
                           donation.status === "completed"
                             ? "default"
+                            : donation.status === "failed"
+                            ? "destructive"
+                            : donation.status === "cancelled"
+                            ? "outline"
                             : "secondary"
                         }
                       >
@@ -284,7 +300,9 @@ export function DonationsTable({
                     <TableCell className="font-mono text-xs">
                       {donation.reference}
                     </TableCell>
-                    <TableCell className="capitalize">{donation.method}</TableCell>
+                    <TableCell className="capitalize">
+                      {donation.method}
+                    </TableCell>
                     <TableCell className="whitespace-nowrap">
                       {formatDateTime(donation.paidAt || donation.createdAt)}
                     </TableCell>
@@ -322,7 +340,9 @@ export function DonationsTable({
                           variant="destructive"
                           size="icon"
                           disabled={isPending}
-                          onClick={() => setDeleteTarget({ type: "single", id: donation.id })}
+                          onClick={() =>
+                            setDeleteTarget({ type: "single", id: donation.id })
+                          }
                           title="Delete donation"
                         >
                           <Trash2 className="h-4 w-4" />

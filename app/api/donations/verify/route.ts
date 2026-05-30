@@ -103,6 +103,7 @@ export async function POST(request: Request) {
       { headers: corsHeaders, status: 200 }
     );
   } catch (error) {
+    console.log("error type:", typeof error);
     console.error("Donation verify error:", error);
     let message = "Could not verify donation";
 
