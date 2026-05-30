@@ -13,13 +13,11 @@ const settingsItems = [
     title: "Settings",
     url: "/settings",
     icon: Settings,
-    gradient: "from-gray-400 to-gray-600",
   },
   {
     title: "Profile",
     url: "/profile",
     icon: User,
-    gradient: "from-indigo-400 to-indigo-600",
   },
 ];
 
@@ -44,10 +42,8 @@ export const SettingsItems = () => {
               onClick={handleClick}
               className="flex items-center gap-4"
             >
-              <div
-                className={`h-8 w-8 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
-              >
-                <item.icon className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent/60 text-sidebar-foreground transition-colors duration-200 group-hover:border-primary/30 group-hover:text-primary">
+                <item.icon className="h-4 w-4" />
               </div>
               <span className="font-medium text-sm">{item.title}</span>
             </Link>

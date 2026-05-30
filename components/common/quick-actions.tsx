@@ -12,32 +12,29 @@ import {
 
 const quickActions = [
   {
-    title: "Create New Blog Post",
+    title: "Manage Blogs & Articles",
     icon: FileText,
-    gradient: "from-blue-400 to-blue-600",
-    hoverBg: "hover:bg-blue-50/40",
-    href: "/blogs-and-articles/new",
+    href: "/blogs-and-articles/manage",
   },
   {
-    title: "Add New Event",
+    title: "Manage Events & Programmes",
     icon: Calendar,
-    gradient: "from-emerald-400 to-emerald-600",
-    hoverBg: "hover:bg-emerald-50/40",
-    href: "/events/new",
+    href: "/events-and-programmes/manage",
   },
   {
-    title: "Add Team Member",
+    title: "Manage Team Member & Volunteers",
     icon: Users,
-    gradient: "from-purple-400 to-purple-600",
-    hoverBg: "hover:bg-purple-50/40",
-    href: "/team",
+    href: "/about/team",
   },
   {
     title: "View Messages",
     icon: MessageSquare,
-    gradient: "from-pink-400 to-pink-600",
-    hoverBg: "hover:bg-pink-50/40",
     href: "/messages",
+  },
+  {
+    title: "Manage Donations & Campaigns",
+    icon: FileText,
+    href: "/donations/manage",
   },
 ];
 
@@ -51,14 +48,10 @@ export function QuickActions() {
       <CardContent className="flex flex-col gap-2">
         {quickActions.map((action) => (
           <Link key={action.title} href={action.href}>
-            <div
-              className={`w-full text-left p-3 rounded-lg border ${action.hoverBg} transition-all duration-200 group hover:shadow-md cursor-pointer`}
-            >
+            <div className="w-full cursor-pointer rounded-lg border border-border/80 p-3 text-left transition-colors duration-200 group hover:border-primary/25 hover:bg-muted/35">
               <div className="flex items-center space-x-3">
-                <div
-                  className={`h-10 w-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
-                >
-                  <action.icon className="h-5 w-5 text-white" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-muted/60 text-muted-foreground transition-colors duration-200 group-hover:border-primary/30 group-hover:text-primary">
+                  <action.icon className="h-5 w-5" />
                 </div>
                 <span className="font-medium">{action.title}</span>
               </div>

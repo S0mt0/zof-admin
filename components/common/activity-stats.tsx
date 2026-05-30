@@ -11,26 +11,20 @@ interface ActivityStatsProps {
   title: string;
   value: number;
   icon: LucideIconType;
-  gradient: string;
+  gradient?: string;
 }
 
 export const ActivityStats = ({
   title,
   value,
   icon: Icon,
-  gradient,
 }: ActivityStatsProps) => {
   return (
-    <Card
-      key={title}
-      className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-    >
+    <Card key={title} className="border-border/80 transition-colors duration-200 hover:border-primary/25">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 xs:px-6 gap-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div
-          className={`h-8 w-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md`}
-        >
-          <Icon className="h-4 w-4 text-white" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-muted/60 text-muted-foreground">
+          <Icon className="h-4 w-4" />
         </div>
       </CardHeader>
       <CardContent>

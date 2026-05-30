@@ -46,7 +46,6 @@ const dashboardItem = {
   title: "Dashboard",
   url: "/",
   icon: Home,
-  gradient: "from-blue-400 to-blue-600",
 };
 
 type SidebarNestedItem =
@@ -197,10 +196,8 @@ export const NavigationItems = ({ role }: { role?: string }) => {
             onClick={handleClick}
             className="flex items-center gap-4"
           >
-            <div
-              className={`h-8 w-8 rounded-lg bg-gradient-to-br ${dashboardItem.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}
-            >
-              <dashboardItem.icon className="h-4 w-4 text-white" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent/60 text-sidebar-foreground transition-colors duration-200 group-hover:border-primary/30 group-hover:text-primary">
+              <dashboardItem.icon className="h-4 w-4" />
             </div>
             <span className="font-medium text-sm">{dashboardItem.title}</span>
           </Link>
@@ -211,8 +208,8 @@ export const NavigationItems = ({ role }: { role?: string }) => {
         <Collapsible open={isPagesOpen} onOpenChange={setPagesOpen} className="group/pages">
           <CollapsibleTrigger asChild>
             <SidebarMenuButton className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105">
-                <LayoutDashboard className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent/60 text-sidebar-foreground transition-colors duration-200 group-hover:border-primary/30 group-hover:text-primary">
+                <LayoutDashboard className="h-4 w-4" />
               </div>
               <span className="font-medium text-sm">Pages</span>
               <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/pages:rotate-90" />

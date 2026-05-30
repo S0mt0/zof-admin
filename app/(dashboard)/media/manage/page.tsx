@@ -15,7 +15,7 @@ export default async function MediaManagePage({
   };
 }) {
   const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 12;
+  const limit = Number(searchParams.limit) || 15;
 
   const where: any = {};
 
@@ -52,7 +52,13 @@ export default async function MediaManagePage({
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <DashboardHeader breadcrumbs={[{ label: "Pages" }, { label: "Photo Gallery" }, { label: "Media Management" }]} />
+      <DashboardHeader
+        breadcrumbs={[
+          { label: "Pages" },
+          { label: "Photo Gallery" },
+          { label: "Media Management" },
+        ]}
+      />
       <MediaStats {...stats} />
       <MediaPage {...mediaData} searchParams={searchParams} />
     </div>

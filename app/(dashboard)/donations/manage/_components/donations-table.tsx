@@ -311,7 +311,11 @@ export function DonationsTable({
                         <Button
                           variant="outline"
                           size="icon"
-                          disabled={isPending || !donation.email}
+                          disabled={
+                            isPending ||
+                            !donation.email ||
+                            donation.status !== "completed"
+                          }
                           onClick={() =>
                             run(
                               sendDonationReceiptAction(donation.id),
@@ -325,7 +329,11 @@ export function DonationsTable({
                         <Button
                           variant="outline"
                           size="icon"
-                          disabled={isPending || !donation.email}
+                          disabled={
+                            isPending ||
+                            !donation.email ||
+                            donation.status !== "completed"
+                          }
                           onClick={() =>
                             run(
                               sendDonationThankYouAction(donation.id),

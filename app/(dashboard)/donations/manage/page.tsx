@@ -21,7 +21,7 @@ export default async function DonationsManagePage({
   }
 
   const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 25;
+  const limit = Number(searchParams.limit) || 15;
   const donations = await listDonations({ page, limit });
 
   return (
