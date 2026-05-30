@@ -1,5 +1,6 @@
 "use server";
 import * as z from "zod";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
 import {
@@ -15,9 +16,8 @@ import {
 } from "../db/repository/user.service";
 import { update } from "@/auth";
 import { capitalize, generateVerificationToken } from "../utils";
-import { currentUser } from "../utils/auth.utils";
 import { MailService } from "../utils/mail.service";
-import { hashPassword, verifyPassword } from "../utils/password";
+import { currentUser } from "../utils/auth.utils";
 
 export const updateProfile = async (values: z.infer<typeof ProfileSchema>) => {
   const userId = (await currentUser())?.id;
@@ -136,12 +136,12 @@ export const updatePassword = async (
   const { currentPassword, newPassword } = validatedFields.data;
 
   try {
-    const passwordsMatch = await verifyPassword(currentPassword, user.password);
+    const passwordsMatch = await bcrypt.compare(currentPassword, user.password);
     if (!passwordsMatch) {
       return { error: "Current password is incorrect!" };
     }
 
-    const hashedPassword = await hashPassword(newPassword);
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
     await updateUser(user.id, { password: hashedPassword });
 
     return { success: "Password updated successfully!" };
