@@ -14,6 +14,7 @@ export const publicApiRoutes = [
   "/api/teams",
   "/api/testimonials",
   "/api/volunteers",
+  "/api/debug-auth",
 ];
 
 export const authRoutes = [
