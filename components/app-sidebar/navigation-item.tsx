@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ElementType } from "react";
+import { useEffect, useState, type ElementType } from "react";
 import {
   BookOpen,
   Calendar,
@@ -125,6 +125,24 @@ const isPathActive = (pathname: string, url: string) => {
 const isNestedItemActive = (pathname: string, item: SidebarNestedItem) =>
   item.type === "separator" ? false : isPathActive(pathname, item.url);
 
+const navStorageKey = (key: string) => `zof-admin-sidebar:${key}`;
+
+function usePersistentNavState(key: string, defaultOpen: boolean) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(navStorageKey(key));
+    setOpen(defaultOpen || stored === "true");
+  }, [defaultOpen, key]);
+
+  const onOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    window.localStorage.setItem(navStorageKey(key), String(nextOpen));
+  };
+
+  return [open, onOpenChange] as const;
+}
+
 export const NavigationItems = ({ role }: { role?: string }) => {
   const canManageDonations = role === "admin";
   const pathname = usePathname();
@@ -164,6 +182,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
   const galleryOpen = galleryItems.some((item) =>
     isNestedItemActive(pathname, item)
   );
+  const [isPagesOpen, setPagesOpen] = usePersistentNavState("pages", pagesOpen);
 
   return (
     <>
@@ -189,7 +208,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
       </SidebarMenuItem>
 
       <SidebarMenuItem>
-        <Collapsible defaultOpen={pagesOpen} className="group/pages">
+        <Collapsible open={isPagesOpen} onOpenChange={setPagesOpen} className="group/pages">
           <CollapsibleTrigger asChild>
             <SidebarMenuButton className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105">
@@ -206,6 +225,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="Landing"
                 icon={Palette}
                 defaultOpen={landingOpen}
+                storageKey="landing"
                 items={landingItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -214,6 +234,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="About"
                 icon={Info}
                 defaultOpen={aboutOpen}
+                storageKey="about"
                 items={aboutItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -222,6 +243,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="Blogs & Articles"
                 icon={BookOpen}
                 defaultOpen={blogsOpen}
+                storageKey="blogs"
                 items={blogsItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -230,6 +252,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="Events"
                 icon={MapPin}
                 defaultOpen={eventsOpen}
+                storageKey="events"
                 items={eventsItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -239,6 +262,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                   title="Donations"
                   icon={Gift}
                   defaultOpen={donationOpen}
+                  storageKey="donations"
                   items={donationItems}
                   pathname={pathname}
                   onNavigate={handleClick}
@@ -248,6 +272,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="Contact"
                 icon={Contact}
                 defaultOpen={contactOpen}
+                storageKey="contact"
                 items={contactItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -257,6 +282,7 @@ export const NavigationItems = ({ role }: { role?: string }) => {
                 title="Photo Gallery"
                 icon={ImageIcon}
                 defaultOpen={galleryOpen}
+                storageKey="gallery"
                 items={galleryItems}
                 pathname={pathname}
                 onNavigate={handleClick}
@@ -273,6 +299,7 @@ function SidebarNestedSection({
   title,
   icon: Icon,
   defaultOpen,
+  storageKey,
   items,
   pathname,
   onNavigate,
@@ -280,13 +307,16 @@ function SidebarNestedSection({
   title: string;
   icon: ElementType;
   defaultOpen: boolean;
+  storageKey: string;
   items: SidebarNestedItem[];
   pathname: string;
   onNavigate: () => void;
 }) {
+  const [open, setOpen] = usePersistentNavState(storageKey, defaultOpen);
+
   return (
     <SidebarMenuSubItem>
-      <Collapsible defaultOpen={defaultOpen} className="group/section">
+      <Collapsible open={open} onOpenChange={setOpen} className="group/section">
         <CollapsibleTrigger className="flex h-7 w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
           <Icon className="h-4 w-4 text-sidebar-accent-foreground" />
           <span className="truncate">{title}</span>
