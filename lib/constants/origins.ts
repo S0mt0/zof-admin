@@ -1,24 +1,2 @@
-type NodeEnv = "development" | "production" | "test" | "preview" | "staging";
-
-const NODE_ENV = process.env.NODE_ENV as NodeEnv;
-const VERCEL_ENV = process.env.VERCEL_ENV as NodeEnv;
-
-export const APP_URL =
-  NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : NODE_ENV === "preview" ||
-      NODE_ENV === "staging" ||
-      VERCEL_ENV === "preview" ||
-      VERCEL_ENV === "staging"
-    ? "https://demo.admin.zitaonyekafoundation.org"
-    : "https://admin.zitaonyekafoundation.org";
-
-export const FRONTEND_BASE_URL =
-  NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : NODE_ENV === "preview" ||
-      NODE_ENV === "staging" ||
-      VERCEL_ENV === "preview" ||
-      VERCEL_ENV === "staging"
-    ? "https://www.demo.zitaonyekafoundation.org"
-    : "https://www.zitaonyekafoundation.org";
+export const APP_URL = process.env.APP_URL!;
+export const FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL!;
