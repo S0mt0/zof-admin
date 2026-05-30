@@ -1,12 +1,12 @@
 "use server";
 import * as z from "zod";
-import bcrypt from "bcryptjs";
 
 import { db } from "../db/config";
 import { getResetPasswordTokenByToken } from "../db/repository/reset-token.service";
 import { getUserByEmail } from "../db/repository/user.service";
 
 import { ResetPasswordSchema } from "../schemas";
+import { hashPassword } from "../utils/password";
 
 export async function resetPassword(
   values: z.infer<typeof ResetPasswordSchema>,
@@ -23,7 +23,7 @@ export async function resetPassword(
   if (!validatedField.success) return { error: "Invalid fields, try again." };
 
   const { password } = validatedField.data;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
 
   const existingUser = await getUserByEmail(existingToken.email);
   if (!existingUser) return { error: "User does not exist!" };

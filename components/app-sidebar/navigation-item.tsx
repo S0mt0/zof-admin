@@ -316,12 +316,26 @@ function SidebarNestedSection({
   onNavigate: () => void;
 }) {
   const [open, setOpen] = usePersistentNavState(storageKey, defaultOpen);
+  const hasActiveDescendant = items.some((item) =>
+    isNestedItemActive(pathname, item)
+  );
 
   return (
     <SidebarMenuSubItem>
       <Collapsible open={open} onOpenChange={setOpen} className="group/section">
-        <CollapsibleTrigger className="flex h-7 w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-          <Icon className="h-4 w-4 text-sidebar-accent-foreground" />
+        <CollapsibleTrigger
+          className={cn(
+            "flex h-7 w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+            hasActiveDescendant &&
+              "hover:bg-primary/15 hover:text-primary bg-sidebar-accent"
+          )}
+        >
+          <Icon
+            className={cn(
+              "h-4 w-4 text-sidebar-accent-foreground transition-colors",
+              hasActiveDescendant && "text-primary"
+            )}
+          />
           <span className="truncate">{title}</span>
           <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/section:rotate-90" />
         </CollapsibleTrigger>
@@ -339,24 +353,22 @@ function SidebarNestedSection({
                 );
               }
 
+              const active = isPathActive(pathname, item.url);
+
               return (
                 <SidebarMenuSubItem key={item.title}>
                   <SidebarMenuSubButton
                     asChild
                     size="sm"
-                    isActive={isPathActive(pathname, item.url)}
+                    isActive={active}
+                    className={cn(
+                      "transition-colors hover:bg-primary/10 hover:text-primary [&:hover>svg]:text-primary data-[active=true]:bg-primary/10",
+                      active &&
+                        "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary [&>svg]:text-primary"
+                    )}
                   >
-                    <Link
-                      href={item.url}
-                      onClick={onNavigate}
-                      className="group"
-                    >
-                      <item.icon
-                        className={cn(
-                          "h-3.5 w-3.5",
-                          isPathActive(pathname, item.url) && "text-primary"
-                        )}
-                      />
+                    <Link href={item.url} onClick={onNavigate}>
+                      <item.icon className="h-3.5 w-3.5 transition-colors" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuSubButton>

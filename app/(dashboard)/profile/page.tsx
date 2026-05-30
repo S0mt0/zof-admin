@@ -1,7 +1,7 @@
 import { User, Calendar, Edit3 } from "lucide-react";
 
 import { DashboardHeader } from "@/components/common/dashboard-header";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { getAppStats } from "@/lib/db/repository/stats.service";
 import { ProfileOverview } from "./_components/profile-overview";
 import { ActivityStats } from "@/components/common/activity-stats";

@@ -4,7 +4,7 @@ import {
   createDonationsPdfBuffer,
   donationsToCsv,
 } from "@/lib/utils/donations.utils";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 const getFileName = (format: "pdf" | "csv") =>
   `zof-donations-${new Date().toISOString().slice(0, 10)}.${format}`;

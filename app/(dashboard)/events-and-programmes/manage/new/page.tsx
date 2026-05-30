@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { EventForm } from "../_components/event-form/form";
 import { Unauthorized } from "@/components/common/unauthorized";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 
 export default async function NewEventPage() {

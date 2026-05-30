@@ -2,7 +2,7 @@ import { addAppActivity } from "@/lib/db/repository/app-activity.service";
 import { capitalize } from "@/lib/utils";
 
 import { getUserById } from "@/lib/db/repository/user.service";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 export const sectionPath = (section: string) => `/donations/${section}`;
 

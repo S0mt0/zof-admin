@@ -3,7 +3,7 @@ import { getEventBySlug } from "@/lib/db/repository/pages/events";
 import { EventForm } from "../../_components/event-form/form";
 import { EventNotFound } from "../../_components/not-found";
 import { Unauthorized } from "@/components/common/unauthorized";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 
 interface EditEventPageProps {

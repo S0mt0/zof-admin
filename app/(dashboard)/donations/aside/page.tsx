@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Unauthorized } from "@/components/common/unauthorized";
 import { getDonationsPageData } from "@/lib/db/repository/pages/donations";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 import { DonationAsideEditor } from "./_components/donation-aside-editor";
 

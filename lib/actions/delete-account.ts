@@ -2,7 +2,7 @@
 
 import { getUserById, deleteUser } from "../db/repository/user.service";
 import { signOut } from "@/auth";
-import { currentUser } from "../utils";
+import { currentUser } from "../utils/auth.utils";
 
 export const deleteAccount = async () => {
   const userId = (await currentUser())?.id;

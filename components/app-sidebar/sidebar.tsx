@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { LogoutButton } from "../common/logout-button";
 import { NavigationItems } from "./navigation-item";
 import { SettingsItems } from "./settings-item";

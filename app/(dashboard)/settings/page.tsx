@@ -5,7 +5,7 @@ import { WebsiteSettings } from "./_components/website-settings";
 import { RolesSettings } from "./_components/roles-settings";
 import { Unauthorized } from "@/components/common/unauthorized";
 
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 export default async function Page() {
   const user = await currentUser();

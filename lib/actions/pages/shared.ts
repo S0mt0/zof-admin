@@ -4,7 +4,7 @@ import { EDITORIAL_ROLES } from "@/lib/constants";
 import { addAppActivity } from "@/lib/db/repository/app-activity.service";
 import { getLandingPageData, type CardSection } from "@/lib/db/repository/pages";
 import { getUserById } from "@/lib/db/repository/user.service";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 export const IdsSchema = z.array(z.string().min(1));
 

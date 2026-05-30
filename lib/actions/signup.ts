@@ -1,11 +1,11 @@
 "use server";
 import * as z from "zod";
-import bcrypt from "bcryptjs";
 
 import { SignUpSchema } from "../schemas";
 import { createUser, getUserByEmail } from "../db/repository/user.service";
 import { capitalize, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
+import { hashPassword } from "../utils/password";
 import { DEFAULT_ADMIN_EMAILS } from "../constants";
 
 export const signup = async (values: z.infer<typeof SignUpSchema>) => {
@@ -14,7 +14,7 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
   if (!validatedField.success) return { error: "Invalid fields, try again." };
 
   const { password, email, name } = validatedField.data;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
 
   const existingUser = await getUserByEmail(email);
 

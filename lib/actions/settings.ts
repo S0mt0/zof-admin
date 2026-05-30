@@ -13,7 +13,7 @@ import {
 } from "../db/repository/settings.service";
 import { getUserById } from "../db/repository/user.service";
 
-import { currentUser } from "../utils";
+import { currentUser } from "../utils/auth.utils";
 import { revalidatePath } from "next/cache";
 
 export const updateFoundationInfoAction = async (

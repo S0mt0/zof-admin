@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Unauthorized } from "@/components/common/unauthorized";
 import { listDonationCampaigns } from "@/lib/db/repository/pages/donations";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 
 import { CampaignsManager } from "./_components/campaigns-manager";
 

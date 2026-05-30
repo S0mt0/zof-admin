@@ -4,7 +4,7 @@ import {
   countUnreadMessages,
   getAllMessages,
 } from "@/lib/db/repository/message.service";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { Unauthorized } from "@/components/common/unauthorized";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 

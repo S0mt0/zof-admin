@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { getBlogBySlug } from "@/lib/db/repository/pages/blogs";
 import { Unauthorized } from "@/components/common/unauthorized";
-import { currentUser } from "@/lib/utils";
+import { currentUser } from "@/lib/utils/auth.utils";
 import { EDITORIAL_ROLES } from "@/lib/constants";
 import { BlogNotFound } from "../../_components/not-found";
 import BlogForm from "../../_components/blog-form/form";

@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { deleteUser, updateUser } from "../db/repository/user.service";
-import { capitalize, currentUser } from "../utils";
+import { capitalize } from "../utils";
+import { currentUser } from "../utils/auth.utils";
 import { MailService } from "../utils/mail.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
 

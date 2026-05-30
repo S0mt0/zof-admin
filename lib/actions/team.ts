@@ -17,7 +17,8 @@ import { getUserById } from "../db/repository/user.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
 
 import { MailService } from "../utils/mail.service";
-import { capitalize, currentUser } from "../utils";
+import { capitalize } from "../utils";
+import { currentUser } from "../utils/auth.utils";
 import { EDITORIAL_ROLES } from "../constants";
 import { revalidatePath } from "next/cache";
 

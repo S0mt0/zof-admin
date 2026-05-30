@@ -11,7 +11,8 @@ import {
 } from "../../../db/repository/pages/blogs/blog.service";
 import { getUserById } from "../../../db/repository/user.service";
 import { addAppActivity } from "../../../db/repository/app-activity.service";
-import { capitalize, currentUser } from "../../../utils";
+import { capitalize } from "../../../utils";
+import { currentUser } from "../../../utils/auth.utils";
 import { MailService } from "../../../utils/mail.service";
 import { BlogFormSchema } from "../../../schemas";
 import { EDITORIAL_ROLES } from "../../../constants";
