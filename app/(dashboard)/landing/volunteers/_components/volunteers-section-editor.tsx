@@ -8,9 +8,9 @@ import { showActionResult } from "@/lib/utils/pages";
 import { ResourcePanel } from "@/components/common/resource-panel";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
 import { SaveButton, TextareaField } from "@/components/common/form-controls";
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { LandingCtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 
 export function VolunteersSectionEditor({
   section,
@@ -50,7 +50,7 @@ export function VolunteersSectionEditor({
           }
         />
       </SectionCopyCard>
-      <CtaButtonsManager section="volunteers" items={section.ctas} />
+      <LandingCtaButtonsManager section="volunteers" items={section.ctas} />
       <ResourcePanel
         title="Volunteer roster"
         description={`${volunteers.length} volunteers available for this section.`}

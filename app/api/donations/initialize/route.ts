@@ -19,6 +19,8 @@ export async function OPTIONS() {
 }
 
 export async function POST(request: Request) {
+  const reference = `zof_${nanoid(10)}`;
+
   try {
     const body = await request.json();
     const validated = DonationInitializeSchema.safeParse(body);
@@ -30,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     const data = validated.data;
-    const reference = `zof_${nanoid(10)}`;
+
     const callbackUrl = `${FRONTEND_BASE_URL}/donate/callback?reference=${reference}`;
 
     const donation = await createDonation({
@@ -86,10 +88,23 @@ export async function POST(request: Request) {
       { headers: corsHeaders, status: 201 }
     );
   } catch (error) {
+    await (
+      await import("@/lib/db/repository/pages/donations")
+    ).updateDonationByReference(reference, {
+      status: "failed",
+    });
+
     console.error("Donation initialize error:", error);
-    return Response.json(
-      { message: "Could not initialize donation" },
-      { headers: corsHeaders, status: 500 }
-    );
+    let message = "Could not initialize donation";
+
+    if (error instanceof Error) {
+      if (error.message.length) {
+        message = error.message;
+      }
+    } else if (typeof error === "string" && error.length) {
+      message = error;
+    }
+
+    return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }
 }

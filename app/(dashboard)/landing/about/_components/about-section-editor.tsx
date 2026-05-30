@@ -8,8 +8,8 @@ import { showActionResult, uploadSectionImage } from "@/lib/utils/pages";
 import { ImagePicker, SaveButton } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { LandingCtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
 
 export function AboutSectionEditor({
@@ -57,7 +57,7 @@ export function AboutSectionEditor({
           }
         />
       </SectionCopyCard>
-      <CtaButtonsManager section="about" items={section.ctas} />
+      <LandingCtaButtonsManager section="about" items={section.ctas} />
       <CardsManager
         section="about"
         title="Reveal cards"

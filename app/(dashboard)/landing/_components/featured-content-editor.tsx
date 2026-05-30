@@ -7,9 +7,9 @@ import { showActionResult } from "@/lib/utils/pages";
 import { SaveButton, TextField } from "@/components/common/form-controls";
 
 import { ResourcePanel } from "../../../../components/common/resource-panel";
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { SectionCopyCard } from "../../../../components/common/section-copy-card";
 import { BackgroundColorPicker } from "@/components/common/background-color-picker";
+import { LandingCtaButtonsManager } from "./landing-cta-buttons-manager";
 
 export function FeaturedContentEditor({
   type,
@@ -68,7 +68,7 @@ export function FeaturedContentEditor({
           />
         ) : null}
       </SectionCopyCard>
-      <CtaButtonsManager section={sectionKey} items={section.ctas} />
+      <LandingCtaButtonsManager section={sectionKey} items={section.ctas} />
       <ResourcePanel
         title={`Featured ${type}`}
         description={`Featured ${type} come from the published ${type} collection.`}

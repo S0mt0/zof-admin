@@ -19,8 +19,8 @@ import {
   TextareaField,
   TextField,
 } from "@/components/common/form-controls";
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { LandingCtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 
 export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
   const [formData, setFormData] = useState({
@@ -81,7 +81,7 @@ export function HeroSectionEditor({ hero }: { hero: HeroSectionContent }) {
           />
         </CardContent>
       </Card>
-      <CtaButtonsManager section="hero" items={hero.ctas} />
+      <LandingCtaButtonsManager section="hero" items={hero.ctas} />
     </LandingSectionShell>
   );
 }

@@ -8,8 +8,8 @@ import { showActionResult } from "@/lib/utils/pages";
 import { SaveButton, TextareaField } from "@/components/common/form-controls";
 
 import { CardsManager } from "../../_components/cards-manager";
-import { CtaButtonsManager } from "@/components/common/cta-buttons-manager";
 import { LandingSectionShell } from "../../_components/landing-section-shell";
+import { LandingCtaButtonsManager } from "../../_components/landing-cta-buttons-manager";
 import { SectionCopyCard } from "@/components/common/section-copy-card";
 
 export function ValuesSectionEditor({
@@ -48,7 +48,7 @@ export function ValuesSectionEditor({
           }
         />
       </SectionCopyCard>
-      <CtaButtonsManager section="values" items={section.ctas} />
+      <LandingCtaButtonsManager section="values" items={section.ctas} />
       <CardsManager
         section="values"
         title="Principle cards"

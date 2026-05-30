@@ -3,7 +3,10 @@ import {
   getDonationByReference,
   updateDonationByReference,
 } from "@/lib/db/repository/pages/donations";
-import { cleanDonationReference, getDonationMethod } from "@/lib/utils/donations.utils";
+import {
+  cleanDonationReference,
+  getDonationMethod,
+} from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
 import { verifyPaystackTransaction } from "@/lib/utils/paystack";
 
@@ -27,9 +30,10 @@ async function verify(reference: string) {
   const tx = await verifyPaystackTransaction(cleanReference);
 
   const completed = tx.status === "success";
+  const cancelled = tx.status === "abandoned";
 
   const donation = await updateDonationByReference(cleanReference, {
-    status: completed ? "completed" : "failed",
+    status: completed ? "completed" : cancelled ? "cancelled" : "failed",
     paystackStatus: tx.status,
     method: getDonationMethod(tx),
     paidAt: completed ? new Date(tx.paid_at || Date.now()) : null,
@@ -67,10 +71,18 @@ export async function GET(request: Request) {
       "Donation verify error:",
       error instanceof Error ? error.message : error
     );
-    return Response.json(
-      { message: "Could not verify donation" },
-      { headers: corsHeaders, status: 500 }
-    );
+
+    let message = "Could not verify donation";
+
+    if (error instanceof Error) {
+      if (error.message.length) {
+        message = error.message;
+      }
+    } else if (typeof error === "string" && error.length) {
+      message = error;
+    }
+
+    return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }
 }
 
@@ -92,9 +104,16 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Donation verify error:", error);
-    return Response.json(
-      { message: "Could not verify donation" },
-      { headers: corsHeaders, status: 500 }
-    );
+    let message = "Could not verify donation";
+
+    if (error instanceof Error) {
+      if (error.message.length) {
+        message = error.message;
+      }
+    } else if (typeof error === "string" && error.length) {
+      message = error;
+    }
+
+    return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }
 }
