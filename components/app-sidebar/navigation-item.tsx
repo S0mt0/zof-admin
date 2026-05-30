@@ -353,7 +353,7 @@ function SidebarNestedSection({
                     >
                       <item.icon
                         className={cn(
-                          "h-3.5 w-3.5 group-hover:text-primary transition-colors duration-150",
+                          "h-3.5 w-3.5",
                           isPathActive(pathname, item.url) && "text-primary"
                         )}
                       />
