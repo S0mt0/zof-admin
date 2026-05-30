@@ -20,5 +20,5 @@ export const FRONTEND_BASE_URL =
       NODE_ENV === "staging" ||
       VERCEL_ENV === "preview" ||
       VERCEL_ENV === "staging"
-    ? "https://demo.zitaonyekafoundation.org"
+    ? "https://www.demo.zitaonyekafoundation.org"
     : "https://www.zitaonyekafoundation.org";
