@@ -19,7 +19,11 @@ export default function EventEmptyState() {
             Create your first event to start organizing activities.
           </p>
         </div>
-        <Button onClick={() => router.push("/events/new")}>Create Event</Button>
+        <Button
+          onClick={() => router.push("/events-and-programmes/manage/new")}
+        >
+          Create Event
+        </Button>
       </CardContent>
     </Card>
   );

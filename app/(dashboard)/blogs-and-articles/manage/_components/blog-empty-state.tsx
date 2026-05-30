@@ -19,7 +19,7 @@ export default function BlogEmptyState() {
             Create your first blog post to start sharing your content.
           </p>
         </div>
-        <Button onClick={() => router.push("/blogs-and-articles/new")}>
+        <Button onClick={() => router.push("/blogs-and-articles/manage/new")}>
           Create Blog Post
         </Button>
       </CardContent>
