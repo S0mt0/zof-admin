@@ -41,6 +41,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 const dashboardItem = {
   title: "Dashboard",
@@ -156,7 +157,8 @@ export const NavigationItems = ({ role }: { role?: string }) => {
     aboutItems.some((item) => isNestedItemActive(pathname, item)) ||
     blogsItems.some((item) => isNestedItemActive(pathname, item)) ||
     eventsItems.some((item) => isNestedItemActive(pathname, item)) ||
-    (canManageDonations && donationItems.some((item) => isNestedItemActive(pathname, item))) ||
+    (canManageDonations &&
+      donationItems.some((item) => isNestedItemActive(pathname, item))) ||
     contactItems.some((item) => isPathActive(pathname, item.url)) ||
     galleryItems.some((item) => isNestedItemActive(pathname, item));
 
@@ -175,9 +177,9 @@ export const NavigationItems = ({ role }: { role?: string }) => {
   const contactOpen = contactItems.some((item) =>
     isPathActive(pathname, item.url)
   );
-  const donationOpen = canManageDonations && donationItems.some((item) =>
-    isNestedItemActive(pathname, item)
-  );
+  const donationOpen =
+    canManageDonations &&
+    donationItems.some((item) => isNestedItemActive(pathname, item));
   const galleryOpen = galleryItems.some((item) =>
     isNestedItemActive(pathname, item)
   );
@@ -205,7 +207,11 @@ export const NavigationItems = ({ role }: { role?: string }) => {
       </SidebarMenuItem>
 
       <SidebarMenuItem>
-        <Collapsible open={isPagesOpen} onOpenChange={setPagesOpen} className="group/pages">
+        <Collapsible
+          open={isPagesOpen}
+          onOpenChange={setPagesOpen}
+          className="group/pages"
+        >
           <CollapsibleTrigger asChild>
             <SidebarMenuButton className="h-12 px-3 group hover:bg-sidebar-accent/50 transition-colors duration-200">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar-accent/60 text-sidebar-foreground transition-colors duration-200 group-hover:border-primary/30 group-hover:text-primary">
@@ -340,8 +346,17 @@ function SidebarNestedSection({
                     size="sm"
                     isActive={isPathActive(pathname, item.url)}
                   >
-                    <Link href={item.url} onClick={onNavigate}>
-                      <item.icon className="h-3.5 w-3.5" />
+                    <Link
+                      href={item.url}
+                      onClick={onNavigate}
+                      className="group"
+                    >
+                      <item.icon
+                        className={cn(
+                          "h-3.5 w-3.5 group-hover:text-primary transition-colors duration-150",
+                          isPathActive(pathname, item.url) && "text-primary"
+                        )}
+                      />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuSubButton>

@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import {
   ChevronDown,
   Download,
+  Eye,
   FileText,
   Mail,
   Receipt,
@@ -31,6 +32,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Pagination } from "@/components/ui/pagination-v2";
 import {
   Table,
@@ -67,6 +75,17 @@ const formatDateTime = (value?: Date | string | null) =>
     hour12: true,
   }).format(new Date(value || Date.now()));
 
+const formatBoolean = (value: boolean) => (value ? "Yes" : "No");
+
+const formatMetadata = (value: unknown) => {
+  if (!value) return "-";
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+};
+
 interface DonationsTableProps extends Paginated<Donation> {
   searchParams?: Record<string, string>;
 }
@@ -81,6 +100,7 @@ export function DonationsTable({
   const [isPending, startTransition] = useTransition();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [detailTarget, setDetailTarget] = useState<Donation | null>(null);
 
   const selectedCount = selectedIds.length;
   const allCurrentSelected =
@@ -249,8 +269,8 @@ export function DonationsTable({
             <TableBody>
               {donations.length ? (
                 donations.map((donation, index) => (
-                  <TableRow key={donation.id}>
-                    <TableCell>
+                  <TableRow key={donation.id} onClick={() => setDetailTarget(donation)} className="cursor-pointer">
+                    <TableCell onClick={(event) => event.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.includes(donation.id)}
                         onCheckedChange={() => toggleSelected(donation.id)}
@@ -306,8 +326,17 @@ export function DonationsTable({
                     <TableCell className="whitespace-nowrap">
                       {formatDateTime(donation.paidAt || donation.createdAt)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={(event) => event.stopPropagation()}>
                       <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          disabled={isPending}
+                          onClick={() => setDetailTarget(donation)}
+                          title="View donation details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="icon"
@@ -389,6 +418,15 @@ export function DonationsTable({
         </CardContent>
       </Card>
 
+
+      <DonationDetailDialog
+        donation={detailTarget}
+        open={Boolean(detailTarget)}
+        onOpenChange={(open) => {
+          if (!open) setDetailTarget(null);
+        }}
+      />
+
       <AlertDialog
         isOpen={Boolean(deleteTarget)}
         onCancel={() => setDeleteTarget(null)}
@@ -397,5 +435,96 @@ export function DonationsTable({
         isPending={isPending}
       />
     </>
+  );
+}
+
+function DonationDetailDialog({
+  donation,
+  open,
+  onOpenChange,
+}: {
+  donation: Donation | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  if (!donation) return null;
+
+  const donorName = donation.anonymous
+    ? "Anonymous"
+    : donation.donor || "Unknown donor";
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[88vh] overflow-y-auto sm:max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Donation details</DialogTitle>
+          <DialogDescription>
+            Full record for {donorName} · {donation.reference}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4">
+          <div className="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-3">
+            <DetailItem label="Amount" value={money(donation.amount, donation.currency)} />
+            <DetailItem label="Status" value={donation.status} className="capitalize" />
+            <DetailItem label="Method" value={donation.method || "-"} className="capitalize" />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <DetailItem label="Donor" value={donorName} />
+            <DetailItem label="Email" value={donation.email || "-"} />
+            <DetailItem label="Phone" value={donation.phone || "-"} />
+            <DetailItem label="Campaign" value={donation.campaign?.topic || "Where needed most"} />
+            <DetailItem label="Frequency" value={donation.frequency} className="capitalize" />
+            <DetailItem label="Recurring" value={formatBoolean(donation.recurring)} />
+            <DetailItem label="Anonymous" value={formatBoolean(donation.anonymous)} />
+            <DetailItem label="Receipt enabled" value={formatBoolean(donation.sendReceipt)} />
+            <DetailItem label="Thank-you enabled" value={formatBoolean(donation.sendThankYou)} />
+            <DetailItem label="Paystack status" value={donation.paystackStatus || "-"} />
+            <DetailItem label="Paid at" value={donation.paidAt ? formatDateTime(donation.paidAt) : "-"} />
+            <DetailItem label="Created at" value={formatDateTime(donation.createdAt)} />
+            <DetailItem label="Updated at" value={formatDateTime(donation.updatedAt)} />
+            <DetailItem label="Campaign ID" value={donation.campaignId || "-"} />
+            <DetailItem label="Access code" value={donation.accessCode || "-"} />
+            <DetailItem label="Reference" value={donation.reference} />
+          </div>
+
+          <div className="grid gap-2 rounded-xl border p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Notes</p>
+            <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">
+              {donation.notes || "No notes provided."}
+            </p>
+          </div>
+
+          <div className="grid gap-2 rounded-xl border p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Metadata</p>
+            <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-lg bg-muted/50 p-3 text-xs leading-6 text-muted-foreground">
+              {formatMetadata(donation.metadata)}
+            </pre>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DetailItem({
+  label,
+  value,
+  className = "",
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
+  return (
+    <div className="min-w-0 rounded-lg border bg-background p-3">
+      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </p>
+      <p className={`mt-1 break-words text-sm font-medium text-foreground ${className}`}>
+        {value}
+      </p>
+    </div>
   );
 }
