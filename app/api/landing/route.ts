@@ -13,6 +13,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+console.log({ FRONTEND_BASE_URL });
+const env = process.env.NODE_ENV;
+const vercel_env = process.env.VERCEL_ENV;
+console.log({ env, vercel_env });
+
 const publishedCtas = (items: CtaButtonContent[] = []) =>
   items
     .filter((item) => item.published)
@@ -25,6 +30,11 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
+    console.log({ FRONTEND_BASE_URL });
+    const env = process.env.NODE_ENV;
+    const vercel_env = process.env.VERCEL_ENV;
+    console.log({ env, vercel_env });
+
     const landing = await getLandingPageData();
 
     const [testimonials, blogs, events, volunteers] = await Promise.all([
