@@ -214,7 +214,7 @@ export class MailService {
     eyebrow,
     content,
   }: {
-    title?: string;
+    title: string;
     eyebrow: string;
     content: string;
   }) {
@@ -271,7 +271,7 @@ export class MailService {
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;">Hello ${donor},</p>
         <p style="font-size:15px;line-height:1.8;margin:0 0 22px;color:#52635e;">Thank you for giving to Zita-Onyeka Foundation. We have attached a PDF receipt for your records.</p>
 
-        <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:8px;padding:18px;margin:0 0 22px;">
+        <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:14px;padding:18px;margin:0 0 22px;">
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
             <tr><td style="padding:7px 0;color:#64748b;">Amount</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;">${amount}</td></tr>
             <tr><td style="padding:7px 0;color:#64748b;">Status</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${
@@ -314,7 +314,7 @@ export class MailService {
 
     const html = this.donationEmailShell({
       eyebrow: "Thank you",
-      // title: "We deeply appreciate your support",
+      title: "Your support means continued outreach and care",
       content: `
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;">Hello ${donor},</p>
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;color:#52635e;">Thank you for your donation of <strong style="color:#10231d;">${amount}</strong>. We do not take your support lightly.</p>

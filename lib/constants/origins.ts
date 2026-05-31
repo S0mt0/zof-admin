@@ -1,5 +1,4 @@
-const isDevelopment = process.env.NODE_ENV === "development";
-const isPreview = process.env.VERCEL_ENV === "preview";
+import { isDevelopment, isPreview } from "./utils";
 
 export const APP_URL =
   process.env.APP_URL ||

@@ -327,7 +327,7 @@ function SidebarNestedSection({
           className={cn(
             "flex h-7 w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             hasActiveDescendant &&
-              "hover:bg-primary/15 hover:text-primary bg-sidebar-accent/10"
+              "hover:bg-primary/15 hover:text-primary bg-sidebar-accent/35"
           )}
         >
           <Icon

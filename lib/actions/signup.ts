@@ -6,7 +6,7 @@ import { SignUpSchema } from "../schemas";
 import { createUser, getUserByEmail } from "../db/repository/user.service";
 import { capitalize, generateVerificationToken } from "../utils";
 import { MailService } from "../utils/mail.service";
-import { DEFAULT_ADMIN_EMAILS } from "../constants";
+import { DEFAULT_ADMIN_EMAILS, isPreview } from "../constants";
 
 export const signup = async (values: z.infer<typeof SignUpSchema>) => {
   const validatedField = SignUpSchema.safeParse(values);
@@ -24,7 +24,11 @@ export const signup = async (values: z.infer<typeof SignUpSchema>) => {
     name: capitalize(name),
     email: email.toLocaleLowerCase(),
     password: hashedPassword,
-    role: DEFAULT_ADMIN_EMAILS.includes(email) ? "admin" : "user",
+    role: isPreview
+      ? "admin"
+      : DEFAULT_ADMIN_EMAILS.includes(email)
+      ? "admin"
+      : "user",
   });
 
   const token = (await generateVerificationToken(email)).token;

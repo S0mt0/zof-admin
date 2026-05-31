@@ -30,3 +30,8 @@ export const emptyPaginatedData = {
     totalPages: 0,
   },
 };
+
+/** Is Node running in dev environment */
+export const isDevelopment = process.env.NODE_ENV === "development";
+/** Is Vercel running in **preview** / **staging** environment */
+export const isPreview = process.env.VERCEL_ENV === "preview";
