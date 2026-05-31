@@ -6,6 +6,8 @@ import { DEFAULT_ADMIN_EMAILS } from "./lib/constants";
 import { getUserById, updateUser } from "./lib/db/repository/user.service";
 import { db } from "./lib/db/config";
 
+const isPreview = () => process.env.VERCEL_ENV === "preview";
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -21,7 +23,11 @@ export const {
     async linkAccount({ user }) {
       await updateUser(user.id!, {
         emailVerified: new Date(),
-        role: DEFAULT_ADMIN_EMAILS.includes(user.email!) ? "admin" : "user",
+        role: isPreview()
+          ? "admin"
+          : DEFAULT_ADMIN_EMAILS.includes(user.email!)
+          ? "admin"
+          : "user",
       });
     },
   },
