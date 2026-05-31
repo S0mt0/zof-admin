@@ -198,7 +198,7 @@ model Donation {
   phone             String?
   amount            Float
   currency          String                @default("NGN")
-  method            String                @default("paystack")
+  method            String                @default("Paystack")
   notes             String?
   recurring         Boolean               @default(false)
   frequency         DonationFrequency     @default(once)

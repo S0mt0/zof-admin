@@ -214,7 +214,7 @@ export class MailService {
     eyebrow,
     content,
   }: {
-    title: string;
+    title?: string;
     eyebrow: string;
     content: string;
   }) {
@@ -222,18 +222,18 @@ export class MailService {
       "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
 
     return `
-      <div style="margin:0;padding:0;background:#144D49;font-family:Arial,sans-serif;color:#10231d;">
+      <div style="margin:0;padding:0;background:#f5faf6;font-family:Arial,sans-serif;color:#10231d;">
         <div style="max-width:660px;margin:0 auto;padding:34px 18px;">
           <div style="background:#ffffff;border:1px solid #dfe8e2;overflow:hidden;">
-            <div style="background:#173f35;padding:24px 26px;color:#ffffff;">
+            <div style="background:#026630;padding:24px 26px;color:#ffffff;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
                 <tr>
                   <td style="width:62px;vertical-align:top;">
-                    <img src="${logoUrl}" alt="Zita-Onyeka Foundation" width="46" height="46" style="display:block;border-radius:999px;background:#ffffff;padding:4px;" />
+                    <img src="${logoUrl}" alt="Zita-Onyeka Foundation" width="48" height="48" style="display:block;border-radius:999px;background:#ffffff;padding:4px;" />
                   </td>
                   <td style="vertical-align:middle;">
-                    <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f7c87b;font-weight:700;">${eyebrow}</div>
-                    <h1 style="margin:8px 0 0;font-size:25px;line-height:1.25;color:#ffffff;">${title}</h1>
+                    <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#f7c87b;font-weight:700;">${eyebrow}</div>
+                    <h1 style="margin:8px 0 0;font-size:18px;line-height:1.25;color:#ffffff;">${title}</h1>
                   </td>
                 </tr>
               </table>
@@ -271,7 +271,7 @@ export class MailService {
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;">Hello ${donor},</p>
         <p style="font-size:15px;line-height:1.8;margin:0 0 22px;color:#52635e;">Thank you for giving to Zita-Onyeka Foundation. We have attached a PDF receipt for your records.</p>
 
-        <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:14px;padding:18px;margin:0 0 22px;">
+        <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:8px;padding:18px;margin:0 0 22px;">
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
             <tr><td style="padding:7px 0;color:#64748b;">Amount</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;">${amount}</td></tr>
             <tr><td style="padding:7px 0;color:#64748b;">Status</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${
@@ -314,7 +314,7 @@ export class MailService {
 
     const html = this.donationEmailShell({
       eyebrow: "Thank you",
-      title: "Your support means practical help can continue",
+      // title: "We deeply appreciate your support",
       content: `
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;">Hello ${donor},</p>
         <p style="font-size:15px;line-height:1.8;margin:0 0 16px;color:#52635e;">Thank you for your donation of <strong style="color:#10231d;">${amount}</strong>. We do not take your support lightly.</p>

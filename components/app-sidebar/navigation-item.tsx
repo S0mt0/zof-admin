@@ -327,13 +327,12 @@ function SidebarNestedSection({
           className={cn(
             "flex h-7 w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             hasActiveDescendant &&
-              "hover:bg-primary/15 hover:text-primary bg-sidebar-accent"
+              "hover:bg-primary/15 hover:text-primary bg-sidebar-accent/10"
           )}
         >
           <Icon
             className={cn(
-              "h-4 w-4 text-sidebar-accent-foreground transition-colors",
-              hasActiveDescendant && "text-primary"
+              "h-4 w-4 text-sidebar-accent-foreground transition-colors"
             )}
           />
           <span className="truncate">{title}</span>
@@ -362,7 +361,7 @@ function SidebarNestedSection({
                     size="sm"
                     isActive={active}
                     className={cn(
-                      "transition-colors hover:bg-primary/10 hover:text-primary [&:hover>svg]:text-primary data-[active=true]:bg-primary/10",
+                      "transition-colors hover:bg-primary/10 [&:hover>svg]:text-primary data-[active=true]:bg-primary/10",
                       active &&
                         "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary [&>svg]:text-primary"
                     )}
