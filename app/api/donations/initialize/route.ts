@@ -88,14 +88,6 @@ export async function POST(request: Request) {
       { headers: corsHeaders, status: 201 }
     );
   } catch (error) {
-    await (
-      await import("@/lib/db/repository/pages/donations")
-    ).updateDonationByReference(reference, {
-      status: "failed",
-    });
-
-    console.log("error type:", typeof error);
-    console.error("Donation initialize error:", error);
     let message = "Could not initialize donation";
 
     if (error instanceof Error) {
@@ -105,6 +97,13 @@ export async function POST(request: Request) {
     } else if (typeof error === "string" && error.length) {
       message = error;
     }
+
+    await (
+      await import("@/lib/db/repository/pages/donations")
+    ).updateDonationByReference(reference, {
+      status: "failed",
+      failReason: message,
+    });
 
     return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }

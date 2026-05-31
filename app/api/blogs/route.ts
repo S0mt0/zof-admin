@@ -41,7 +41,6 @@ export async function GET(request: NextRequest) {
     where.featured = featured === "featured";
   }
 
-  // --- Type-safe select builder ---
   let select: Prisma.BlogSelect | undefined = undefined;
 
   if (fields) {

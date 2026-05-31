@@ -206,6 +206,7 @@ model Donation {
   sendReceipt       Boolean               @default(true)
   sendThankYou      Boolean               @default(true)
   status            DonationStatus        @default(pending)
+  failReason        String?
   reference         String                @unique
   paystackStatus    String?
   accessCode        String?

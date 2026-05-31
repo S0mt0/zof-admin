@@ -52,14 +52,14 @@ async function verify(reference: string) {
 }
 
 export async function GET(request: Request) {
-  try {
-    const reference = new URL(request.url).searchParams.get("reference");
-    if (!reference)
-      return Response.json(
-        { message: "Reference is required" },
-        { headers: corsHeaders, status: 400 }
-      );
+  const reference = new URL(request.url).searchParams.get("reference");
+  if (!reference)
+    return Response.json(
+      { message: "Reference is required" },
+      { headers: corsHeaders, status: 400 }
+    );
 
+  try {
     const donation = await verify(reference);
 
     return Response.json(
@@ -67,11 +67,6 @@ export async function GET(request: Request) {
       { headers: corsHeaders, status: 200 }
     );
   } catch (error) {
-    console.error(
-      "Donation verify error:",
-      error instanceof Error ? error.message : error
-    );
-
     let message = "Could not verify donation";
 
     if (error instanceof Error) {
@@ -81,30 +76,34 @@ export async function GET(request: Request) {
     } else if (typeof error === "string" && error.length) {
       message = error;
     }
+
+    await (
+      await import("@/lib/db/repository/pages/donations")
+    ).updateDonationByReference(reference, {
+      status: "failed",
+      failReason: message,
+    });
 
     return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }
 }
 
 export async function POST(request: Request) {
+  const reference = (await request.json())?.reference;
+
+  if (!reference)
+    return Response.json(
+      { message: "Reference is required" },
+      { headers: corsHeaders, status: 400 }
+    );
   try {
-    const body = await request.json();
-
-    if (!body.reference)
-      return Response.json(
-        { message: "Reference is required" },
-        { headers: corsHeaders, status: 400 }
-      );
-
-    const donation = await verify(body.reference);
+    const donation = await verify(reference);
 
     return Response.json(
       { message: "Donation verified", data: donation },
       { headers: corsHeaders, status: 200 }
     );
   } catch (error) {
-    console.log("error type:", typeof error);
-    console.error("Donation verify error:", error);
     let message = "Could not verify donation";
 
     if (error instanceof Error) {
@@ -114,6 +113,13 @@ export async function POST(request: Request) {
     } else if (typeof error === "string" && error.length) {
       message = error;
     }
+
+    await (
+      await import("@/lib/db/repository/pages/donations")
+    ).updateDonationByReference(reference, {
+      status: "failed",
+      failReason: message,
+    });
 
     return Response.json({ message }, { headers: corsHeaders, status: 500 });
   }

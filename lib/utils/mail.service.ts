@@ -4,7 +4,10 @@ import { format } from "date-fns";
 import { type CreateEmailOptions, Resend } from "resend";
 
 import { APP_URL } from "../constants";
-import { createDonationReceiptPdfBuffer, formatDonationDateTime } from "./donations.utils";
+import {
+  createDonationReceiptPdfBuffer,
+  formatDonationDateTime,
+} from "./donations.utils";
 import { capitalize } from "./helpers.utils";
 
 export class MailService {
@@ -215,17 +218,18 @@ export class MailService {
     eyebrow: string;
     content: string;
   }) {
-    const logoUrl = "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
+    const logoUrl =
+      "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
 
     return `
-      <div style="margin:0;padding:0;background:#f5faf6;font-family:Arial,sans-serif;color:#10231d;">
+      <div style="margin:0;padding:0;background:#144D49;font-family:Arial,sans-serif;color:#10231d;">
         <div style="max-width:660px;margin:0 auto;padding:34px 18px;">
-          <div style="background:#ffffff;border:1px solid #dfe8e2;border-radius:18px;overflow:hidden;">
+          <div style="background:#ffffff;border:1px solid #dfe8e2;overflow:hidden;">
             <div style="background:#173f35;padding:24px 26px;color:#ffffff;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
                 <tr>
                   <td style="width:62px;vertical-align:top;">
-                    <img src="${logoUrl}" alt="Zita-Onyeka Foundation" width="48" height="48" style="display:block;border-radius:999px;background:#ffffff;padding:4px;" />
+                    <img src="${logoUrl}" alt="Zita-Onyeka Foundation" width="46" height="46" style="display:block;border-radius:999px;background:#ffffff;padding:4px;" />
                   </td>
                   <td style="vertical-align:middle;">
                     <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#f7c87b;font-weight:700;">${eyebrow}</div>
@@ -270,10 +274,18 @@ export class MailService {
         <div style="background:#f6fbf7;border:1px solid #dfe8e2;border-radius:14px;padding:18px;margin:0 0 22px;">
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
             <tr><td style="padding:7px 0;color:#64748b;">Amount</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;">${amount}</td></tr>
-            <tr><td style="padding:7px 0;color:#64748b;">Status</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${donation.status}</td></tr>
-            <tr><td style="padding:7px 0;color:#64748b;">Method</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${donation.method || "paystack"}</td></tr>
-            <tr><td style="padding:7px 0;color:#64748b;">Reference</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;font-family:monospace;">${donation.reference}</td></tr>
-            <tr><td style="padding:7px 0;color:#64748b;">Date</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;">${formatDonationDateTime(donation.paidAt || donation.createdAt)}</td></tr>
+            <tr><td style="padding:7px 0;color:#64748b;">Status</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${
+              donation.status
+            }</td></tr>
+            <tr><td style="padding:7px 0;color:#64748b;">Method</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;text-transform:capitalize;">${
+              donation.method || "paystack"
+            }</td></tr>
+            <tr><td style="padding:7px 0;color:#64748b;">Reference</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;font-family:monospace;">${
+              donation.reference
+            }</td></tr>
+            <tr><td style="padding:7px 0;color:#64748b;">Date</td><td style="padding:7px 0;text-align:right;font-weight:700;color:#10231d;">${formatDonationDateTime(
+              donation.paidAt || donation.createdAt
+            )}</td></tr>
           </table>
         </div>
 
@@ -321,5 +333,4 @@ export class MailService {
       text: "Thank you for giving to Zita-Onyeka Foundation.",
     });
   }
-
 }

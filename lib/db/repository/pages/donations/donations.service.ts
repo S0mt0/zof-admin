@@ -6,11 +6,12 @@ import { prismaPaginate } from "@/lib/utils/db.utils";
 
 interface ListDonationsOptions {
   where?: Prisma.DonationWhereInput;
+  orderBy?: Prisma.DonationOrderByWithRelationInput;
   page: number;
   limit: number;
 }
 
-export const listDonations = async ({ where, page, limit }: ListDonationsOptions) => {
+export const listDonations = async ({ where, orderBy, page, limit }: ListDonationsOptions) => {
   try {
     return prismaPaginate({
       page,
@@ -19,7 +20,7 @@ export const listDonations = async ({ where, page, limit }: ListDonationsOptions
       model: db.donation,
       args: {
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: orderBy ?? { createdAt: "desc" },
         include: { campaign: true },
       },
     });
@@ -27,6 +28,35 @@ export const listDonations = async ({ where, page, limit }: ListDonationsOptions
     console.log("error fetching donations", error);
     return emptyPaginatedData;
   }
+};
+
+
+export const getDonationSummary = async (where?: Prisma.DonationWhereInput) => {
+  const [total, completed, pending, failed, refunded, cancelled, totalAmount, completedAmount] =
+    await Promise.all([
+      db.donation.count({ where }),
+      db.donation.count({ where: { ...where, status: "completed" } }),
+      db.donation.count({ where: { ...where, status: "pending" } }),
+      db.donation.count({ where: { ...where, status: "failed" } }),
+      db.donation.count({ where: { ...where, status: "refunded" } }),
+      db.donation.count({ where: { ...where, status: "cancelled" } }),
+      db.donation.aggregate({ where, _sum: { amount: true } }),
+      db.donation.aggregate({
+        where: { ...where, status: "completed" },
+        _sum: { amount: true },
+      }),
+    ]);
+
+  return {
+    total,
+    completed,
+    pending,
+    failed,
+    refunded,
+    cancelled,
+    totalAmount: totalAmount._sum.amount ?? 0,
+    completedAmount: completedAmount._sum.amount ?? 0,
+  };
 };
 
 export const listAllDonations = () =>

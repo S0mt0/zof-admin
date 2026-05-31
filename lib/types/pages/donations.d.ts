@@ -12,7 +12,12 @@ interface DonationAsideSectionContent {
 }
 
 type DonationFrequency = "once" | "monthly";
-type DonationStatus = "pending" | "completed" | "failed" | "refunded" | "cancelled";
+type DonationStatus =
+  | "pending"
+  | "completed"
+  | "failed"
+  | "refunded"
+  | "cancelled";
 
 type DonationCampaign = {
   id: string;
@@ -40,6 +45,7 @@ type Donation = {
   sendReceipt: boolean;
   sendThankYou: boolean;
   status: DonationStatus;
+  failReason?: string | null;
   reference: string;
   paystackStatus?: string | null;
   accessCode?: string | null;
