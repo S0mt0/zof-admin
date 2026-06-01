@@ -45,6 +45,7 @@ interface AboutStorySectionContent {
 
 interface AboutTeamSectionContent {
   intro: SectionIntroContent;
+  members?: Partial<TeamMember>[];
 }
 
 interface AboutFoundersMessageSectionContent {

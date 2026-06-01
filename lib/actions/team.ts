@@ -12,6 +12,8 @@ import {
   getUniqueVolunteer,
   getUniqueTeamMember,
   updateVolunteer,
+  reorderTeamMembers,
+  reorderVolunteers,
 } from "../db/repository/team.service";
 import { getUserById } from "../db/repository/user.service";
 import { addAppActivity } from "../db/repository/app-activity.service";
@@ -126,6 +128,31 @@ export const deleteTeamMemberAction = async (id: string) => {
   }
 };
 
+
+export const reorderTeamMembersAction = async (ids: string[]) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session, please login again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  if (!Array.isArray(ids) || ids.some((id) => typeof id !== "string" || !id)) {
+    return { error: "Invalid order payload" };
+  }
+
+  try {
+    await reorderTeamMembers(ids);
+    await addAppActivity(
+      "Team order updated",
+      `${user.name} (${user.role}) rearranged team member order.`
+    );
+    revalidatePath("/about/team");
+    revalidatePath("/");
+    return { success: "Team order updated" };
+  } catch (e) {
+    return { error: "Could not update team order" };
+  }
+};
+
 export const createVolunteerAction = async (
   values: z.infer<typeof VolunteerSchema>
 ) => {
@@ -222,6 +249,32 @@ export const deleteVolunteerAction = async (id: string) => {
     return { success: "Volunteer removed" };
   } catch (e) {
     return { error: "Could not remove volunteer" };
+  }
+};
+
+
+export const reorderVolunteersAction = async (ids: string[]) => {
+  const userId = (await currentUser())?.id;
+  const user = await getUserById(userId || "");
+  if (!user) return { error: "Invalid session, please login again." };
+  if (!EDITORIAL_ROLES.includes(user.role)) return { error: "Unauthorized" };
+
+  if (!Array.isArray(ids) || ids.some((id) => typeof id !== "string" || !id)) {
+    return { error: "Invalid order payload" };
+  }
+
+  try {
+    await reorderVolunteers(ids);
+    await addAppActivity(
+      "Volunteer order updated",
+      `${user.name} (${user.role}) rearranged volunteer order.`
+    );
+    revalidatePath("/about/volunteers");
+    revalidatePath("/landing/volunteers");
+    revalidatePath("/");
+    return { success: "Volunteer order updated" };
+  } catch (e) {
+    return { error: "Could not update volunteer order" };
   }
 };
 

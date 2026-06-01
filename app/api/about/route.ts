@@ -1,5 +1,6 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { getAboutPageData } from "@/lib/db/repository/pages/about";
+import { listTeamMembers } from "@/lib/db/repository/team.service";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": FRONTEND_BASE_URL,
@@ -25,14 +26,49 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const about = await getAboutPageData();
+    const [about, teamMembers] = await Promise.all([
+      getAboutPageData(),
+      listTeamMembers({
+        where: { status: "active" },
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          email: true,
+          bio: true,
+          avatar: true,
+          order: true,
+          facebook: true,
+          x: true,
+          instagram: true,
+          youtube: true,
+          linkedin: true,
+          tiktok: true,
+          threads: true,
+          whatsapp: true,
+          telegram: true,
+          snapchat: true,
+          pinterest: true,
+          medium: true,
+          twitter: true,
+          github: true,
+        },
+      }),
+    ]);
+    const members = teamMembers.map((member) => ({
+      ...member,
+      x: member.x || member.twitter,
+    }));
     const data = {
       hero: about.hero,
       story: {
         ...about.story,
         trustPoints: publishedTrustPoints(about.story.trustPoints),
       },
-      team: about.team,
+      team: {
+        ...about.team,
+        members,
+      },
       foundersMessage: {
         ...about.foundersMessage,
         ctas: publishedCtas(about.foundersMessage.ctas),

@@ -243,6 +243,7 @@ model TeamMember {
   bio          String?
   status       TeamMemberStatus  @default(active)
   avatar       String?
+  order        Int               @default(0)
   joinDate     DateTime
   department   String?
   location     String?
@@ -282,6 +283,7 @@ model Volunteer {
   volunteerType String
   avatar        String?
   featured      Boolean  @default(false)
+  order         Int      @default(0)
 
   // Relations
   addedBy      String   @db.ObjectId

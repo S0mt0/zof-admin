@@ -144,7 +144,6 @@ export const useWriteTeam = ({
           if (res?.success) {
             toast.success(res.success);
             form.reset();
-            onSuccess?.() || router.push("/team");
           }
         });
       } else if (mode === "edit" && initialData?.id) {
@@ -152,7 +151,6 @@ export const useWriteTeam = ({
           if (res?.error) toast.error(res.error);
           if (res?.success) {
             toast.success(res.success);
-            onSuccess?.() || router.push("/team");
           }
         });
       }
@@ -175,7 +173,8 @@ export const useWriteTeam = ({
     values.location !== initialValues.location ||
     !arraysEqual(values.skills || [], initialValues.skills || []) ||
     teamSocialFields.some(
-      (field) => (values[field.name] || "") !== (initialValues[field.name] || "")
+      (field) =>
+        (values[field.name] || "") !== (initialValues[field.name] || "")
     ) ||
     (values.twitter || "") !== (initialValues.twitter || "") ||
     (values.github || "") !== (initialValues.github || "");

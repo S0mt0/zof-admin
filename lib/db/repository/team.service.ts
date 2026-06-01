@@ -32,7 +32,7 @@ export const listTeamMembers = async (
         },
       },
     },
-    orderBy = { createdAt: "asc" },
+    orderBy = [{ order: "asc" }, { createdAt: "asc" }],
   } = options;
 
   try {
@@ -63,7 +63,7 @@ export const listVolunteers = async (
         },
       },
     },
-    orderBy = { createdAt: "desc" },
+    orderBy = [{ order: "asc" }, { createdAt: "desc" }],
   } = options;
 
   try {
@@ -102,6 +102,8 @@ export const getUniqueVolunteer = async (
 
 export const createVolunteer = async (data: any) => {
   try {
+    const count = await db.volunteer.count();
+
     if (data.featured) {
       await db.volunteer.updateMany({
         where: { featured: true },
@@ -109,7 +111,7 @@ export const createVolunteer = async (data: any) => {
       });
     }
 
-    return (await db.volunteer.create({ data })) as Volunteer;
+    return (await db.volunteer.create({ data: { ...data, order: count } })) as Volunteer;
   } catch (e) {
     console.log("error creating volunteer", e);
     return null;
@@ -198,7 +200,8 @@ export const getUniqueTeamMember = async (name: string, email: string) => {
 
 export const createTeamMember = async (data: any) => {
   try {
-    return (await db.teamMember.create({ data })) as TeamMember;
+    const count = await db.teamMember.count();
+    return (await db.teamMember.create({ data: { ...data, order: count } })) as TeamMember;
   } catch (e) {
     console.log("error creating team member", e);
     return null;
@@ -222,4 +225,25 @@ export const deleteTeamMember = async (id: string) => {
   } catch (e) {
     return null;
   }
+};
+
+
+export const reorderTeamMembers = async (ids: string[]) => {
+  await Promise.all(
+    ids.map((id, order) =>
+      db.teamMember.update({ where: { id }, data: { order } })
+    )
+  );
+
+  return listTeamMembers();
+};
+
+export const reorderVolunteers = async (ids: string[]) => {
+  await Promise.all(
+    ids.map((id, order) =>
+      db.volunteer.update({ where: { id }, data: { order } })
+    )
+  );
+
+  return listVolunteers();
 };

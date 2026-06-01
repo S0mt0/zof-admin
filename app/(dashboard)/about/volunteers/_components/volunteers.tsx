@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AlertDialog } from "@/components/common/alert-dialog";
+import { SortableList } from "@/components/common/sortable-list";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   createVolunteerAction,
   deleteVolunteerAction,
+  reorderVolunteersAction,
   updateVolunteerAction,
 } from "@/lib/actions/team";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "@/lib/constants";
@@ -277,87 +279,90 @@ export function Volunteers({ volunteers }: { volunteers: Volunteer[] }) {
             No volunteers have been added yet.
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {volunteers.map((volunteer) => (
-              <Card key={volunteer.id}>
-                <CardHeader className="space-y-2">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage
-                          src={volunteer.avatar || "/placeholder-user.jpg"}
-                          alt={volunteer.name}
-                        />
-                        <AvatarFallback>
-                          {getInitials(volunteer.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">
-                          {volunteer.name}
-                        </CardTitle>
-                        <CardDescription>
-                          {volunteer.volunteerType}
-                        </CardDescription>
+          <SortableList
+            items={volunteers}
+            onReorder={reorderVolunteersAction}
+            renderItem={(volunteer, dragHandle) => {
+              const visibleSocials = socialFields.filter((field) =>
+                Boolean(volunteer[field.name])
+              );
+
+              return (
+                <Card key={volunteer.id} className="overflow-hidden border-border/70">
+                  <div className="flex items-center gap-3 p-3">
+                    <div className="shrink-0">{dragHandle}</div>
+                    <Avatar className="h-12 w-12 shrink-0 rounded-xl">
+                      <AvatarImage
+                        src={volunteer.avatar || "/placeholder-user.jpg"}
+                        alt={volunteer.name}
+                      />
+                      <AvatarFallback>{getInitials(volunteer.name)}</AvatarFallback>
+                    </Avatar>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <CardTitle className="truncate text-base">
+                            {volunteer.name}
+                          </CardTitle>
+                          <CardDescription className="truncate text-xs">
+                            {volunteer.volunteerType}
+                          </CardDescription>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {volunteer.featured ? (
+                            <Badge className="gap-1 bg-amber-500 text-white hover:bg-amber-500">
+                              <Star className="h-3 w-3 fill-current" />
+                              Featured
+                            </Badge>
+                          ) : null}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditForm(volunteer)}
+                            disabled={isPending}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteTarget(volunteer)}
+                            disabled={isPending}
+                            className="text-red-600 hover:text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        <span className="text-xs text-muted-foreground">
+                          Added {new Date(volunteer.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                        {visibleSocials.slice(0, 5).map((field) => (
+                          <Badge key={field.name} variant="outline" className="text-[0.65rem]">
+                            {field.label}
+                          </Badge>
+                        ))}
+                        {visibleSocials.length > 5 ? (
+                          <Badge variant="secondary" className="text-[0.65rem]">
+                            +{visibleSocials.length - 5}
+                          </Badge>
+                        ) : null}
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      {volunteer.featured ? (
-                        <Badge className="gap-1 bg-amber-500 text-white hover:bg-amber-500">
-                          <Star className="h-3 w-3 fill-current" />
-                          Featured
-                        </Badge>
-                      ) : null}
-                      <Badge variant="secondary">Volunteer</Badge>
-                    </div>
                   </div>
-                </CardHeader>
-
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {socialFields
-                      .filter((field) => Boolean(volunteer[field.name]))
-                      .map((field) => (
-                        <Badge key={field.name} variant="outline">
-                          {field.label}
-                        </Badge>
-                      ))}
-                  </div>
-                </CardContent>
-
-                <CardFooter className="flex items-center justify-between border-t px-4 py-3">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(volunteer.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openEditForm(volunteer)}
-                      disabled={isPending}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteTarget(volunteer)}
-                      disabled={isPending}
-                      className="text-red-600 hover:text-red-600"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Remove
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              );
+            }}
+          />
         )}
       </CardContent>
 

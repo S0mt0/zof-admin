@@ -9,6 +9,7 @@ interface TeamMember {
   bio?: string | null;
   status: TeamMemberStatus;
   avatar?: string | null;
+  order: number;
   joinDate: Date | string;
   department?: string | null;
   location?: string | null;
@@ -39,6 +40,7 @@ interface Volunteer {
   volunteerType: string;
   avatar?: string | null;
   featured: boolean;
+  order: number;
   addedBy: string;
   addedByUser?: Partial<IUser> | null;
   facebook?: string | null;

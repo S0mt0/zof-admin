@@ -173,7 +173,7 @@ export default function TeamForm({ mode, initialData }: TeamFormProps) {
                     <FormItem>
                       <FormLabel>Join Date</FormLabel>
                       <FormControl>
-                        <Input {...field} type="date" />
+                        <Input {...field} type="date" required={false} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -238,7 +238,10 @@ export default function TeamForm({ mode, initialData }: TeamFormProps) {
                           <FormItem>
                             <FormLabel>{social.label}</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder={social.placeholder} />
+                              <Input
+                                {...field}
+                                placeholder={social.placeholder}
+                              />
                             </FormControl>
                           </FormItem>
                         )}

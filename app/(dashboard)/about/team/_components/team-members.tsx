@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SortableList } from "@/components/common/sortable-list";
 import { Input } from "@/components/ui/input";
 import EmailModal from "@/components/common/email-modal";
 import TeamMemberCard from "./team-member-card";
@@ -11,6 +12,7 @@ import { TeamMemberFormDialog } from "./team-member-form-dialog";
 
 import { useReadTeam } from "@/lib/hooks";
 import { AlertDialog } from "@/components/common/alert-dialog";
+import { reorderTeamMembersAction } from "@/lib/actions/team";
 
 export function TeamMembers({ members }: { members: TeamMember[] }) {
   const [formOpen, setFormOpen] = useState(false);
@@ -75,11 +77,14 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
       {filteredMembers.length === 0 ? (
         <TeamEmptyState onAdd={openCreateForm} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredMembers.map((member) => (
+        <SortableList
+          items={filteredMembers}
+          onReorder={reorderTeamMembersAction}
+          renderItem={(member, dragHandle) => (
             <TeamMemberCard
               key={member.id}
               member={member}
+              dragHandle={dragHandle}
               onEdit={() => openEditForm(member)}
               onEmail={() => openEmailModal(member)}
               onDelete={() => {
@@ -88,8 +93,8 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
               }}
               getStatusColor={getStatusColor}
             />
-          ))}
-        </div>
+          )}
+        />
       )}
 
       <EmailModal
