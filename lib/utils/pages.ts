@@ -24,19 +24,28 @@ export function uploadSectionImage(
   }
 
   if (file.size > MAX_IMAGE_SIZE) {
-    toast.error("File size must not be more than 5MB");
+    toast.error(
+      `File size must not be more than ${MAX_IMAGE_SIZE / 1000 / 1024}MB`
+    );
     event.target.value = "";
     return;
   }
 
   const dismiss = toast.loading("Uploading image...");
+
   handleFileUpload(event, "media")
     .then((url) => {
       if (!url) return toast.error("Upload failed");
       onComplete(url);
       toast.success("Image uploaded");
     })
-    .catch(() => toast.error("Upload failed"))
+    .catch((err) => {
+      if (err instanceof Error) {
+        if (err.message) toast.error(err.message);
+        else
+          toast.error(JSON.stringify(err) || "An error occurred during upload");
+      } else toast.error(JSON.stringify(err) || "Unknown error occurred");
+    })
     .finally(() => {
       toast.dismiss(dismiss);
       event.target.value = "";
