@@ -646,12 +646,18 @@ type GalleryArchiveSection {
   intro SectionIntro
 }
 
+type AboutFounderMessage {
+  name  String?
+  role  String?
+  image String?
+  quote String
+  body  String
+}
+
 type AboutFoundersMessageSection {
-  intro      SectionIntro
-  quote      String
-  body       String
-  image      String?
-  ctas       CtaButton[]
+  intro   SectionIntro
+  founder AboutFounderMessage
+  ctas    CtaButton[]
 }
 
 type AboutCtaSection {

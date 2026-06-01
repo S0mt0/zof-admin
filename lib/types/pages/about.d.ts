@@ -48,11 +48,17 @@ interface AboutTeamSectionContent {
   members?: Partial<TeamMember>[];
 }
 
-interface AboutFoundersMessageSectionContent {
-  intro: SectionIntroContent;
+interface AboutFounderMessageContent {
+  name?: string | null;
+  role?: string | null;
+  image?: string | null;
   quote: string;
   body: string;
-  image?: string | null;
+}
+
+interface AboutFoundersMessageSectionContent {
+  intro: SectionIntroContent;
+  founder: AboutFounderMessageContent;
   ctas: CtaButtonContent[];
 }
 

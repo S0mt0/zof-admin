@@ -40,9 +40,13 @@ export const AboutTeamSectionSchema = z.object({
 
 export const AboutFoundersMessageSectionSchema = z.object({
   intro: SectionIntroSchema,
-  quote: z.string().trim().min(1, { message: "Quote is required" }),
-  body: z.string().trim().min(1, { message: "Message body is required" }),
-  image: optionalText,
+  founder: z.object({
+    name: optionalText,
+    role: optionalText,
+    image: optionalText,
+    quote: z.string().trim().min(1, { message: "Quote is required" }),
+    body: z.string().trim().min(1, { message: "Message body is required" }),
+  }),
 });
 
 export const AboutCtaSectionSchema = z.object({

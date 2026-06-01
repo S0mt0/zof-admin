@@ -46,6 +46,21 @@ const normalizeTrustPoints = (
   );
 };
 
+const normalizeFounderMessage = (
+  current: any,
+  fallback: AboutFounderMessageContent
+): AboutFounderMessageContent => {
+  const founder = current?.founder || {};
+
+  return {
+    name: founder.name ?? current?.name ?? fallback.name,
+    role: founder.role ?? current?.role ?? fallback.role,
+    image: founder.image ?? current?.image ?? fallback.image,
+    quote: founder.quote ?? current?.quote ?? fallback.quote,
+    body: founder.body ?? current?.body ?? fallback.body,
+  };
+};
+
 export const normalizeAboutPageData = (data: any): AboutPageContent => {
   const fallback = defaultAboutPageData({
     aboutUs: data.aboutUs,
@@ -84,6 +99,10 @@ export const normalizeAboutPageData = (data: any): AboutPageContent => {
       intro: normalizeIntro(
         data.foundersMessage?.intro,
         fallback.foundersMessage.intro
+      ),
+      founder: normalizeFounderMessage(
+        data.foundersMessage,
+        fallback.foundersMessage.founder
       ),
       ctas: normalizeCtas(data.foundersMessage, fallback.foundersMessage.ctas),
     },

@@ -78,10 +78,14 @@ export const defaultAboutPageData = (
     },
     foundersMessage: {
       intro: aboutIntro("Founder's message", "A note from the founder.", ""),
-      quote:
-        "We started this foundation because care should not feel far away from the people who need it most.",
-      body: "Every outreach begins with listening. We pay attention to what families are carrying, what children need to keep learning, and what women and young people need to move with more confidence.\n\nMy hope is that every person who meets this work feels seen, respected, and supported in a practical way. The goal is not noise. The goal is useful help, delivered with dignity and followed through with care.",
-      image: "",
+      founder: {
+        name: "Zita Onyeka",
+        role: "Founder & Executive Lead",
+        image: "",
+        quote:
+          "We started this foundation because care should not feel far away from the people who need it most.",
+        body: "Every outreach begins with listening. We pay attention to what families are carrying, what children need to keep learning, and what women and young people need to move with more confidence.\n\nMy hope is that every person who meets this work feels seen, respected, and supported in a practical way. The goal is not noise. The goal is useful help, delivered with dignity and followed through with care.",
+      },
       ctas: [aboutCta("Reach out", "/contact")],
     },
     cta: {

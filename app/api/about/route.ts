@@ -1,5 +1,6 @@
 import { FRONTEND_BASE_URL } from "@/lib/constants";
 import { getAboutPageData } from "@/lib/db/repository/pages/about";
+import { intro } from "@/lib/db/repository/pages/landing/utils";
 import { listTeamMembers } from "@/lib/db/repository/team.service";
 
 const corsHeaders = {
@@ -70,7 +71,14 @@ export async function GET() {
         members,
       },
       foundersMessage: {
-        ...about.foundersMessage,
+        founder: {
+          name: about.foundersMessage?.founder?.name,
+          role: about.foundersMessage?.founder?.role,
+          image: about.foundersMessage?.founder?.image,
+          quote: about.foundersMessage?.founder?.quote,
+          body: about.foundersMessage?.founder?.body,
+        },
+        intro: about.foundersMessage.intro,
         ctas: publishedCtas(about.foundersMessage.ctas),
       },
       cta: {
