@@ -19,8 +19,16 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "ZOF - Admin Dashboard",
-  description: "CMS for the Zita-Onyeka Foundation's website",
+  title: "CMS - The Zita-Onyeka Foundation",
+
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export const viewport: Viewport = {

@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { format } from "date-fns";
+import { FRONTEND_BASE_URL } from "../constants";
 
 const LOGO_URL =
   "https://zitaonyekafoundation.s3.eu-west-2.amazonaws.com/media/zof-logo.png";
@@ -275,7 +276,7 @@ export const createDonationReceiptPdfBuffer = async (donation: Donation) => {
 
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(8);
-  doc.text("https://zitaonyekafoundation.org", 18, 274, { maxWidth: 174 });
+  doc.text(FRONTEND_BASE_URL, 18, 274, { maxWidth: 174 });
   doc.text(`Generated: ${formatFullDateTime(new Date())}`, 18, 280, {
     maxWidth: 174,
   });

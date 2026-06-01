@@ -40,6 +40,7 @@ export function uploadSectionImage(
       toast.success("Image uploaded");
     })
     .catch((err) => {
+      console.error("Upload error:", err);
       if (err instanceof Error) {
         if (err.message) toast.error(err.message);
         else

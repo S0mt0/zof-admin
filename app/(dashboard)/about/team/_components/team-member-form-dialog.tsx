@@ -37,13 +37,11 @@ export function TeamMemberFormDialog({
   mode,
   initialData,
   onOpenChange,
-  onSaved,
 }: {
   open: boolean;
   mode: "create" | "edit";
   initialData?: TeamMember | null;
   onOpenChange: (open: boolean) => void;
-  onSaved: () => void;
 }) {
   const {
     form,
@@ -60,7 +58,6 @@ export function TeamMemberFormDialog({
   } = useWriteTeam({
     mode,
     initialData,
-    onSuccess: onSaved,
   });
 
   return (

@@ -117,7 +117,6 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
           mode={formTarget ? "edit" : "create"}
           initialData={formTarget}
           onOpenChange={setFormOpen}
-          onSaved={onSaved}
         />
       ) : null}
 

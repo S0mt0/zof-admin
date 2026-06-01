@@ -10,6 +10,7 @@ export const FOUNDATION_ADDRESS =
 export const FOUNDATION_PHONE = "+234 803 786 4683";
 
 export const ACCEPTED_IMAGE_TYPES = [
+  "image/JPEG",
   "image/jpeg",
   "image/jpg",
   "image/png",

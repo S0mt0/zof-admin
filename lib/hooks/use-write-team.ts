@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import { TeamMemberSchema } from "../schemas";
 import { teamSocialFields } from "../team-social-fields";
@@ -24,16 +23,13 @@ import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "../constants";
 export const useWriteTeam = ({
   initialData,
   mode,
-  onSuccess,
 }: {
   initialData?: TeamMember | null;
   mode: "create" | "edit";
-  onSuccess?: () => void;
 }) => {
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [skillsInput, setSkillsInput] = useState("");
-  const router = useRouter();
 
   const initialValues = useMemo(
     () => ({
@@ -127,6 +123,7 @@ export const useWriteTeam = ({
           form.setValue("avatar", objectUrl || initialValues.avatar);
         })
         .catch((err) => {
+          console.error("Upload error:", err);
           toast.error("Something went wrong");
         })
         .finally(() => {
