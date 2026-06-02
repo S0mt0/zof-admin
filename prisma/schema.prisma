@@ -28,17 +28,11 @@ enum EventStatus {
   happening
 }
 
-enum DonationStatus {
-  completed
-  pending
-  failed
-  refunded
-  cancelled
-}
-
 enum DonationFrequency {
   once
+  weekly
   monthly
+  yearly
 }
 
 enum TeamMemberStatus {
@@ -192,46 +186,78 @@ model DonationsPage {
 }
 
 model Donation {
-  id                String                @id @default(auto()) @map("_id") @db.ObjectId
-  donor             String?
-  email             String?
-  phone             String?
-  amount            Float
-  currency          String                @default("NGN")
-  method            String                @default("Paystack")
-  notes             String?
-  recurring         Boolean               @default(false)
-  frequency         DonationFrequency     @default(once)
-  anonymous         Boolean               @default(false)
-  sendReceipt       Boolean               @default(true)
-  sendThankYou      Boolean               @default(true)
-  status            DonationStatus        @default(pending)
-  failReason        String?
-  reference         String                @unique
-  paystackStatus    String?
-  accessCode        String?
-  authorizationUrl  String?
-  paidAt            DateTime?
-  metadata          Json?
-  campaignId        String?               @db.ObjectId
-  campaign          DonationCampaign?     @relation(fields: [campaignId], references: [id])
+  id                       String                @id @default(auto()) @map("_id") @db.ObjectId
+  donor                    String?
+  email                    String?
+  phone                    String?
+  amount                   Float
+  currency                 String                @default("NGN")
+  method                   String                @default("Paystack")
+  notes                    String?
+  recurring                Boolean               @default(false)
+  frequency                DonationFrequency     @default(once)
+  anonymous                Boolean               @default(false)
+  sendReceipt              Boolean               @default(true)
+  sendThankYou             Boolean               @default(true)
+  status                   String                @default("pending")
+  failReason               String?
+  reference                String                @unique
+  paystackStatus           String?
+  accessCode               String?
+  authorizationUrl         String?
+  paidAt                   DateTime?
+  metadata                 Json?
+  paystackPlanCode         String?
+  paystackSubscriptionCode String?
+  paystackCustomerCode     String?
+  paystackEmailToken       String?
+  subscriptionId           String?               @db.ObjectId
+  subscription             DonationSubscription? @relation(fields: [subscriptionId], references: [id])
+  campaignId               String?               @db.ObjectId
+  campaign                 DonationCampaign?     @relation(fields: [campaignId], references: [id])
   
   // Timestamps
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt
+}
+
+model DonationSubscription {
+  id                       String              @id @default(auto()) @map("_id") @db.ObjectId
+  donor                    String?
+  email                    String
+  phone                    String?
+  amount                   Float
+  currency                 String              @default("NGN")
+  frequency                DonationFrequency
+  anonymous                Boolean             @default(false)
+  sendReceipt              Boolean             @default(true)
+  sendThankYou             Boolean             @default(true)
+  status                   String              @default("pending")
+  paystackPlanCode         String
+  paystackSubscriptionCode String?
+  paystackCustomerCode     String?
+  paystackEmailToken       String?
+  metadata                 Json?
+  campaignId               String?             @db.ObjectId
+  campaign                 DonationCampaign?   @relation(fields: [campaignId], references: [id])
+  donations                Donation[]
+
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
 }
 
 model DonationCampaign {
-  id                String         @id @default(auto()) @map("_id") @db.ObjectId
-  topic             String         @unique
+  id                String                 @id @default(auto()) @map("_id") @db.ObjectId
+  topic             String                 @unique
   description       String?
-  published         Boolean        @default(false)
-  order             Int            @default(0)
+  published         Boolean                @default(false)
+  order             Int                    @default(0)
   donation          Donation[]
+  subscriptions     DonationSubscription[]
 
   // Timestamps
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
 }
 
 model TeamMember {

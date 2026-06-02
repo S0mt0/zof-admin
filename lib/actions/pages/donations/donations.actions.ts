@@ -13,6 +13,7 @@ import {
   donationsToCsv,
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
+import { syncUnresolvedDonations } from "@/lib/services/donations/sync-unresolved-donations";
 
 import {
   getAuthorizedDonationAdmin,
@@ -139,5 +140,33 @@ export const sendDonationsExportAction = async (format: "pdf" | "csv") => {
   } catch (error) {
     console.error("Donation export email error:", error);
     return { error: "Could not send donation export." };
+  }
+};
+
+export const syncUnresolvedDonationsAction = async () => {
+  const auth = await getAuthorizedDonationAdmin();
+  if ("error" in auth) return { error: auth.error };
+
+  try {
+    const result = await syncUnresolvedDonations();
+
+    await logDonationActivity(
+      "Donation status sync completed",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("manage"));
+    revalidatePath(sectionPath("subscriptions"));
+
+    if (!result.checkedCount) return { success: "No pending donations to sync." };
+
+    return {
+      success: `Synced ${result.updatedCount} donation${
+        result.updatedCount === 1 ? "" : "s"
+      }.${result.skippedCount ? ` ${result.skippedCount} skipped.` : ""}`,
+    };
+  } catch (error) {
+    console.error("Donation sync error", error);
+    return { error: "Could not sync pending donations." };
   }
 };

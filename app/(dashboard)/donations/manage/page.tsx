@@ -1,4 +1,4 @@
-import { DonationStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Unauthorized } from "@/components/common/unauthorized";
@@ -11,7 +11,9 @@ import { currentUser } from "@/lib/utils/auth.utils";
 
 import { DonationsTable } from "./_components/donations-table";
 
-const donationStatuses = Object.values(DonationStatus);
+export const revalidate = 60;
+
+const donationStatuses = ["abandoned", "failed", "ongoing", "pending", "reversed", "success"] as const;
 const sortFields = ["date", "amount"] as const;
 const sortDirections = ["asc", "desc"] as const;
 
@@ -32,8 +34,10 @@ const clean = (value?: string) => value?.trim() || undefined;
 
 const getDonationWhere = (searchParams: DonationManageSearchParams) => {
   const query = clean(searchParams.q);
-  const status = donationStatuses.includes(searchParams.status as DonationStatus)
-    ? (searchParams.status as DonationStatus)
+  const status = donationStatuses.includes(
+    searchParams.status as (typeof donationStatuses)[number]
+  )
+    ? searchParams.status
     : undefined;
   const campaignId = clean(searchParams.campaign);
   const and: Prisma.DonationWhereInput[] = [];
@@ -45,7 +49,9 @@ const getDonationWhere = (searchParams: DonationManageSearchParams) => {
         { donor: { contains: query, mode: "insensitive" } },
         { email: { contains: query, mode: "insensitive" } },
         { phone: { contains: query, mode: "insensitive" } },
-        { campaign: { is: { topic: { contains: query, mode: "insensitive" } } } },
+        {
+          campaign: { is: { topic: { contains: query, mode: "insensitive" } } },
+        },
       ],
     });
   }
@@ -60,18 +66,24 @@ const getDonationOrderBy = (searchParams: DonationManageSearchParams) => {
   const sort = sortFields.includes(searchParams.sort as DonationSortField)
     ? (searchParams.sort as DonationSortField)
     : "date";
-  const direction = sortDirections.includes(searchParams.direction as SortDirection)
+  const direction = sortDirections.includes(
+    searchParams.direction as SortDirection
+  )
     ? (searchParams.direction as SortDirection)
     : "desc";
 
   return sort === "amount"
     ? ({ amount: direction } satisfies Prisma.DonationOrderByWithRelationInput)
-    : ({ createdAt: direction } satisfies Prisma.DonationOrderByWithRelationInput);
+    : ({
+        createdAt: direction,
+      } satisfies Prisma.DonationOrderByWithRelationInput);
 };
 
 const hasActiveFilters = (searchParams: DonationManageSearchParams) =>
   Boolean(
-    clean(searchParams.q) || clean(searchParams.status) || clean(searchParams.campaign)
+    clean(searchParams.q) ||
+      clean(searchParams.status) ||
+      clean(searchParams.campaign)
   );
 
 export default async function DonationsManagePage({
@@ -90,7 +102,7 @@ export default async function DonationsManagePage({
   }
 
   const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 15;
+  const limit = Number(searchParams.limit) || 10;
   const where = getDonationWhere(searchParams);
   const orderBy = getDonationOrderBy(searchParams);
 

@@ -29,11 +29,50 @@ export const formatMetadata = (value: unknown) => {
   }
 };
 
+
+export const normalizeDonationStatus = (status: string): DonationStatus => {
+  if (status === "completed") return "success";
+  if (status === "cancelled") return "abandoned";
+  if (status === "refunded") return "reversed";
+  if (
+    status === "success" ||
+    status === "pending" ||
+    status === "ongoing" ||
+    status === "abandoned" ||
+    status === "failed" ||
+    status === "reversed"
+  ) {
+    return status;
+  }
+  return "failed";
+};
+
 export const getStatusVariant = (
   status: DonationStatus
 ): BadgeProps["variant"] => {
-  if (status === "completed") return "default";
+  if (status === "success") return "default";
   if (status === "failed") return "destructive";
-  if (status === "cancelled" || status === "refunded") return "outline";
+  if (status === "abandoned" || status === "reversed") return "outline";
+  if (status === "ongoing") return "secondary";
   return "secondary";
+};
+
+export const getStatusClassName = (status: DonationStatus) => {
+  if (status === "success") return "bg-emerald-600 text-white hover:bg-emerald-600/90";
+  if (status === "pending") return "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-50";
+  if (status === "ongoing") return "border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-50";
+  if (status === "abandoned") return "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-50";
+  if (status === "reversed") return "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-50";
+  return "bg-red-600 text-white hover:bg-red-600/90";
+};
+
+export const getDonationOutcomeLabel = (donation: Donation) => {
+  const status = normalizeDonationStatus(donation.status);
+  if (status === "success") return "Confirmed";
+  if (donation.failReason) return donation.failReason;
+  if (status === "abandoned") return "Checkout abandoned";
+  if (status === "ongoing") return "Customer completing payment";
+  if (status === "pending") return "Awaiting confirmation";
+  if (status === "reversed") return "Reversed or chargeback";
+  return "Failed";
 };

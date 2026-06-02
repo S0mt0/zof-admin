@@ -10,7 +10,58 @@ export const PAYSTACK_DONATION_CHANNELS = [
   "bank_transfer",
 ] as const;
 
-export type PaystackDonationChannel = (typeof PAYSTACK_DONATION_CHANNELS)[number];
+export type PaystackDonationChannel =
+  (typeof PAYSTACK_DONATION_CHANNELS)[number];
+export type PaystackPlanInterval = "weekly" | "monthly" | "annually";
+
+export const PAYSTACK_TRANSACTION_STATUSES = [
+  "abandoned",
+  "failed",
+  "ongoing",
+  "pending",
+  "reversed",
+  "success",
+] as const;
+
+export type PaystackTransactionStatus =
+  (typeof PAYSTACK_TRANSACTION_STATUSES)[number];
+
+export const isPaystackTransactionStatus = (
+  status: string
+): status is PaystackTransactionStatus =>
+  PAYSTACK_TRANSACTION_STATUSES.includes(status as PaystackTransactionStatus);
+
+export const normalizePaystackDonationStatus = (status?: string | null) => {
+  if (!status) return "failed" satisfies PaystackTransactionStatus;
+
+  const normalized = status.toLowerCase();
+  if (normalized === "processing") return "pending";
+  if (normalized === "queued") return "pending";
+  if (isPaystackTransactionStatus(normalized)) return normalized;
+
+  return "failed" satisfies PaystackTransactionStatus;
+};
+
+
+export const getPaystackDonationOutcome = (tx: any) => {
+  const status = normalizePaystackDonationStatus(tx?.status);
+  if (status === "success") return null;
+
+  return (
+    tx?.gateway_response ||
+    tx?.message ||
+    tx?.fees_breakdown?.message ||
+    (status === "abandoned"
+      ? "Customer abandoned checkout"
+      : status === "ongoing"
+      ? "Customer is still completing payment"
+      : status === "pending"
+      ? "Payment is still pending"
+      : status === "reversed"
+      ? "Transaction was reversed"
+      : "Transaction failed")
+  );
+};
 
 const getSecretKey = () => {
   const key = process.env.PAYSTACK_SECRET_KEY;
@@ -26,6 +77,7 @@ export async function initializePaystackTransaction(data: {
   currency?: "NGN" | "USD";
   channels?: readonly PaystackDonationChannel[];
   metadata?: Record<string, unknown>;
+  plan?: string;
 }) {
   const res = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
     method: "POST",
@@ -37,21 +89,101 @@ export async function initializePaystackTransaction(data: {
       ...data,
       amount: Math.round(data.amount * 100),
       currency: data.currency || "NGN",
-      channels: data.channels || PAYSTACK_DONATION_CHANNELS,
+      channels: data.plan
+        ? undefined
+        : data.channels || PAYSTACK_DONATION_CHANNELS,
     }),
   });
 
   const json = await res.json();
-  if (!res.ok || !json.status) throw new Error(json.message || "Paystack initialization failed");
-  return json.data as { authorization_url: string; access_code: string; reference: string };
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack initialization failed");
+  return json.data as {
+    authorization_url: string;
+    access_code: string;
+    reference: string;
+  };
 }
 
 export async function verifyPaystackTransaction(reference: string) {
-  const res = await fetch(`${PAYSTACK_BASE_URL}/transaction/verify/${reference}`, {
+  const res = await fetch(
+    `${PAYSTACK_BASE_URL}/transaction/verify/${reference}`,
+    {
+      headers: { Authorization: `Bearer ${getSecretKey()}` },
+    }
+  );
+
+  const json = await res.json();
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack verification failed");
+  return json.data as any;
+}
+
+export async function createPaystackPlan(data: {
+  name: string;
+  amount: number;
+  interval: PaystackPlanInterval;
+  currency?: "NGN" | "USD";
+}) {
+  const res = await fetch(`${PAYSTACK_BASE_URL}/plan`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getSecretKey()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: data.name,
+      amount: Math.round(data.amount * 100),
+      interval: data.interval,
+      currency: data.currency || "NGN",
+    }),
+  });
+
+  const json = await res.json();
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack plan creation failed");
+
+  return json.data as {
+    plan_code: string;
+    name: string;
+    amount: number;
+    interval: PaystackPlanInterval;
+    currency: string;
+  };
+}
+
+export async function fetchPaystackSubscription(subscriptionCode: string) {
+  const res = await fetch(`${PAYSTACK_BASE_URL}/subscription/${subscriptionCode}`, {
     headers: { Authorization: `Bearer ${getSecretKey()}` },
   });
 
   const json = await res.json();
-  if (!res.ok || !json.status) throw new Error(json.message || "Paystack verification failed");
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack subscription fetch failed");
+
   return json.data as any;
+}
+
+export async function listPaystackSubscriptions(params?: {
+  page?: number;
+  perPage?: number;
+  customer?: string;
+  plan?: string;
+}) {
+  const query = new URLSearchParams();
+  if (params?.page) query.set("page", String(params.page));
+  if (params?.perPage) query.set("perPage", String(params.perPage));
+  if (params?.customer) query.set("customer", params.customer);
+  if (params?.plan) query.set("plan", params.plan);
+
+  const url = `${PAYSTACK_BASE_URL}/subscription${query.size ? `?${query}` : ""}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${getSecretKey()}` },
+  });
+
+  const json = await res.json();
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack subscriptions fetch failed");
+
+  return json.data as any[];
 }

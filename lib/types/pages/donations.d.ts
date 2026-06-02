@@ -11,13 +11,14 @@ interface DonationAsideSectionContent {
   intro: SectionIntroContent;
 }
 
-type DonationFrequency = "once" | "monthly";
+type DonationFrequency = "once" | "weekly" | "monthly" | "yearly";
 type DonationStatus =
-  | "pending"
-  | "completed"
+  | "abandoned"
   | "failed"
-  | "refunded"
-  | "cancelled";
+  | "ongoing"
+  | "pending"
+  | "reversed"
+  | "success";
 
 type DonationCampaign = {
   id: string;
@@ -26,6 +27,31 @@ type DonationCampaign = {
   published: boolean;
   order: number;
   donation?: Donation[];
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+
+type DonationSubscription = {
+  id: string;
+  donor?: string | null;
+  email: string;
+  phone?: string | null;
+  amount: number;
+  currency: string;
+  frequency: DonationFrequency;
+  anonymous: boolean;
+  sendReceipt: boolean;
+  sendThankYou: boolean;
+  status: string;
+  paystackPlanCode: string;
+  paystackSubscriptionCode?: string | null;
+  paystackCustomerCode?: string | null;
+  paystackEmailToken?: string | null;
+  metadata?: unknown;
+  campaignId?: string | null;
+  campaign?: DonationCampaign | null;
+  donations?: Donation[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -52,6 +78,12 @@ type Donation = {
   authorizationUrl?: string | null;
   paidAt?: Date | null;
   metadata?: unknown;
+  paystackPlanCode?: string | null;
+  paystackSubscriptionCode?: string | null;
+  paystackCustomerCode?: string | null;
+  paystackEmailToken?: string | null;
+  subscriptionId?: string | null;
+  subscription?: DonationSubscription | null;
   campaignId?: string | null;
   campaign?: DonationCampaign | null;
   createdAt: Date;

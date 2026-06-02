@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AlertDialog } from "@/components/common/alert-dialog";
@@ -11,6 +12,7 @@ import {
   sendDonationReceiptAction,
   sendDonationThankYouAction,
   sendDonationsExportAction,
+  syncUnresolvedDonationsAction,
 } from "@/lib/actions/pages/donations";
 import { showActionResult } from "@/lib/utils/pages";
 
@@ -40,6 +42,7 @@ export function DonationsTable({
   hasActiveFilters,
   searchParams,
 }: DonationsTableProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
@@ -134,6 +137,11 @@ export function DonationsTable({
             run(
               sendDonationsExportAction(format),
               `${format.toUpperCase()} export sent`
+            )
+          }
+          onSync={() =>
+            run(syncUnresolvedDonationsAction(), "Donation statuses synced", () =>
+              router.refresh()
             )
           }
         />

@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { DonationTableSearchParams } from "./donation-table.types";
 
 const statuses: DonationStatus[] = [
+  "success",
   "pending",
-  "completed",
+  "ongoing",
+  "abandoned",
   "failed",
-  "refunded",
-  "cancelled",
+  "reversed",
 ];
 
 export function DonationFilters({

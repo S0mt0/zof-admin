@@ -284,25 +284,11 @@ export const createDonationReceiptPdfBuffer = async (donation: Donation) => {
   return Buffer.from(doc.output("arraybuffer"));
 };
 
-export function cleanDonationReference(reference: string = "") {
+export function cleanDonationReference(reference: string | string[] = "") {
   let cleanReference = reference;
 
-  if (Array.isArray(cleanReference)) {
-    cleanReference = cleanReference[0];
-  } else {
-    try {
-      cleanReference = JSON.parse(reference);
-    } catch (error) {
-      console.error("Error parsing verification reference:", error);
-    }
-  }
+  if (Array.isArray(cleanReference)) cleanReference = cleanReference[0];
 
-  if (reference.includes("=")) {
-    cleanReference = reference.split("=")[0];
-  }
-  if (reference.includes(",")) {
-    cleanReference = reference.split(",")[0];
-  }
-
-  return cleanReference;
+  const str = String(cleanReference).trim();
+  return str.split(/[=,]/, 1)[0];
 }

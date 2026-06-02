@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -73,6 +74,25 @@ export function DonationDetailDialog({
               label="Recurring"
               value={formatBoolean(donation.recurring)}
             />
+            {donation.recurring ? (
+              <div className="min-w-0 rounded-lg border bg-background p-3">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  Subscription
+                </p>
+                {donation.subscriptionId ? (
+                  <Link
+                    href={`/donations/subscriptions?q=${donation.subscription?.paystackSubscriptionCode || donation.subscription?.paystackPlanCode || donation.subscriptionId}`}
+                    className="mt-1 inline-flex break-all text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                  >
+                    {donation.subscription?.paystackSubscriptionCode ||
+                      donation.subscription?.paystackPlanCode ||
+                      donation.subscriptionId}
+                  </Link>
+                ) : (
+                  <p className="mt-1 text-sm font-medium text-foreground">-</p>
+                )}
+              </div>
+            ) : null}
             <DetailItem
               label="Anonymous"
               value={formatBoolean(donation.anonymous)}
