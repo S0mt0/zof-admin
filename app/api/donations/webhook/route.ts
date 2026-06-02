@@ -45,8 +45,7 @@ const isPaystackIp = (headers: Headers) =>
 
 export async function GET() {
   return Response.json({
-    message:
-      "Donation webhook is reachable. Paystack should call this route with POST.",
+    health: "ok",
   });
 }
 
@@ -64,12 +63,6 @@ export async function POST(request: Request) {
     const body = await request.text();
     const signature = request.headers.get("x-paystack-signature") || "";
     const secret = process.env.PAYSTACK_SECRET_KEY || "";
-
-    console.info("Paystack donation webhook received", {
-      requestIp,
-      hasBody: Boolean(body),
-      hasSignature: Boolean(signature),
-    });
 
     const hash = crypto.createHmac("sha512", secret).update(body).digest("hex");
 

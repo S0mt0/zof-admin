@@ -9,7 +9,10 @@ import {
   getDonationMethod,
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
-import { normalizePaystackDonationStatus, verifyPaystackTransaction } from "@/lib/utils/paystack";
+import {
+  normalizePaystackDonationStatus,
+  verifyPaystackTransaction,
+} from "@/lib/utils/paystack";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": FRONTEND_BASE_URL,
@@ -29,6 +32,8 @@ async function verify(reference: string) {
   if (!existing) throw new Error("Donation not found");
 
   const tx = await verifyPaystackTransaction(cleanReference);
+
+  console.log("Paystack transaction details:", tx);
 
   const status = normalizePaystackDonationStatus(tx.status);
   const completed = status === "success";
@@ -114,6 +119,7 @@ export async function POST(request: Request) {
       { message: "Reference is required" },
       { headers: corsHeaders, status: 400 }
     );
+
   try {
     const donation = await verify(reference);
 
