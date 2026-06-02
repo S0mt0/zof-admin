@@ -15,11 +15,11 @@ export const DonationInitializeSchema = z.object({
   amount: z.coerce.number().min(1, "Donation amount is required"),
   currency: DonationCurrencySchema.default("NGN"),
   notes: z.string().trim().max(500).optional().or(z.literal("")),
-  frequency: z.enum(["once", "monthly"]).default("once"),
+  frequency: z.enum(["once", "weekly", "monthly", "yearly"]).default("once"),
   anonymous: z.boolean().default(false),
   sendReceipt: z.boolean().default(true),
   sendThankYou: z.boolean().default(true),
   campaignId: z.string().trim().optional().or(z.literal("")),
 });
 
-export const DonationStatusSchema = z.enum(["pending", "completed", "failed", "refunded", "cancelled"]);
+export const DonationStatusSchema = z.enum(["abandoned", "failed", "ongoing", "pending", "reversed", "success"]);

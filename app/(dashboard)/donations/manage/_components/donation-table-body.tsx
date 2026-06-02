@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 
-import { formatDateTime, getStatusVariant, money } from "./donation-table.utils";
+import { formatDateTime, getStatusClassName, getStatusVariant, money, normalizeDonationStatus } from "./donation-table.utils";
 
 export function DonationTableBody({
   donations,
@@ -42,7 +42,10 @@ export function DonationTableBody({
 
   return (
     <TableBody>
-      {donations.map((donation, index) => (
+      {donations.map((donation, index) => {
+        const status = normalizeDonationStatus(donation.status);
+
+        return (
         <TableRow
           key={donation.id}
           onClick={() => onViewDonation(donation)}
@@ -72,7 +75,7 @@ export function DonationTableBody({
           </TableCell>
           <TableCell className="capitalize">{donation.frequency}</TableCell>
           <TableCell>
-            <Badge variant={getStatusVariant(donation.status)}>{donation.status}</Badge>
+            <Badge variant={getStatusVariant(status)} className={getStatusClassName(status)}>{status}</Badge>
           </TableCell>
           <TableCell>{donation.campaign?.topic || "Where needed most"}</TableCell>
           <TableCell className="font-mono text-xs">{donation.reference}</TableCell>
@@ -94,7 +97,7 @@ export function DonationTableBody({
               <Button
                 variant="outline"
                 size="icon"
-                disabled={isPending || !donation.email || donation.status !== "completed"}
+                disabled={isPending || !donation.email || status !== "success"}
                 onClick={() => onSendReceipt(donation.id)}
                 title="Send receipt"
               >
@@ -103,7 +106,7 @@ export function DonationTableBody({
               <Button
                 variant="outline"
                 size="icon"
-                disabled={isPending || !donation.email || donation.status !== "completed"}
+                disabled={isPending || !donation.email || status !== "success"}
                 onClick={() => onSendThankYou(donation.id)}
                 title="Send thank-you"
               >
@@ -121,7 +124,7 @@ export function DonationTableBody({
             </div>
           </TableCell>
         </TableRow>
-      ))}
+      )})}
     </TableBody>
   );
 }

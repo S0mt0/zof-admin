@@ -2,13 +2,14 @@ import { FRONTEND_BASE_URL } from "@/lib/constants";
 import {
   getDonationByReference,
   updateDonationByReference,
+  updateDonationSubscription,
 } from "@/lib/db/repository/pages/donations";
 import {
   cleanDonationReference,
   getDonationMethod,
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
-import { verifyPaystackTransaction } from "@/lib/utils/paystack";
+import { normalizePaystackDonationStatus, verifyPaystackTransaction } from "@/lib/utils/paystack";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": FRONTEND_BASE_URL,
@@ -29,16 +30,33 @@ async function verify(reference: string) {
 
   const tx = await verifyPaystackTransaction(cleanReference);
 
-  const completed = tx.status === "success";
-  const cancelled = tx.status === "abandoned";
+  const status = normalizePaystackDonationStatus(tx.status);
+  const completed = status === "success";
 
   const donation = await updateDonationByReference(cleanReference, {
-    status: completed ? "completed" : cancelled ? "cancelled" : "failed",
+    status,
     paystackStatus: tx.status,
     method: getDonationMethod(tx),
     paidAt: completed ? new Date(tx.paid_at || Date.now()) : null,
     metadata: tx,
+    paystackPlanCode: tx.plan?.plan_code || existing.paystackPlanCode || null,
+    paystackSubscriptionCode:
+      tx.subscription?.subscription_code ||
+      existing.paystackSubscriptionCode ||
+      null,
+    paystackCustomerCode:
+      tx.customer?.customer_code || existing.paystackCustomerCode || null,
   });
+
+  if (completed && donation.subscriptionId) {
+    await updateDonationSubscription(donation.subscriptionId, {
+      status: "active",
+      paystackPlanCode: donation.paystackPlanCode,
+      paystackSubscriptionCode: donation.paystackSubscriptionCode,
+      paystackCustomerCode: donation.paystackCustomerCode,
+      metadata: tx,
+    });
+  }
 
   if (completed && donation.email) {
     const mailer = new MailService();

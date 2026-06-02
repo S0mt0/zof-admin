@@ -1,12 +1,13 @@
 export type DonationSummary = {
   total: number;
-  completed: number;
+  success: number;
   pending: number;
+  ongoing: number;
   failed: number;
-  refunded: number;
-  cancelled: number;
+  abandoned: number;
+  reversed: number;
   totalAmount: number;
-  completedAmount: number;
+  successAmount: number;
 };
 
 export type DeleteTarget = { type: "single"; id: string } | { type: "bulk" } | null;

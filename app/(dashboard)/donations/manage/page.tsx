@@ -1,4 +1,4 @@
-import { DonationStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { DashboardHeader } from "@/components/common/dashboard-header";
 import { Unauthorized } from "@/components/common/unauthorized";
@@ -11,7 +11,7 @@ import { currentUser } from "@/lib/utils/auth.utils";
 
 import { DonationsTable } from "./_components/donations-table";
 
-const donationStatuses = Object.values(DonationStatus);
+const donationStatuses = ["abandoned", "failed", "ongoing", "pending", "reversed", "success"] as const;
 const sortFields = ["date", "amount"] as const;
 const sortDirections = ["asc", "desc"] as const;
 
@@ -33,9 +33,9 @@ const clean = (value?: string) => value?.trim() || undefined;
 const getDonationWhere = (searchParams: DonationManageSearchParams) => {
   const query = clean(searchParams.q);
   const status = donationStatuses.includes(
-    searchParams.status as DonationStatus
+    searchParams.status as (typeof donationStatuses)[number]
   )
-    ? (searchParams.status as DonationStatus)
+    ? searchParams.status
     : undefined;
   const campaignId = clean(searchParams.campaign);
   const and: Prisma.DonationWhereInput[] = [];

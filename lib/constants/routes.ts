@@ -3,8 +3,8 @@ export const publicRoutes = ["/auth/verify-account"];
 export const publicApiRoutes = [
   "/api/about",
   "/api/blogs",
-  "/api/donations",
   "/api/donations/webhook",
+  "/api/donations",
   "/api/events",
   "/api/faqs",
   "/api/info",
