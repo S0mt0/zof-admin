@@ -143,7 +143,7 @@ export const listDonationSubscriptions = async ({
       args: {
         where,
         orderBy: { createdAt: "desc" },
-        include: { campaign: true, subscription: true },
+        include: { campaign: true },
       },
     });
   } catch (error) {
