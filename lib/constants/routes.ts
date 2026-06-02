@@ -4,6 +4,7 @@ export const publicApiRoutes = [
   "/api/about",
   "/api/blogs",
   "/api/donations",
+  "/api/donations/webhook",
   "/api/events",
   "/api/faqs",
   "/api/info",
