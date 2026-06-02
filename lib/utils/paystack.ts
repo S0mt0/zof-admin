@@ -42,6 +42,27 @@ export const normalizePaystackDonationStatus = (status?: string | null) => {
   return "failed" satisfies PaystackTransactionStatus;
 };
 
+
+export const getPaystackDonationOutcome = (tx: any) => {
+  const status = normalizePaystackDonationStatus(tx?.status);
+  if (status === "success") return null;
+
+  return (
+    tx?.gateway_response ||
+    tx?.message ||
+    tx?.fees_breakdown?.message ||
+    (status === "abandoned"
+      ? "Customer abandoned checkout"
+      : status === "ongoing"
+      ? "Customer is still completing payment"
+      : status === "pending"
+      ? "Payment is still pending"
+      : status === "reversed"
+      ? "Transaction was reversed"
+      : "Transaction failed")
+  );
+};
+
 const getSecretKey = () => {
   const key = process.env.PAYSTACK_SECRET_KEY;
   if (!key) throw new Error("PAYSTACK_SECRET_KEY is not configured");
@@ -93,7 +114,6 @@ export async function verifyPaystackTransaction(reference: string) {
   );
 
   const json = await res.json();
-  console.log("Paystack verification response:", json);
   if (!res.ok || !json.status)
     throw new Error(json.message || "Paystack verification failed");
   return json.data as any;

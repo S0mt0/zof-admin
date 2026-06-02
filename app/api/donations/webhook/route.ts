@@ -17,7 +17,7 @@ import {
   cleanDonationReference,
   getDonationMethod,
 } from "@/lib/utils/donations.utils";
-import { normalizePaystackDonationStatus } from "@/lib/utils/paystack";
+import { getPaystackDonationOutcome, normalizePaystackDonationStatus } from "@/lib/utils/paystack";
 
 const PAYSTACK_WEBHOOK_IPS = new Set([
   "52.31.139.75",
@@ -219,7 +219,7 @@ export async function POST(request: Request) {
           await updateDonationByReference(reference, {
             status,
             paystackStatus: event.data?.status || status,
-            failReason: event.data?.gateway_response || null,
+            failReason: getPaystackDonationOutcome(event.data),
             metadata: event.data,
           });
         }

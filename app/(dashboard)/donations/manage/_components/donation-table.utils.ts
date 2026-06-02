@@ -65,3 +65,14 @@ export const getStatusClassName = (status: DonationStatus) => {
   if (status === "reversed") return "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-50";
   return "bg-red-600 text-white hover:bg-red-600/90";
 };
+
+export const getDonationOutcomeLabel = (donation: Donation) => {
+  const status = normalizeDonationStatus(donation.status);
+  if (status === "success") return "Confirmed";
+  if (donation.failReason) return donation.failReason;
+  if (status === "abandoned") return "Checkout abandoned";
+  if (status === "ongoing") return "Customer completing payment";
+  if (status === "pending") return "Awaiting confirmation";
+  if (status === "reversed") return "Reversed or chargeback";
+  return "Failed";
+};

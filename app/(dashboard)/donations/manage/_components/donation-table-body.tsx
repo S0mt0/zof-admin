@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 
-import { formatDateTime, getStatusClassName, getStatusVariant, money, normalizeDonationStatus } from "./donation-table.utils";
+import { formatDateTime, getDonationOutcomeLabel, getStatusClassName, getStatusVariant, money, normalizeDonationStatus } from "./donation-table.utils";
 
 export function DonationTableBody({
   donations,
@@ -32,7 +32,7 @@ export function DonationTableBody({
     return (
       <TableBody>
         <TableRow>
-          <TableCell colSpan={12} className="h-28 text-center text-muted-foreground">
+          <TableCell colSpan={13} className="h-28 text-center text-muted-foreground">
             No donations match the current view.
           </TableCell>
         </TableRow>
@@ -76,6 +76,9 @@ export function DonationTableBody({
           <TableCell className="capitalize">{donation.frequency}</TableCell>
           <TableCell>
             <Badge variant={getStatusVariant(status)} className={getStatusClassName(status)}>{status}</Badge>
+          </TableCell>
+          <TableCell className="max-w-[12rem] truncate text-sm text-muted-foreground" title={getDonationOutcomeLabel(donation)}>
+            {getDonationOutcomeLabel(donation)}
           </TableCell>
           <TableCell>{donation.campaign?.topic || "Where needed most"}</TableCell>
           <TableCell className="font-mono text-xs">{donation.reference}</TableCell>

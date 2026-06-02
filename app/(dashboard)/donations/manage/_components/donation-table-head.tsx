@@ -26,6 +26,7 @@ export function DonationTableHead({
         <TableHead>Amount</TableHead>
         <TableHead>Frequency</TableHead>
         <TableHead>Status</TableHead>
+        <TableHead>Outcome</TableHead>
         <TableHead>Campaign</TableHead>
         <TableHead>Reference</TableHead>
         <TableHead>Method</TableHead>

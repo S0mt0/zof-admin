@@ -10,6 +10,7 @@ import {
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
 import {
+  getPaystackDonationOutcome,
   normalizePaystackDonationStatus,
   verifyPaystackTransaction,
 } from "@/lib/utils/paystack";
@@ -41,6 +42,7 @@ async function verify(reference: string) {
     paystackStatus: tx.status,
     method: getDonationMethod(tx),
     paidAt: completed ? new Date(tx.paid_at || Date.now()) : null,
+    failReason: getPaystackDonationOutcome(tx),
     metadata: tx,
     paystackPlanCode: tx.plan?.plan_code || existing.paystackPlanCode || null,
     paystackSubscriptionCode:
