@@ -21,7 +21,7 @@ export const listDonations = async ({ where, orderBy, page, limit }: ListDonatio
       args: {
         where,
         orderBy: orderBy ?? { createdAt: "desc" },
-        include: { campaign: true },
+        include: { campaign: true, subscription: true },
       },
     });
   } catch (error) {
@@ -71,25 +71,25 @@ export const getDonationSummary = async (where?: Prisma.DonationWhereInput) => {
 };
 
 export const listAllDonations = () =>
-  db.donation.findMany({ orderBy: { createdAt: "desc" }, include: { campaign: true } });
+  db.donation.findMany({ orderBy: { createdAt: "desc" }, include: { campaign: true, subscription: true } });
 
 export const getDonationById = (id: string) =>
-  db.donation.findUnique({ where: { id }, include: { campaign: true } });
+  db.donation.findUnique({ where: { id }, include: { campaign: true, subscription: true } });
 
 export const getDonationByReference = (reference: string) =>
-  db.donation.findUnique({ where: { reference }, include: { campaign: true } });
+  db.donation.findUnique({ where: { reference }, include: { campaign: true, subscription: true } });
 
 export const createDonation = (data: any) =>
-  db.donation.create({ data, include: { campaign: true } });
+  db.donation.create({ data, include: { campaign: true, subscription: true } });
 
 export const updateDonationByReference = (reference: string, data: any) =>
-  db.donation.update({ where: { reference }, data, include: { campaign: true } });
+  db.donation.update({ where: { reference }, data, include: { campaign: true, subscription: true } });
 
 export const updateDonation = (id: string, data: any) =>
-  db.donation.update({ where: { id }, data, include: { campaign: true } });
+  db.donation.update({ where: { id }, data, include: { campaign: true, subscription: true } });
 
 export const deleteDonation = (id: string) =>
-  db.donation.delete({ where: { id }, include: { campaign: true } });
+  db.donation.delete({ where: { id }, include: { campaign: true, subscription: true } });
 
 export const deleteDonations = (ids: string[]) =>
   db.donation.deleteMany({ where: { id: { in: ids } } });
@@ -121,4 +121,40 @@ export const updateDonationSubscriptionBySubscriptionCode = (
   db.donationSubscription.updateMany({
     where: { paystackSubscriptionCode },
     data,
+  });
+
+interface ListDonationSubscriptionsOptions {
+  where?: Prisma.DonationSubscriptionWhereInput;
+  page: number;
+  limit: number;
+}
+
+export const listDonationSubscriptions = async ({
+  where,
+  page,
+  limit,
+}: ListDonationSubscriptionsOptions) => {
+  try {
+    return prismaPaginate({
+      page,
+      limit,
+      maxLimit: 100,
+      model: db.donationSubscription,
+      args: {
+        where,
+        orderBy: { createdAt: "desc" },
+        include: { campaign: true, subscription: true },
+      },
+    });
+  } catch (error) {
+    console.log("error fetching donation subscriptions", error);
+    return emptyPaginatedData;
+  }
+};
+
+export const listUnresolvedDonations = () =>
+  db.donation.findMany({
+    where: { status: { in: ["pending", "ongoing"] } },
+    orderBy: { createdAt: "desc" },
+    include: { campaign: true, subscription: true },
   });

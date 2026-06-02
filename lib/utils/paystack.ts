@@ -131,3 +131,39 @@ export async function createPaystackPlan(data: {
     currency: string;
   };
 }
+
+export async function fetchPaystackSubscription(subscriptionCode: string) {
+  const res = await fetch(`${PAYSTACK_BASE_URL}/subscription/${subscriptionCode}`, {
+    headers: { Authorization: `Bearer ${getSecretKey()}` },
+  });
+
+  const json = await res.json();
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack subscription fetch failed");
+
+  return json.data as any;
+}
+
+export async function listPaystackSubscriptions(params?: {
+  page?: number;
+  perPage?: number;
+  customer?: string;
+  plan?: string;
+}) {
+  const query = new URLSearchParams();
+  if (params?.page) query.set("page", String(params.page));
+  if (params?.perPage) query.set("perPage", String(params.perPage));
+  if (params?.customer) query.set("customer", params.customer);
+  if (params?.plan) query.set("plan", params.plan);
+
+  const url = `${PAYSTACK_BASE_URL}/subscription${query.size ? `?${query}` : ""}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${getSecretKey()}` },
+  });
+
+  const json = await res.json();
+  if (!res.ok || !json.status)
+    throw new Error(json.message || "Paystack subscriptions fetch failed");
+
+  return json.data as any[];
+}

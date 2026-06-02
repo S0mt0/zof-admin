@@ -7,12 +7,17 @@ import {
   deleteDonations,
   getDonationById,
   listAllDonations,
+  listUnresolvedDonations,
+  updateDonationByReference,
+  updateDonationSubscription,
 } from "@/lib/db/repository/pages/donations";
 import {
   createDonationsPdfBuffer,
   donationsToCsv,
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
+import { normalizePaystackDonationStatus, verifyPaystackTransaction } from "@/lib/utils/paystack";
+import { getDonationMethod } from "@/lib/utils/donations.utils";
 
 import {
   getAuthorizedDonationAdmin,
@@ -139,5 +144,79 @@ export const sendDonationsExportAction = async (format: "pdf" | "csv") => {
   } catch (error) {
     console.error("Donation export email error:", error);
     return { error: "Could not send donation export." };
+  }
+};
+
+export const syncUnresolvedDonationsAction = async () => {
+  const auth = await getAuthorizedDonationAdmin();
+  if ("error" in auth) return { error: auth.error };
+
+  try {
+    const donations = await listUnresolvedDonations();
+    if (!donations.length) return { success: "No pending donations to sync." };
+
+    let updatedCount = 0;
+    let skippedCount = 0;
+
+    await Promise.allSettled(
+      donations.map(async (donation) => {
+        try {
+          const tx = await verifyPaystackTransaction(donation.reference);
+          const status = normalizePaystackDonationStatus(tx.status);
+          const completed = status === "success";
+
+          const updated = await updateDonationByReference(donation.reference, {
+            status,
+            paystackStatus: tx.status,
+            method: getDonationMethod(tx),
+            paidAt: completed ? new Date(tx.paid_at || Date.now()) : null,
+            failReason: completed ? null : tx.gateway_response || tx.message || null,
+            metadata: tx,
+            paystackPlanCode: tx.plan?.plan_code || donation.paystackPlanCode || null,
+            paystackSubscriptionCode:
+              tx.subscription?.subscription_code ||
+              donation.paystackSubscriptionCode ||
+              null,
+            paystackCustomerCode:
+              tx.customer?.customer_code || donation.paystackCustomerCode || null,
+          });
+
+          if (completed && updated.subscriptionId) {
+            await updateDonationSubscription(updated.subscriptionId, {
+              status: "active",
+              paystackPlanCode: updated.paystackPlanCode,
+              paystackSubscriptionCode: updated.paystackSubscriptionCode,
+              paystackCustomerCode: updated.paystackCustomerCode,
+              metadata: tx,
+            });
+          }
+
+          updatedCount += 1;
+        } catch (error) {
+          console.warn("Donation sync skipped", {
+            reference: donation.reference,
+            error,
+          });
+          skippedCount += 1;
+        }
+      })
+    );
+
+    await logDonationActivity(
+      "Donation status sync completed",
+      auth.user.name,
+      auth.user.role
+    );
+    revalidatePath(sectionPath("manage"));
+    revalidatePath(sectionPath("subscriptions"));
+
+    return {
+      success: `Synced ${updatedCount} donation${updatedCount === 1 ? "" : "s"}.${
+        skippedCount ? ` ${skippedCount} skipped.` : ""
+      }`,
+    };
+  } catch (error) {
+    console.error("Donation sync error", error);
+    return { error: "Could not sync pending donations." };
   }
 };

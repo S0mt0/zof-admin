@@ -22,6 +22,7 @@ import {
   MapPin,
   MessageSquareQuote,
   Palette,
+  Repeat2,
   Sparkles,
   Target,
   Users,
@@ -107,6 +108,7 @@ const donationItems = [
   { type: "separator", title: "Manage Donations" },
   { title: "Campaigns", url: "/donations/campaigns", icon: List },
   { title: "Donations", url: "/donations/manage", icon: BiSolidDonateHeart },
+  { title: "Subscriptions", url: "/donations/subscriptions", icon: Repeat2 },
 ] satisfies SidebarNestedItem[];
 
 const galleryItems = [

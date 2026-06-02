@@ -3,6 +3,7 @@ import {
   Download,
   FileText,
   Mail,
+  RefreshCw,
   Send,
   Trash2,
 } from "lucide-react";
@@ -29,6 +30,7 @@ export function DonationCardHeader({
   onDeleteSelected,
   onDownloadExport,
   onEmailExport,
+  onSync,
 }: {
   selectedCount: number;
   total: number;
@@ -36,6 +38,7 @@ export function DonationCardHeader({
   onDeleteSelected: () => void;
   onDownloadExport: (format: "pdf" | "csv") => void;
   onEmailExport: (format: "pdf" | "csv") => void;
+  onSync: () => void;
 }) {
   return (
     <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -52,6 +55,11 @@ export function DonationCardHeader({
             Delete selected ({selectedCount})
           </Button>
         ) : null}
+
+        <Button variant="outline" disabled={isPending} onClick={onSync}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Sync status
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

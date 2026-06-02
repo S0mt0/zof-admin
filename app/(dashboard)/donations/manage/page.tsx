@@ -11,6 +11,8 @@ import { currentUser } from "@/lib/utils/auth.utils";
 
 import { DonationsTable } from "./_components/donations-table";
 
+export const revalidate = 60;
+
 const donationStatuses = ["abandoned", "failed", "ongoing", "pending", "reversed", "success"] as const;
 const sortFields = ["date", "amount"] as const;
 const sortDirections = ["asc", "desc"] as const;
