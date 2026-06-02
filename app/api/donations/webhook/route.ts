@@ -155,9 +155,7 @@ export async function POST(request: Request) {
           donation.sendThankYou
             ? mailer.sendDonationThankYouEmail(donation as any)
             : Promise.resolve(),
-        ]).then((results) => {
-          console.log("Donation email results:", results);
-        });
+        ]);
       }
 
       if (donation?.subscriptionId) {

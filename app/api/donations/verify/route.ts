@@ -33,8 +33,6 @@ async function verify(reference: string) {
 
   const tx = await verifyPaystackTransaction(cleanReference);
 
-  console.log("Paystack transaction details:", tx);
-
   const status = normalizePaystackDonationStatus(tx.status);
   const completed = status === "success";
 
