@@ -123,8 +123,10 @@ export const useWriteTeam = ({
           form.setValue("avatar", objectUrl || initialValues.avatar);
         })
         .catch((err) => {
+          const message =
+            err?.response?.data?.error || err?.message || "Upload failed";
           console.error("Upload error:", err);
-          toast.error("Something went wrong");
+          toast.error(message);
         })
         .finally(() => {
           toast.dismiss(dismiss);

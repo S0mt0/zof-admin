@@ -24,7 +24,6 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
     emailTo,
     filteredMembers,
     isPending,
-    router,
     searchTerm,
     openDialog,
     target,
@@ -48,12 +47,6 @@ export function TeamMembers({ members }: { members: TeamMember[] }) {
   const openEditForm = (member: TeamMember) => {
     setFormTarget(member);
     setFormOpen(true);
-  };
-
-  const onSaved = () => {
-    setFormOpen(false);
-    setFormTarget(null);
-    router.refresh();
   };
 
   return (
