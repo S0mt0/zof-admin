@@ -3,6 +3,8 @@ import { createMessage } from "@/lib/db/repository/message.service";
 import { MessageSchema } from "@/lib/schemas/messages";
 import { MailService } from "@/lib/utils/mail.service";
 
+const isPreview = () => process.env.VERCEL_ENV === "preview";
+
 export async function OPTIONS() {
   return new Response(null, {
     headers: {
@@ -41,7 +43,9 @@ export async function POST(request: Request) {
       createMessage(data),
       mailer.sendMail({
         subject: data.subject,
-        to: "noreply.backoffice.server@gmail.com",
+        to: isPreview()
+          ? "noreply.backoffice.server@gmail.com"
+          : "onyekazita@gmail.com",
         text: `You have a new message from ${data.sender} (${data.email}): ${data.content}`,
         html: `
           <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">

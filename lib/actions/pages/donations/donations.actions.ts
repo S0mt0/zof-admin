@@ -13,7 +13,7 @@ import {
   donationsToCsv,
 } from "@/lib/utils/donations.utils";
 import { MailService } from "@/lib/utils/mail.service";
-import { syncUnresolvedDonations } from "@/lib/services/donations/sync-unresolved-donations";
+import { syncUnresolvedDonations } from "@/lib/utils/donations.utils";
 
 import {
   getAuthorizedDonationAdmin,
@@ -47,9 +47,17 @@ export const deleteDonationsAction = async (ids: string[]) => {
 
   try {
     await deleteDonations(validIds);
-    await logDonationActivity("Donations deleted", auth.user.name, auth.user.role);
+    await logDonationActivity(
+      "Donations deleted",
+      auth.user.name,
+      auth.user.role
+    );
     revalidatePath(sectionPath("manage"));
-    return { success: `${validIds.length} donation${validIds.length === 1 ? "" : "s"} deleted` };
+    return {
+      success: `${validIds.length} donation${
+        validIds.length === 1 ? "" : "s"
+      } deleted`,
+    };
   } catch {
     return { error: "Could not delete donations" };
   }
@@ -158,7 +166,8 @@ export const syncUnresolvedDonationsAction = async () => {
     revalidatePath(sectionPath("manage"));
     revalidatePath(sectionPath("subscriptions"));
 
-    if (!result.checkedCount) return { success: "No pending donations to sync." };
+    if (!result.checkedCount)
+      return { success: "No pending donations to sync." };
 
     return {
       success: `Synced ${result.updatedCount} donation${
