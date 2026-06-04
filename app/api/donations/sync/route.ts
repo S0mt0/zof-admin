@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 
-import { syncUnresolvedDonations } from "@/lib/services/donations/sync-unresolved-donations";
+import { syncUnresolvedDonations } from "@/lib/utils/donations.utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

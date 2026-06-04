@@ -31,7 +31,6 @@ type DonationCampaign = {
   updatedAt: Date;
 };
 
-
 type DonationSubscription = {
   id: string;
   donor?: string | null;
@@ -88,4 +87,10 @@ type Donation = {
   campaign?: DonationCampaign | null;
   createdAt: Date;
   updatedAt: Date;
+};
+
+type DonationSyncResult = {
+  checkedCount: number;
+  updatedCount: number;
+  skippedCount: number;
 };
